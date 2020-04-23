@@ -1,4 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-04-02T14:44:16-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>A CFFL journey towards building a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">Fastpages Notebook Blog Post</title><link href="https://qa.fastforwardlabs.com/jupyter/2020/02/20/test.html" rel="alternate" type="text/html" title="Fastpages Notebook Blog Post" /><published>2020-02-20T00:00:00-06:00</published><updated>2020-02-20T00:00:00-06:00</updated><id>https://qa.fastforwardlabs.com/jupyter/2020/02/20/test</id><content type="html" xml:base="https://qa.fastforwardlabs.com/jupyter/2020/02/20/test.html">&lt;!--
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-04-23T15:57:29-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>A CFFL journey towards building a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">An Example Markdown Post take TWO</title><link href="https://qa.fastforwardlabs.com/markdown/2020/04/28/Intro-to-QA.html" rel="alternate" type="text/html" title="An Example Markdown Post take TWO" /><published>2020-04-28T00:00:00-05:00</published><updated>2020-04-28T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/markdown/2020/04/28/Intro-to-QA</id><content type="html" xml:base="https://qa.fastforwardlabs.com/markdown/2020/04/28/Intro-to-QA.html">&lt;h1 id=&quot;nlp-for-automated-question-answering&quot;&gt;NLP for Automated Question Answering&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/post1/reading_retriever.png&quot; alt=&quot;&quot; title=&quot;Get it? Retriever
+? Reader?&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;information-retrieval-based-systems-retrievers-and-readers&quot;&gt;Information Retrieval-Based Systems: Retrievers and Readers&lt;/h2&gt;
+
+&lt;p&gt;Information retrieval-based question answering (IR QA) systems find and extract 
+a text segment from a large collection of documents. The collection can be as 
+vast as the entire web (open domain) or as specific as a company’s Confluence 
+documents (closed domain). Contemporary IR QA systems first identify the most 
+relevant documents in the collection, and then extract the answer from the 
+contents of those documents. To illustrate this approach, let’s revisit our 
+Google example from the introduction, only this time we’ll include some of the 
+search results!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/post1/abe_search.png&quot; alt=&quot;&quot; title=&quot;Did Abe have big
+ ears?&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We already talked about how the snippet box acts like a QA system. 
+The search results below the snippet illustrate some of the reasons why an IR QA 
+system can be more useful than a search engine alone. The relevant links vary 
+from essentially advertising (study.com), to making fun of Lincoln’s ears 
+(Reddit at its finest), to a discussion of color blindness (answers.com without 
+the answer we want), to an article about all presidents’ eye color (getting 
+warmer, Chicago Tribune), to the last link, answers.yahoo.com, which is on-topic, 
+and narrowly scoped to Lincoln but gives an ambiguous answer. Without the 
+snippet box at the top, a user would have to skim each of these links looking 
+for their answer.&lt;/p&gt;
+
+&lt;p&gt;IR QA systems are not just search engines, which take general natural language 
+terms and provide a list of relevant documents. IR QA systems perform an 
+additional layer of processing on the most relevant documents to deliver a 
+pointed answer based on the contents of those documents (like the snippet box). 
+While we won’t hazard a guess at exactly how Google extracted “gray” from these 
+search results, we can examine how an IR QA system could exhibit similar 
+functionality in a real world (e.g., non-Google) implementation. Below we 
+illustrate the workflow of a generic IR-based QA system. These systems generally 
+have two main components: the document retriever and the document reader.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/post1/QAworkflow.png&quot; alt=&quot;&quot; title=&quot;Generic IR QA
+ system&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The document retriever functions as the search engine, ranking and retrieving 
+relevant documents to which it has access. It supplies a set of candidate 
+documents that could answer the question (often with mixed results, per the 
+Google search shown above). The second component is the document reader: 
+reading comprehension algorithms built with core NLP techniques. This component 
+processes the candidate documents and extracts from one of them an explicit span 
+of text that best satisfies the query. Let’s dive into each of these components.&lt;/p&gt;</content><author><name></name></author><summary type="html">NLP for Automated Question Answering</summary></entry><entry><title type="html">Fastpages Notebook Blog Post</title><link href="https://qa.fastforwardlabs.com/jupyter/2020/02/20/test.html" rel="alternate" type="text/html" title="Fastpages Notebook Blog Post" /><published>2020-02-20T00:00:00-06:00</published><updated>2020-02-20T00:00:00-06:00</updated><id>https://qa.fastforwardlabs.com/jupyter/2020/02/20/test</id><content type="html" xml:base="https://qa.fastforwardlabs.com/jupyter/2020/02/20/test.html">&lt;!--
 #################################################
 ### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
 #################################################
