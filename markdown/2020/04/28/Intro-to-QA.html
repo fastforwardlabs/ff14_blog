@@ -103,7 +103,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      6 min read
+      7 min read
     
 </span></p>
 
@@ -120,13 +120,12 @@ window.onload = wrap_img;
 
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
-<li class="toc-entry toc-h1"><a href="#nlp-for-automated-question-answering">NLP for Automated Question Answering</a>
-<ul>
 <li class="toc-entry toc-h2"><a href="#question-answering-in-a-nutshell">Question Answering in a Nutshell</a></li>
 <li class="toc-entry toc-h2"><a href="#why-question-answering">Why Question Answering?</a></li>
 <li class="toc-entry toc-h2"><a href="#designing-a-question-answerer">Designing a Question Answerer</a>
 <ul>
 <li class="toc-entry toc-h3"><a href="#domain">Domain</a></li>
+<li class="toc-entry toc-h3"><a href="#question-type">Question Type</a></li>
 <li class="toc-entry toc-h3"><a href="#implementation">Implementation</a>
 <ul>
 <li class="toc-entry toc-h4"><a href="#information-retrieval-based-systems-retrievers-and-readers">Information Retrieval-Based Systems: Retrievers and Readers</a></li>
@@ -134,12 +133,11 @@ window.onload = wrap_img;
 </li>
 </ul>
 </li>
-</ul>
-</li>
-</ul><h1 id="nlp-for-automated-question-answering">
-<a class="anchor" href="#nlp-for-automated-question-answering" aria-hidden="true"><span class="octicon octicon-link"></span></a>NLP for Automated Question Answering</h1>
-
-<p>Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf parts and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:</p>
+</ul><p>Welcome to the first edition of the Cloudera Fast Forward blog on Natural 
+Language Processing for Question Answering! Throughout this series, we’ll 
+build a Question Answering (QA) system with off-the-shelf parts and blog about 
+our process and what we find along the way. We hope to wind up with a 
+beginning-to-end documentary that provides:</p>
 
 <ul>
   <li>insight into QA as a tool,</li>
@@ -195,9 +193,18 @@ ease of use, and wider adoption of analytics platforms - especially to
 mainstream users. QA systems specifically will be a core part of the NLP suite, 
 and are already seeing adoption in several areas.</p>
 
+<div class="Toast">
+   <span class="Toast-icon"><svg class="octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg></span>
+   <span class="Toast-content">Missing some paragraphs from the Google Doc</span>
+</div>
+
 <h2 id="designing-a-question-answerer">
 <a class="anchor" href="#designing-a-question-answerer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designing a Question Answerer</h2>
-<p>As explained above, question answering systems process natural language queries and output concise answers. This general capability can be implemented in dozens of ways. How a QA system is designed depends, in large part, on three key elements: the knowledge provided to the system, the types of questions it can answer, and the structure of the data supporting the system.</p>
+<p>As explained above, question answering systems process natural language queries 
+and output concise answers. This general capability can be implemented in dozens 
+of ways. How a QA system is designed depends, in large part, on three key 
+elements: the knowledge provided to the system, the types of questions it can 
+answer, and the structure of the data supporting the system.</p>
 
 <h3 id="domain">
 <a class="anchor" href="#domain" aria-hidden="true"><span class="octicon octicon-link"></span></a>Domain</h3>
@@ -206,6 +213,22 @@ them. The domain represents the embodiment of all the knowledge the system can
 know. There are two domain paradigms: open and closed. Closed domain systems 
 are narrow in scope and focus on a specific topic or regime. Open domain systems 
 are broad, answering general knowledge questions.</p>
+
+<h3 id="question-type">
+<a class="anchor" href="#question-type" aria-hidden="true"><span class="octicon octicon-link"></span></a>Question Type</h3>
+<p>Once you’ve decided the scope of knowledge your QA system will cover, you must 
+also determine what types of questions it can answer. The vast majority of all 
+QA systems answer factual questions: those that start with who, what, where, 
+when, and how many. These types of questions tend to be straightforward enough 
+for a machine to comprehend, and can be built directly atop structural databases 
+or ontologies, as well as being extracted directly from unstructured text.</p>
+
+<p>However, research is emerging that would allow QA systems to answer hypothetical 
+questions, cause-effect questions, confirmation (yes/no) questions, and 
+inferential questions (questions whose answers can be inferred from one or more 
+pieces of evidence). Much of this research is still in its infancy, however, as 
+the requisite natural language understanding is (for now) beyond the capabilities 
+of most of today’s algorithms.</p>
 
 <h3 id="implementation">
 <a class="anchor" href="#implementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation</h3>
@@ -224,10 +247,9 @@ while we provide an overview here, an even more comprehensive discussion can be
 found in the Question Answering chapter of Jurafsky and Martin’s Speech and 
 Language Processing textbook.</p>
 
-<p><img src="/images/post1/reading_retriever.jpg" alt="" title="Get it? Retriever? Reader?"></p>
-
 <h4 id="information-retrieval-based-systems-retrievers-and-readers">
 <a class="anchor" href="#information-retrieval-based-systems-retrievers-and-readers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Information Retrieval-Based Systems: Retrievers and Readers</h4>
+<p><img src="/images/post1/reading_retriever.jpg" alt="" title="Get it? Retriever? Reader?"></p>
 
 <p>Information retrieval-based question answering (IR QA) systems find and extract 
 a text segment from a large collection of documents. The collection can be as 
