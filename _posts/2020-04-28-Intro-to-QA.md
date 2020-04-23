@@ -8,7 +8,7 @@ title: An Example Markdown Post take TWO
 # NLP for Automated Question Answering
 
 
-![]({{ site.baseurl }}/images/post1/reading_retriever.png "Get it? Retriever
+![]({{ site.baseurl }}/images/post1/reading_retriever.jpg "Get it? Retriever
 ? Reader?")
 
 ## Information Retrieval-Based Systems: Retrievers and Readers
