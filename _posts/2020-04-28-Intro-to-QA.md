@@ -5,9 +5,12 @@ description: Introduction to NLP for QA
 categories: [markdown]
 title: NLP for Automated Question Answering
 ---
-# NLP for Automated Question Answering
 
-Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf parts and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:
+Welcome to the first edition of the Cloudera Fast Forward blog on Natural 
+Language Processing for Question Answering! Throughout this series, we’ll 
+build a Question Answering (QA) system with off-the-shelf parts and blog about 
+our process and what we find along the way. We hope to wind up with a 
+beginning-to-end documentary that provides:
 
 - insight into QA as a tool, 
 - useful context to make decisions for those who might build their own QA
@@ -60,9 +63,14 @@ ease of use, and wider adoption of analytics platforms - especially to
 mainstream users. QA systems specifically will be a core part of the NLP suite, 
 and are already seeing adoption in several areas.
 
+{% include info.html text="Missing some paragraphs from the Google Doc" %}
 
 ## Designing a Question Answerer 
-As explained above, question answering systems process natural language queries and output concise answers. This general capability can be implemented in dozens of ways. How a QA system is designed depends, in large part, on three key elements: the knowledge provided to the system, the types of questions it can answer, and the structure of the data supporting the system.  
+As explained above, question answering systems process natural language queries 
+and output concise answers. This general capability can be implemented in dozens 
+of ways. How a QA system is designed depends, in large part, on three key 
+elements: the knowledge provided to the system, the types of questions it can 
+answer, and the structure of the data supporting the system.  
 
 ### Domain
 QA systems operate within a domain, constrained by the data that is provided to 
@@ -71,6 +79,20 @@ know. There are two domain paradigms: open and closed. Closed domain systems
 are narrow in scope and focus on a specific topic or regime. Open domain systems 
 are broad, answering general knowledge questions. 
 
+### Question Type
+Once you’ve decided the scope of knowledge your QA system will cover, you must 
+also determine what types of questions it can answer. The vast majority of all 
+QA systems answer factual questions: those that start with who, what, where, 
+when, and how many. These types of questions tend to be straightforward enough 
+for a machine to comprehend, and can be built directly atop structural databases 
+or ontologies, as well as being extracted directly from unstructured text.  
+
+However, research is emerging that would allow QA systems to answer hypothetical 
+questions, cause-effect questions, confirmation (yes/no) questions, and 
+inferential questions (questions whose answers can be inferred from one or more 
+pieces of evidence). Much of this research is still in its infancy, however, as 
+the requisite natural language understanding is (for now) beyond the capabilities 
+of most of today’s algorithms. 
 
 ### Implementation 
 There’s more than one way to cuddle a cat, as the saying goes. Question 
@@ -88,10 +110,8 @@ while we provide an overview here, an even more comprehensive discussion can be
 found in the Question Answering chapter of Jurafsky and Martin’s Speech and 
 Language Processing textbook. 
 
-
-![]({{ site.baseurl }}/images/post1/reading_retriever.jpg "Get it? Retriever? Reader?")
-
 #### Information Retrieval-Based Systems: Retrievers and Readers
+![]({{ site.baseurl }}/images/post1/reading_retriever.jpg "Get it? Retriever? Reader?")
 
 Information retrieval-based question answering (IR QA) systems find and extract 
 a text segment from a large collection of documents. The collection can be as 
