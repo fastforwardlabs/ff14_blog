@@ -3,15 +3,95 @@ toc: true
 layout: post
 description: Introduction to NLP for QA
 categories: [markdown]
-title: An Example Markdown Post take TWO
+title: NLP for Automated Question Answering
 ---
 # NLP for Automated Question Answering
 
+Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf parts and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:
 
-![]({{ site.baseurl }}/images/post1/reading_retriever.jpg "Get it? Retriever
-? Reader?")
+- insight into QA as a tool, 
+- useful context to make decisions for those who might build their own QA
+ system,
+- tips and tricks we pick up as we go,
+- sample code, if we’re lucky (we’ll show our work in notebooks), and
+- entertainment, as you watch us fumble our way through the process. (Feedback
+ and commentary welcome.)
 
-## Information Retrieval-Based Systems: Retrievers and Readers
+We’re trying a new thing here. In the past, Cloudera Fast Forward has
+ documented its work in [discrete reports](https://www.cloudera.com/products/fast-forward-labs-research/fast-forward-labs-research-reports.html). 
+ We hope this new format suits the above goals and makes the topic more
+  accessible, while ultimately being useful. 
+
+To kick off the series, this introductory post will discuss what QA is and isn’t, where this technology is being employed, and what techniques are used to accomplish this natural language task. 
+
+## Question Answering in a Nutshell
+Question Answering is a human-machine interaction to extract information from 
+data using natural language queries. Machines do not inherently understand human
+ languages any more than the average human understands machine language. A 
+ well-developed QA system bridges the gap between the two, allowing humans to 
+ extract knowledge from data in a way that is natural to us, i.e., asking questions. 
+
+QA systems accept questions in the form of natural language (typically text 
+based, although you are probably also familiar with systems that accept speech 
+input, such as Amazon’s Alexa or Apple’s Siri), and output a concise answer. 
+Google’s search engine product adds a form of question answering in addition to 
+its traditional search results, as illustrated here: 
+
+![]({{ site.baseurl }}/images/post1/abe_search_crop.png)
+
+Google took our question and returned a set of 1.3 million documents (not shown)
+ relevant to the search terms, i.e., documents about Abraham Lincoln. 
+ Google also used what it knows about the contents of some of those documents 
+ to provide a “[snippet](https://support.google.com/websearch/answer/9351707?p=featured_snippets)” 
+ that answered our question in one word, presented above 
+ a link to the most pertinent website and keyword-highlighted text. 
+
+This goes beyond the standard capabilities of a search engine, which typically only return a list of relevant documents or websites. Google is pretty tight-lipped about its algorithms, so we can’t tell you whether they are harnessing elements of natural language understanding or which algorithms they’re using. We’ll revisit this example in a later section and discuss how we can (and will!) build our own system to demonstrate how question answering works in practice. 
+
+
+## Why Question Answering? 
+Sophisticated Google searches with precise answers are fun, but how useful are 
+QA systems in general? It turns out that this technology is maturing rapidly. 
+Gartner recently identified [natural language processing and conversational 
+analytics](https://www.gartner.com/smarterwithgartner/gartner-top-10-data-analytics-trends/) 
+as one of the top trends poised to make a substantial impact in the 
+next three to five years.  These technologies will provide increased data access, 
+ease of use, and wider adoption of analytics platforms - especially to 
+mainstream users. QA systems specifically will be a core part of the NLP suite, 
+and are already seeing adoption in several areas.
+
+
+## Designing a Question Answerer 
+As explained above, question answering systems process natural language queries and output concise answers. This general capability can be implemented in dozens of ways. How a QA system is designed depends, in large part, on three key elements: the knowledge provided to the system, the types of questions it can answer, and the structure of the data supporting the system.  
+
+### Domain
+QA systems operate within a domain, constrained by the data that is provided to 
+them. The domain represents the embodiment of all the knowledge the system can 
+know. There are two domain paradigms: open and closed. Closed domain systems 
+are narrow in scope and focus on a specific topic or regime. Open domain systems 
+are broad, answering general knowledge questions. 
+
+
+### Implementation 
+There’s more than one way to cuddle a cat, as the saying goes. Question 
+answering seeks to extract information from data and, generally speaking, data 
+come in two broad formats: structured and unstructured. QA algorithms have been 
+developed to harness the information from either paradigm: knowledge- based 
+systems for structured data and information retrieval-based systems for 
+unstructured (text) data. Some QA systems exploit a hybrid design that harvests 
+information from both data types; IBM’s Watson is a famous example. In this 
+section, we’ll highlight some of the most widely used techniques in each data 
+regime - concentrating more on those for unstructured data, since this will be 
+the focus of our applied research. Because we’ll be discussing explicit methods 
+and techniques, the following sections are more technical. And we’ll note that, 
+while we provide an overview here, an even more comprehensive discussion can be 
+found in the Question Answering chapter of Jurafsky and Martin’s Speech and 
+Language Processing textbook. 
+
+
+![]({{ site.baseurl }}/images/post1/reading_retriever.jpg "Get it? Retriever? Reader?")
+
+#### Information Retrieval-Based Systems: Retrievers and Readers
 
 Information retrieval-based question answering (IR QA) systems find and extract 
 a text segment from a large collection of documents. The collection can be as 
