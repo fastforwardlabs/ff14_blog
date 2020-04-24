@@ -1,9 +1,9 @@
 ---
 toc: true
 layout: post
-comment: true
+comments: true
 description: A gentle introuction to QA systems, our new applied research project
-categories: [methods, background, intro]
+categories: [methods, background]
 title: Intro to Automated Question Answering
 ---
 
