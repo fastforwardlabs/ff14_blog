@@ -1,8 +1,8 @@
 ---
 toc: true
 layout: post
-description: Introduction to NLP for QA
-categories: [markdown]
+description: A gentle introuction to building a QA system
+categories: [methods, background, intro]
 title: NLP for Automated Question Answering
 ---
 
