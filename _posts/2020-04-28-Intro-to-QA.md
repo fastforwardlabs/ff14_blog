@@ -122,7 +122,7 @@ contents of those documents. To illustrate this approach, let’s revisit our
 Google example from the introduction, only this time we’ll include some of the 
 search results!
 
-![]({{ site.baseurl }}/images/post1/abe_search.png "Did Abe have big
+![]({{ site.baseurl }}/images/post1/LincolnWithSearch7Entries.png "Did Abe have big
  ears?")
 
 
