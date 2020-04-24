@@ -1,9 +1,10 @@
 ---
 toc: true
 layout: post
-description: A gentle introuction to building a QA system
+comment: true
+description: A gentle introuction to QA systems, our new applied research project
 categories: [methods, background, intro]
-title: NLP for Automated Question Answering
+title: Intro to Automated Question Answering
 ---
 
 Welcome to the first edition of the Cloudera Fast Forward blog on Natural 
