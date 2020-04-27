@@ -11,10 +11,10 @@ Welcome to the first edition of the Cloudera Fast Forward blog on Natural Langua
 
 - insight into QA as a tool, 
 - useful context to make decisions for those who might build their own QA system,
-- tips and tricks we pick up as we go,
+- tips and tricks we pick up as we go, and
 - sample code and commentary.
 
-We’re trying a new thing here. In the past, Fast Forward Labs has documented its work in discrete reports. We hope this new format suits the above goals and makes the topic more accessible, while ultimately being useful. 
+We’re trying a new thing here. In the past, we’ve documented our work in [discrete reports](https://www.cloudera.com/products/fast-forward-labs-research/fast-forward-labs-research-reports.html) at the end of our research process. We hope this new format suits the above goals and makes the topic more accessible, while ultimately being useful.
 
 To kick off the series, this introductory post will discuss what QA is and isn’t, where this technology is being employed, and what techniques are used to accomplish this natural language task. 
 
@@ -65,7 +65,7 @@ A large quantity of data is encapsulated in structured formats, e.g., relational
 
 ![]({{ site.baseurl }}/images/post1/kb_examples.png "Source: This and other images in the knowledge-based systems section are from the Question Answering chapter in Jurafsky and Martin’s Speech and Language Processing third edition draft.")
 
-Semantic parsing algorithms are highly tailored to their specific domain and database, and utilize templates as well as supervised learning approaches. Templates are handwritten rules, useful for frequently observed logical relationships. For example, an employee database might have a **start-date** template consisting of handwritten rules that search for _when_ and _hired_ since “when was <Employee Name> hired” would likely be a common query. 
+Semantic parsing algorithms are highly tailored to their specific domain and database, and utilize templates as well as supervised learning approaches. Templates are handwritten rules, useful for frequently observed logical relationships. For example, an employee database might have a **start-date** template consisting of handwritten rules that search for _when_ and _hired_ since “when was _Employee Name_ hired” would likely be a common query. 
  
 Supervised methods generalize this approach and are used when there exists a dataset of question-logical form pairs, such as in the figure above. These algorithms process the question, creating a parse tree that then maps the relevant parts of speech (nouns, verbs, and modifiers) to the appropriate logical form. Many algorithms begin with simple relationship mapping: matching segments from the question parse tree to a logical relation, as in the two examples below.
 
@@ -99,7 +99,7 @@ The document retriever functions as the search engine, ranking and retrieving re
 ##### Document Retriever 
 The document retriever has two core jobs: process the question for use in an IR engine, and use this IR query to retrieve the most appropriate documents and passages. Query processing can be as simple as no processing at all, and instead passing the entire question to the search engine. However, if the question is long or complicated, it often pays to process the query through various techniques - such as stop word removal, removing wh-words, converting to n-grams, or extracting named entities as keywords. 
 
-Some systems also extract contextual information from the query, e.g., the _focus_ of the question and the expected _answer type_, which can then be used in the Document Reader during the answer extraction phase. The focus of a question is the string within the query that the user is looking to fill. The answer type is categorical, e.g. person, location, time, etc. In our earlier example, “when was <Employee Name> hired?”, the focus would be “when” and the answer type might be a numeric _date-time_.
+Some systems also extract contextual information from the query, e.g., the _focus_ of the question and the expected _answer type_, which can then be used in the Document Reader during the answer extraction phase. The focus of a question is the string within the query that the user is looking to fill. The answer type is categorical, e.g., person, location, time, etc. In our earlier example, “when was _Employee Name_ hired?”, the focus would be “when” and the answer type might be a numeric _date-time_.
 
 The IR query is then passed to an IR algorithm. These algorithms search over all documents often using standard tf-idf cosine matching to rank documents by relevance. The simplest implementations would pass the top _n_ most relevant documents to the document reader for answer extraction but this, too, can be made more sophisticated by breaking documents into their respective passages or paragraphs and filtering them (based on named entity matching or answer type, for example) to narrow down the number of passages sent to the document reader.
 
@@ -115,12 +115,12 @@ Neural network models that perform well in this arena are Seq2Seq models and Tra
 In this paradigm, one does not need to identify the answer type, the parts of speech, or the proper nouns. One need only feed the question and the passage into the model and wait for the answer. While this is an exciting development, it does have its drawbacks. When the model doesn’t work, it’s not always straightforward to identify the problem - and scaling these models is still a challenging prospect. These models generally perform better (according to your quantitative metric of choice) relative to the number of parameters they have (the more, the better), but the cost of inference also goes up - and with it, the difficulty of implementation in settings like federated learning scenarios or on mobile devices.
 
 ## Building a Question-Answerer 
-At the beginning of this article we said we were going to build a QA system. Now that we’ve covered some background, we can describe our approach. Over the course of the next two months, two of Cloudera Fast Forward’s Research Engineers, Melanie Beck and Ryan Micallef, will build a QA system following the information retrieval-based method, by creating a document retriever and document reader. We’ll focus our efforts on exploring and experimenting with various Transformer architectures (like BERT) for the document reader, as well as off-the-shelf search engine algorithms for the retriever. Neither of us has built a system like this before, so it’ll be a learning experience for everyone. And that’s precisely why we wanted to invite you along for the journey! We’ll share what we learn each step of the way by posting and discussing example code, in addition to articles covering topics like: 
+At the beginning of this article, we said we were going to build a QA system. Now that we’ve covered some background, we can describe our approach. Over the course of the next two months, two of Cloudera Fast Forward’s Research Engineers, Melanie Beck and Ryan Micallef, will build a QA system following the information retrieval-based method, by creating a document retriever and document reader. We’ll focus our efforts on exploring and experimenting with various Transformer architectures (like BERT) for the document reader, as well as off-the-shelf search engine algorithms for the retriever. Neither of us has built a system like this before, so it’ll be a learning experience for everyone. And that’s precisely why we wanted to invite you along for the journey! We’ll share what we learn each step of the way by posting and discussing example code, in addition to articles covering topics like: 
 
 - existing QA training sets for Transformers and what you’ll need to develop your own
 - how to evaluate the quality of a QA system - both the reader and retriever
 - building a search engine over a large set of documents
 - and more!
 
-Because we’ll be writing about our work as we go, we might end up in some dead ends or run into some nasty bugs; such is the nature of research! When these things happen, we’ll share our thoughts on what worked, what didn’t, and why - but it’s important to note upfront that while we do have a solid goal in mind, the end product may turn out to be quite different than what we currently envision. Stay tuned because in our next post we’ll start digging into the nuts and bolts!
+Because we’ll be writing about our work as we go, we might end up in some dead ends or run into some nasty bugs; such is the nature of research! When these things happen, we’ll share our thoughts on what worked, what didn’t, and why - but it’s important to note upfront that while we do have a solid goal in mind, the end product may turn out to be quite different than what we currently envision. Stay tuned; in our next post we’ll start digging into the nuts and bolts!
 
