@@ -63,7 +63,7 @@ There’s more than one way to cuddle a cat, as the saying goes. Question answer
 #### Knowledge-Based Systems
 A large quantity of data is encapsulated in structured formats, e.g., relational databases. The goal of knowledge-based QA systems is to map questions to these structured entities through semantic parsing algorithms. Semantic parsing techniques convert text strings to symbolic logic or query languages, e.g., SQL. 
 
-![]({{ site.baseurl }}/images/post1/LincolnCrop.png "Source: This and other images in the knowledge-based systems section are from the Question Answering chapter in Jurafsky and Martin’s Speech and Language Processing third edition draft.")
+![]({{ site.baseurl }}/images/post1/kb_examples.png "Source: This and other images in the knowledge-based systems section are from the Question Answering chapter in Jurafsky and Martin’s Speech and Language Processing third edition draft.")
 
 Semantic parsing algorithms are highly tailored to their specific domain and database, and utilize templates as well as supervised learning approaches. Templates are handwritten rules, useful for frequently observed logical relationships. For example, an employee database might have a **start-date** template consisting of handwritten rules that search for _when_ and _hired_ since “when was <Employee Name> hired” would likely be a common query. 
  
