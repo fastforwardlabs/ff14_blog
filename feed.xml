@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-04-28T16:23:46-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>CFF builds a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">Intro to Automated Question Answering</title><link href="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html" rel="alternate" type="text/html" title="Intro to Automated Question Answering" /><published>2020-04-28T00:00:00-05:00</published><updated>2020-04-28T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA</id><content type="html" xml:base="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html">&lt;p&gt;Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf algorithms and libraries and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-04-28T18:50:16-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>CFF builds a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">Intro to Automated Question Answering</title><link href="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html" rel="alternate" type="text/html" title="Intro to Automated Question Answering" /><published>2020-04-28T00:00:00-05:00</published><updated>2020-04-28T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA</id><content type="html" xml:base="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html">&lt;p&gt;Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf algorithms and libraries and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;insight into QA as a tool,&lt;/li&gt;
@@ -141,6 +141,17 @@ analytics&lt;/a&gt; as one of the top trends poised to make a substantial impact
 &lt;li&gt;Understanding the basic ins and outs of a BERT-esque model&lt;/li&gt;
 &lt;li&gt;getting BERT to accept a full Wikipedia article as context for a question&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h3 id=&quot;Setting-up-your-virtual-environment&quot;&gt;Setting up your virtual environment&lt;a class=&quot;anchor-link&quot; href=&quot;#Setting-up-your-virtual-environment&quot;&gt; &lt;/a&gt;&lt;/h3&gt;&lt;p&gt;A virtual environment is always best practice and we're using &lt;code&gt;venv&lt;/code&gt; (though Melanie is also partial to &lt;code&gt;conda&lt;/code&gt;). Here's the bare minimum that you'll need to do what I did. For this project we'll be using Pytorch (though everything we do can also be accomplished in Tensorflow). Pytorch handles the heavy lifting of deep differentiable learning. Transformers is a library by Huggingface that provides super easy to use implementations (in torch) of all the popular Transformer architectures (more on this later).&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PyTorch &lt;/li&gt;
+&lt;li&gt;Transformers&lt;/li&gt;
+&lt;li&gt;Wikipedia&lt;/li&gt;
+&lt;li&gt;TensorboardX (optional)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A note on PyTorch: our GPU machine sports an older version of CUDA (9.2) that we're getting around to updating... In the meantime, this forces us to use an older version of PyTorch that supports this CUDA version in order to access our GPU for training. Some older verisons of PyTorch might require that you also install &lt;code&gt;TensorboardX&lt;/code&gt; which is used in Huggingface's &lt;code&gt;run_squad.py&lt;/code&gt; script. If you have want to use your GPU (pretty much required if you plan to &lt;em&gt;fine tune&lt;/em&gt; BERT on the SQuAD dataset) and you have CUDA 10+ you can use the most recent version of Pytorch and you won't need to install the additional TensorboardX package.&lt;/p&gt;
+&lt;p&gt;Why are we using PyTorch instead of Tensorflow? Honestly? Because Tensorflow isn't playing nice with our GPU machine these days... You'll likely see some warning messages about it not being install properly in order to access the GPU. It's on our To Do list.&lt;/p&gt;
+&lt;h3 id=&quot;Huggingface's-Transformer-library-and-training-script&quot;&gt;Huggingface's Transformer library and training script&lt;a class=&quot;anchor-link&quot; href=&quot;#Huggingface's-Transformer-library-and-training-script&quot;&gt; &lt;/a&gt;&lt;/h3&gt;&lt;p&gt;I'm new to PyTorch and Huggingface but I'm quickly becoming a convert!  Huggingface provides state-of-the-art general-purpose architecures for natural language understanding and natural language generation. They have tons of pre-trained models that work in dozens of languages. They even have interoperability between PyTorch and Tensorflow (all camps welcome!) which means if someone trained BERT using Tensorflow we can load those pre-trained weights through Huggingface methods and it will convert the weights to PyTorch for us! Yay.&lt;/p&gt;
+&lt;p&gt;Huggingface provide more than just pre-trained models. They also have&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -169,7 +180,7 @@ analytics&lt;/a&gt; as one of the top trends poised to make a substantial impact
 
 &lt;div class=&quot;inner_cell&quot;&gt;
     &lt;div class=&quot;input_area&quot;&gt;
-&lt;div class=&quot; highlight hl-ipython3&quot;&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DocumentReader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODEL_PATHS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;bert_base_uncased_squad1&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;div class=&quot; highlight hl-ipython3&quot;&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODEL_PATHS&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
     &lt;/div&gt;
@@ -181,61 +192,33 @@ analytics&lt;/a&gt; as one of the top trends poised to make a substantial impact
 
 &lt;div class=&quot;output_area&quot;&gt;
 
-&lt;div class=&quot;output_subarea output_text output_error&quot;&gt;
-&lt;pre&gt;
-&lt;span class=&quot;ansi-red-fg&quot;&gt;---------------------------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;                                   Traceback (most recent call last)
-&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/configuration_utils.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;get_config_dict&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, pretrained_config_archive_map, **kwargs)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    253&lt;/span&gt;             &lt;span class=&quot;ansi-green-fg&quot;&gt;if&lt;/span&gt; resolved_config_file &lt;span class=&quot;ansi-green-fg&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
-&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 254&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;                 &lt;/span&gt;&lt;span class=&quot;ansi-green-fg&quot;&gt;raise&lt;/span&gt; EnvironmentError
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    255&lt;/span&gt;             config_dict &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; cls&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;_dict_from_json_file&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;resolved_config_file&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;: 
 
-During handling of the above exception, another exception occurred:
+&lt;div class=&quot;output_text output_subarea output_execute_result&quot;&gt;
+&lt;pre&gt;{&amp;#39;default_bert_base_uncased&amp;#39;: &amp;#39;bert-base-uncased&amp;#39;,
+ &amp;#39;bert_base_uncased_squad1&amp;#39;: &amp;#39;/home/ryan/work/ff14/src/models/bert/bert-base-uncased-tuned-squad-1.0&amp;#39;,
+ &amp;#39;bert_base_cased_squad2&amp;#39;: &amp;#39;/home/ryan/work/ff14/src/models/bert/bert-base-cased-tuned-squad-2.0/&amp;#39;}&lt;/pre&gt;
+&lt;/div&gt;
 
-&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;                                   Traceback (most recent call last)
-&lt;span class=&quot;ansi-green-fg&quot;&gt;&amp;lt;ipython-input-5-b2430c8054d0&amp;gt;&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;&amp;lt;module&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;ansi-green-fg&quot;&gt;----&amp;gt; 1&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt; &lt;/span&gt;reader &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; DocumentReader&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;MODEL_PATHS&lt;span class=&quot;ansi-blue-fg&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#39;bert_base_uncased_squad1&amp;#39;&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+&lt;/div&gt;
 
-&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/src/qasystem.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(self, pretrained_model_name_or_path)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     21&lt;/span&gt;     &lt;span class=&quot;ansi-green-fg&quot;&gt;def&lt;/span&gt; __init__&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#39;bert-large-uncased&amp;#39;&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;ansi-red-fg&quot;&gt;# &amp;#39;bert-base-uncased&amp;#39;&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     22&lt;/span&gt;         self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;READER_PATH &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; pretrained_model_name_or_path
-&lt;span class=&quot;ansi-green-fg&quot;&gt;---&amp;gt; 23&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;         &lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;tokenizer &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; AutoTokenizer&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;READER_PATH&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     24&lt;/span&gt;         self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;model &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; AutoModelForQuestionAnswering&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;READER_PATH&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     25&lt;/span&gt;         self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;max_len &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;model&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;config&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;max_position_embeddings
-
-&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/tokenization_auto.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;from_pretrained&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, *inputs, **kwargs)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    184&lt;/span&gt;         config &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; kwargs&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;pop&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#34;config&amp;#34;&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    185&lt;/span&gt;         &lt;span class=&quot;ansi-green-fg&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;not&lt;/span&gt; isinstance&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;config&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; PretrainedConfig&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
-&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 186&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;             &lt;/span&gt;config &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; AutoConfig&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ansi-blue-fg&quot;&gt;**&lt;/span&gt;kwargs&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    187&lt;/span&gt; 
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    188&lt;/span&gt;         &lt;span class=&quot;ansi-green-fg&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#34;bert-base-japanese&amp;#34;&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;in&lt;/span&gt; pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
-
-&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/configuration_auto.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;from_pretrained&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, **kwargs)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    185&lt;/span&gt;         &amp;#34;&amp;#34;&amp;#34;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    186&lt;/span&gt;         config_dict, _ = PretrainedConfig.get_config_dict(
-&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 187&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;             &lt;/span&gt;pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; pretrained_config_archive_map&lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt;ALL_PRETRAINED_CONFIG_ARCHIVE_MAP&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ansi-blue-fg&quot;&gt;**&lt;/span&gt;kwargs
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    188&lt;/span&gt;         )
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    189&lt;/span&gt; 
-
-&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/configuration_utils.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;get_config_dict&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, pretrained_config_archive_map, **kwargs)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    271&lt;/span&gt;                     )
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    272&lt;/span&gt;                 )
-&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 273&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;             &lt;/span&gt;&lt;span class=&quot;ansi-green-fg&quot;&gt;raise&lt;/span&gt; EnvironmentError&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;msg&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    274&lt;/span&gt; 
-&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    275&lt;/span&gt;         &lt;span class=&quot;ansi-green-fg&quot;&gt;except&lt;/span&gt; json&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;JSONDecodeError&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
-
-&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;: Can&amp;#39;t load &amp;#39;/home/ryan/work/ff14/src/models/squad1_output/&amp;#39;. Make sure that:
-
-- &amp;#39;/home/ryan/work/ff14/src/models/squad1_output/&amp;#39; is a correct model identifier listed on &amp;#39;https://huggingface.co/models&amp;#39;
-
-- or &amp;#39;/home/ryan/work/ff14/src/models/squad1_output/&amp;#39; is the correct path to a directory containing a &amp;#39;config.json&amp;#39; file
-
-&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 
+&lt;/div&gt;
+    
+
+    
+    
+&lt;div class=&quot;cell border-box-sizing code_cell rendered&quot;&gt;
+&lt;div class=&quot;input&quot;&gt;
+
+&lt;div class=&quot;inner_cell&quot;&gt;
+    &lt;div class=&quot;input_area&quot;&gt;
+&lt;div class=&quot; highlight hl-ipython3&quot;&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DocumentReader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODEL_PATHS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;bert_base_uncased_squad1&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 
@@ -253,6 +236,22 @@ During handling of the above exception, another exception occurred:
 &lt;/pre&gt;&lt;/div&gt;
 
     &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;output_wrapper&quot;&gt;
+&lt;div class=&quot;output&quot;&gt;
+
+&lt;div class=&quot;output_area&quot;&gt;
+
+
+
+&lt;div class=&quot;output_text output_subarea output_execute_result&quot;&gt;
+&lt;pre&gt;&amp;lt;qasystem.DocumentReader at 0x7f3141261e48&amp;gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
 &lt;/div&gt;
 &lt;/div&gt;
 
