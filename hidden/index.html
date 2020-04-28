@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Getting Started | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Getting Started" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="First steps towards building an IR-based QA system with BERT." />
+<meta property="og:description" content="First steps towards building an IR-based QA system with BERT." />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"First steps towards building an IR-based QA system with BERT.","@type":"BlogPosting","headline":"Getting Started","dateModified":"2020-04-27T00:00:00-05:00","datePublished":"2020-04-27T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Getting Started | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Getting Started" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="First steps towards building an IR-based QA system with BERT." />
+<meta property="og:description" content="First steps towards building an IR-based QA system with BERT." />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"First steps towards building an IR-based QA system with BERT.","@type":"BlogPosting","headline":"Getting Started","dateModified":"2020-04-27T00:00:00-05:00","datePublished":"2020-04-27T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">NLP for Question Answering</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Us</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Getting Started</h1><p class="page-description">First steps towards building an IR-based QA system with BERT.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-04-27T00:00:00-05:00" itemprop="datePublished">
+        Apr 27, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      1 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#jupyter">jupyter</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/fastforwardlabs/ff14_blog/tree/master/_notebooks/Getting_Started_with_QA.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/fastforwardlabs/ff14_blog/master?filepath=_notebooks%2FGetting_Started_with_QA.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/fastforwardlabs/ff14_blog/blob/master/_notebooks/Getting_Started_with_QA.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#So-you've-decided-to-build-a-QA-system.">So you&#39;ve decided to build a QA system. </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/Getting_Started_with_QA.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="So-you've-decided-to-build-a-QA-system.">
+<a class="anchor" href="#So-you've-decided-to-build-a-QA-system." aria-hidden="true"><span class="octicon octicon-link"></span></a>So you've decided to build a QA system.<a class="anchor-link" href="#So-you've-decided-to-build-a-QA-system."> </a>
+</h2>
+<p>You want to start with something general and straightforward so you plan to make it open domain using Wikipedia as a corpus for answering questions. You're going to use an IR-based design (see previous post) since you're working with a large collection of unstructured text. You want to use the best NLP that your compute resources allow (you're lucky enough to have access to a GPU) so you're going to focus on the big, flashy Transformer models that are all the rage these days.</p>
+<p>Sounds like a plan! So where do you start?</p>
+<p>This was our thought process when we first set out on this research path and in this post we'll discuss what you need to know to get going!</p>
+<ul>
+<li>installing libraries and setting up an environment</li>
+<li>understanding Huggingface's <code>run_squad.py</code> training script</li>
+<li>Understanding the basic ins and outs of a BERT-esque model</li>
+<li>getting BERT to accept a full Wikipedia article as context for a question</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qasystem</span> <span class="kn">import</span> <span class="n">DocumentReader</span><span class="p">,</span> <span class="n">MODEL_PATHS</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reader</span> <span class="o">=</span> <span class="n">DocumentReader</span><span class="p">(</span><span class="n">MODEL_PATHS</span><span class="p">[</span><span class="s1">'bert_base_uncased_squad1'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">OSError</span>                                   Traceback (most recent call last)
+<span class="ansi-green-fg">/home/ryan/work/ff14/transformers/src/transformers/configuration_utils.py</span> in <span class="ansi-cyan-fg">get_config_dict</span><span class="ansi-blue-fg">(cls, pretrained_model_name_or_path, pretrained_config_archive_map, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    253</span>             <span class="ansi-green-fg">if</span> resolved_config_file <span class="ansi-green-fg">is</span> <span class="ansi-green-fg">None</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 254</span><span class="ansi-red-fg">                 </span><span class="ansi-green-fg">raise</span> EnvironmentError
+<span class="ansi-green-intense-fg ansi-bold">    255</span>             config_dict <span class="ansi-blue-fg">=</span> cls<span class="ansi-blue-fg">.</span>_dict_from_json_file<span class="ansi-blue-fg">(</span>resolved_config_file<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">OSError</span>: 
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">OSError</span>                                   Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-5-b2430c8054d0&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>reader <span class="ansi-blue-fg">=</span> DocumentReader<span class="ansi-blue-fg">(</span>MODEL_PATHS<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">'bert_base_uncased_squad1'</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/src/qasystem.py</span> in <span class="ansi-cyan-fg">__init__</span><span class="ansi-blue-fg">(self, pretrained_model_name_or_path)</span>
+<span class="ansi-green-intense-fg ansi-bold">     21</span>     <span class="ansi-green-fg">def</span> __init__<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> pretrained_model_name_or_path<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">'bert-large-uncased'</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span> <span class="ansi-red-fg"># 'bert-base-uncased'</span>
+<span class="ansi-green-intense-fg ansi-bold">     22</span>         self<span class="ansi-blue-fg">.</span>READER_PATH <span class="ansi-blue-fg">=</span> pretrained_model_name_or_path
+<span class="ansi-green-fg">---&gt; 23</span><span class="ansi-red-fg">         </span>self<span class="ansi-blue-fg">.</span>tokenizer <span class="ansi-blue-fg">=</span> AutoTokenizer<span class="ansi-blue-fg">.</span>from_pretrained<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">.</span>READER_PATH<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     24</span>         self<span class="ansi-blue-fg">.</span>model <span class="ansi-blue-fg">=</span> AutoModelForQuestionAnswering<span class="ansi-blue-fg">.</span>from_pretrained<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">.</span>READER_PATH<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     25</span>         self<span class="ansi-blue-fg">.</span>max_len <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>model<span class="ansi-blue-fg">.</span>config<span class="ansi-blue-fg">.</span>max_position_embeddings
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/transformers/src/transformers/tokenization_auto.py</span> in <span class="ansi-cyan-fg">from_pretrained</span><span class="ansi-blue-fg">(cls, pretrained_model_name_or_path, *inputs, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    184</span>         config <span class="ansi-blue-fg">=</span> kwargs<span class="ansi-blue-fg">.</span>pop<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">"config"</span><span class="ansi-blue-fg">,</span> <span class="ansi-green-fg">None</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    185</span>         <span class="ansi-green-fg">if</span> <span class="ansi-green-fg">not</span> isinstance<span class="ansi-blue-fg">(</span>config<span class="ansi-blue-fg">,</span> PretrainedConfig<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 186</span><span class="ansi-red-fg">             </span>config <span class="ansi-blue-fg">=</span> AutoConfig<span class="ansi-blue-fg">.</span>from_pretrained<span class="ansi-blue-fg">(</span>pretrained_model_name_or_path<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    187</span> 
+<span class="ansi-green-intense-fg ansi-bold">    188</span>         <span class="ansi-green-fg">if</span> <span class="ansi-blue-fg">"bert-base-japanese"</span> <span class="ansi-green-fg">in</span> pretrained_model_name_or_path<span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/transformers/src/transformers/configuration_auto.py</span> in <span class="ansi-cyan-fg">from_pretrained</span><span class="ansi-blue-fg">(cls, pretrained_model_name_or_path, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    185</span>         """
+<span class="ansi-green-intense-fg ansi-bold">    186</span>         config_dict, _ = PretrainedConfig.get_config_dict(
+<span class="ansi-green-fg">--&gt; 187</span><span class="ansi-red-fg">             </span>pretrained_model_name_or_path<span class="ansi-blue-fg">,</span> pretrained_config_archive_map<span class="ansi-blue-fg">=</span>ALL_PRETRAINED_CONFIG_ARCHIVE_MAP<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs
+<span class="ansi-green-intense-fg ansi-bold">    188</span>         )
+<span class="ansi-green-intense-fg ansi-bold">    189</span> 
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/transformers/src/transformers/configuration_utils.py</span> in <span class="ansi-cyan-fg">get_config_dict</span><span class="ansi-blue-fg">(cls, pretrained_model_name_or_path, pretrained_config_archive_map, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    271</span>                     )
+<span class="ansi-green-intense-fg ansi-bold">    272</span>                 )
+<span class="ansi-green-fg">--&gt; 273</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">raise</span> EnvironmentError<span class="ansi-blue-fg">(</span>msg<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    274</span> 
+<span class="ansi-green-intense-fg ansi-bold">    275</span>         <span class="ansi-green-fg">except</span> json<span class="ansi-blue-fg">.</span>JSONDecodeError<span class="ansi-blue-fg">:</span>
+
+<span class="ansi-red-fg">OSError</span>: Can't load '/home/ryan/work/ff14/src/models/squad1_output/'. Make sure that:
+
+- '/home/ryan/work/ff14/src/models/squad1_output/' is a correct model identifier listed on 'https://huggingface.co/models'
+
+- or '/home/ryan/work/ff14/src/models/squad1_output/' is the correct path to a directory containing a 'config.json' file
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reader</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="fastforwardlabs/ff14_blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/hidden/" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>CFF builds a state-of-the-art QA application with the latest NLP techniques</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastforwardlabs" title="fastforwardlabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/FastForwardLabs" title="FastForwardLabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

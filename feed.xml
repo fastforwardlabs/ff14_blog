@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-04-27T17:22:36-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>CFF builds a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">Intro to Automated Question Answering</title><link href="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html" rel="alternate" type="text/html" title="Intro to Automated Question Answering" /><published>2020-04-28T00:00:00-05:00</published><updated>2020-04-28T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA</id><content type="html" xml:base="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html">&lt;p&gt;Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf algorithms and libraries and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-04-28T16:23:46-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>CFF builds a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">Intro to Automated Question Answering</title><link href="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html" rel="alternate" type="text/html" title="Intro to Automated Question Answering" /><published>2020-04-28T00:00:00-05:00</published><updated>2020-04-28T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA</id><content type="html" xml:base="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html">&lt;p&gt;Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf algorithms and libraries and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;insight into QA as a tool,&lt;/li&gt;
@@ -114,4 +114,149 @@ analytics&lt;/a&gt; as one of the top trends poised to make a substantial impact
   &lt;li&gt;and more!&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Because we’ll be writing about our work as we go, we might end up in some dead ends or run into some nasty bugs; such is the nature of research! When these things happen, we’ll share our thoughts on what worked, what didn’t, and why - but it’s important to note upfront that while we do have a solid goal in mind, the end product may turn out to be quite different than what we currently envision. Stay tuned; in our next post we’ll start digging into the nuts and bolts!&lt;/p&gt;</content><author><name></name></author><summary type="html">Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf algorithms and libraries and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:</summary></entry></feed>
+&lt;p&gt;Because we’ll be writing about our work as we go, we might end up in some dead ends or run into some nasty bugs; such is the nature of research! When these things happen, we’ll share our thoughts on what worked, what didn’t, and why - but it’s important to note upfront that while we do have a solid goal in mind, the end product may turn out to be quite different than what we currently envision. Stay tuned; in our next post we’ll start digging into the nuts and bolts!&lt;/p&gt;</content><author><name></name></author><summary type="html">Welcome to the first edition of the Cloudera Fast Forward blog on Natural Language Processing for Question Answering! Throughout this series, we’ll build a Question Answering (QA) system with off-the-shelf algorithms and libraries and blog about our process and what we find along the way. We hope to wind up with a beginning-to-end documentary that provides:</summary></entry><entry><title type="html">Getting Started</title><link href="https://qa.fastforwardlabs.com/hidden/" rel="alternate" type="text/html" title="Getting Started" /><published>2020-04-27T00:00:00-05:00</published><updated>2020-04-27T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/Getting_Started_with_QA</id><content type="html" xml:base="https://qa.fastforwardlabs.com/hidden/">&lt;!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/Getting_Started_with_QA.ipynb
+--&gt;
+
+&lt;div class=&quot;container&quot; id=&quot;notebook-container&quot;&gt;
+        
+    
+    
+&lt;div class=&quot;cell border-box-sizing code_cell rendered&quot;&gt;
+
+&lt;/div&gt;
+    
+
+&lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
+&lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
+&lt;h2 id=&quot;So-you've-decided-to-build-a-QA-system.&quot;&gt;So you've decided to build a QA system.&lt;a class=&quot;anchor-link&quot; href=&quot;#So-you've-decided-to-build-a-QA-system.&quot;&gt; &lt;/a&gt;&lt;/h2&gt;&lt;p&gt;You want to start with something general and straightforward so you plan to make it open domain using Wikipedia as a corpus for answering questions. You're going to use an IR-based design (see previous post) since you're working with a large collection of unstructured text. You want to use the best NLP that your compute resources allow (you're lucky enough to have access to a GPU) so you're going to focus on the big, flashy Transformer models that are all the rage these days.&lt;/p&gt;
+&lt;p&gt;Sounds like a plan! So where do you start?&lt;/p&gt;
+&lt;p&gt;This was our thought process when we first set out on this research path and in this post we'll discuss what you need to know to get going!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;installing libraries and setting up an environment&lt;/li&gt;
+&lt;li&gt;understanding Huggingface's &lt;code&gt;run_squad.py&lt;/code&gt; training script&lt;/li&gt;
+&lt;li&gt;Understanding the basic ins and outs of a BERT-esque model&lt;/li&gt;
+&lt;li&gt;getting BERT to accept a full Wikipedia article as context for a question&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+    
+    
+&lt;div class=&quot;cell border-box-sizing code_cell rendered&quot;&gt;
+&lt;div class=&quot;input&quot;&gt;
+
+&lt;div class=&quot;inner_cell&quot;&gt;
+    &lt;div class=&quot;input_area&quot;&gt;
+&lt;div class=&quot; highlight hl-ipython3&quot;&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;qasystem&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DocumentReader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MODEL_PATHS&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+    
+
+    
+    
+&lt;div class=&quot;cell border-box-sizing code_cell rendered&quot;&gt;
+&lt;div class=&quot;input&quot;&gt;
+
+&lt;div class=&quot;inner_cell&quot;&gt;
+    &lt;div class=&quot;input_area&quot;&gt;
+&lt;div class=&quot; highlight hl-ipython3&quot;&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DocumentReader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODEL_PATHS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;bert_base_uncased_squad1&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;output_wrapper&quot;&gt;
+&lt;div class=&quot;output&quot;&gt;
+
+&lt;div class=&quot;output_area&quot;&gt;
+
+&lt;div class=&quot;output_subarea output_text output_error&quot;&gt;
+&lt;pre&gt;
+&lt;span class=&quot;ansi-red-fg&quot;&gt;---------------------------------------------------------------------------&lt;/span&gt;
+&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;                                   Traceback (most recent call last)
+&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/configuration_utils.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;get_config_dict&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, pretrained_config_archive_map, **kwargs)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    253&lt;/span&gt;             &lt;span class=&quot;ansi-green-fg&quot;&gt;if&lt;/span&gt; resolved_config_file &lt;span class=&quot;ansi-green-fg&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 254&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;                 &lt;/span&gt;&lt;span class=&quot;ansi-green-fg&quot;&gt;raise&lt;/span&gt; EnvironmentError
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    255&lt;/span&gt;             config_dict &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; cls&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;_dict_from_json_file&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;resolved_config_file&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;: 
+
+During handling of the above exception, another exception occurred:
+
+&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;                                   Traceback (most recent call last)
+&lt;span class=&quot;ansi-green-fg&quot;&gt;&amp;lt;ipython-input-5-b2430c8054d0&amp;gt;&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;&amp;lt;module&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;ansi-green-fg&quot;&gt;----&amp;gt; 1&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt; &lt;/span&gt;reader &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; DocumentReader&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;MODEL_PATHS&lt;span class=&quot;ansi-blue-fg&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#39;bert_base_uncased_squad1&amp;#39;&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/src/qasystem.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(self, pretrained_model_name_or_path)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     21&lt;/span&gt;     &lt;span class=&quot;ansi-green-fg&quot;&gt;def&lt;/span&gt; __init__&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#39;bert-large-uncased&amp;#39;&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;ansi-red-fg&quot;&gt;# &amp;#39;bert-base-uncased&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     22&lt;/span&gt;         self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;READER_PATH &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; pretrained_model_name_or_path
+&lt;span class=&quot;ansi-green-fg&quot;&gt;---&amp;gt; 23&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;         &lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;tokenizer &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; AutoTokenizer&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;READER_PATH&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     24&lt;/span&gt;         self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;model &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; AutoModelForQuestionAnswering&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;READER_PATH&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;     25&lt;/span&gt;         self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;max_len &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; self&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;model&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;config&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;max_position_embeddings
+
+&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/tokenization_auto.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;from_pretrained&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, *inputs, **kwargs)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    184&lt;/span&gt;         config &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; kwargs&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;pop&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#34;config&amp;#34;&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    185&lt;/span&gt;         &lt;span class=&quot;ansi-green-fg&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;not&lt;/span&gt; isinstance&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;config&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; PretrainedConfig&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 186&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;             &lt;/span&gt;config &lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt; AutoConfig&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;from_pretrained&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ansi-blue-fg&quot;&gt;**&lt;/span&gt;kwargs&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    187&lt;/span&gt; 
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    188&lt;/span&gt;         &lt;span class=&quot;ansi-green-fg&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ansi-blue-fg&quot;&gt;&amp;#34;bert-base-japanese&amp;#34;&lt;/span&gt; &lt;span class=&quot;ansi-green-fg&quot;&gt;in&lt;/span&gt; pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
+
+&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/configuration_auto.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;from_pretrained&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, **kwargs)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    185&lt;/span&gt;         &amp;#34;&amp;#34;&amp;#34;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    186&lt;/span&gt;         config_dict, _ = PretrainedConfig.get_config_dict(
+&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 187&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;             &lt;/span&gt;pretrained_model_name_or_path&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; pretrained_config_archive_map&lt;span class=&quot;ansi-blue-fg&quot;&gt;=&lt;/span&gt;ALL_PRETRAINED_CONFIG_ARCHIVE_MAP&lt;span class=&quot;ansi-blue-fg&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ansi-blue-fg&quot;&gt;**&lt;/span&gt;kwargs
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    188&lt;/span&gt;         )
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    189&lt;/span&gt; 
+
+&lt;span class=&quot;ansi-green-fg&quot;&gt;/home/ryan/work/ff14/transformers/src/transformers/configuration_utils.py&lt;/span&gt; in &lt;span class=&quot;ansi-cyan-fg&quot;&gt;get_config_dict&lt;/span&gt;&lt;span class=&quot;ansi-blue-fg&quot;&gt;(cls, pretrained_model_name_or_path, pretrained_config_archive_map, **kwargs)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    271&lt;/span&gt;                     )
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    272&lt;/span&gt;                 )
+&lt;span class=&quot;ansi-green-fg&quot;&gt;--&amp;gt; 273&lt;/span&gt;&lt;span class=&quot;ansi-red-fg&quot;&gt;             &lt;/span&gt;&lt;span class=&quot;ansi-green-fg&quot;&gt;raise&lt;/span&gt; EnvironmentError&lt;span class=&quot;ansi-blue-fg&quot;&gt;(&lt;/span&gt;msg&lt;span class=&quot;ansi-blue-fg&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    274&lt;/span&gt; 
+&lt;span class=&quot;ansi-green-intense-fg ansi-bold&quot;&gt;    275&lt;/span&gt;         &lt;span class=&quot;ansi-green-fg&quot;&gt;except&lt;/span&gt; json&lt;span class=&quot;ansi-blue-fg&quot;&gt;.&lt;/span&gt;JSONDecodeError&lt;span class=&quot;ansi-blue-fg&quot;&gt;:&lt;/span&gt;
+
+&lt;span class=&quot;ansi-red-fg&quot;&gt;OSError&lt;/span&gt;: Can&amp;#39;t load &amp;#39;/home/ryan/work/ff14/src/models/squad1_output/&amp;#39;. Make sure that:
+
+- &amp;#39;/home/ryan/work/ff14/src/models/squad1_output/&amp;#39; is a correct model identifier listed on &amp;#39;https://huggingface.co/models&amp;#39;
+
+- or &amp;#39;/home/ryan/work/ff14/src/models/squad1_output/&amp;#39; is the correct path to a directory containing a &amp;#39;config.json&amp;#39; file
+
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+    
+
+    
+    
+&lt;div class=&quot;cell border-box-sizing code_cell rendered&quot;&gt;
+&lt;div class=&quot;input&quot;&gt;
+
+&lt;div class=&quot;inner_cell&quot;&gt;
+    &lt;div class=&quot;input_area&quot;&gt;
+&lt;div class=&quot; highlight hl-ipython3&quot;&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reader&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+    
+
+&lt;/div&gt;</content><author><name></name></author><summary type="html"></summary></entry></feed>
