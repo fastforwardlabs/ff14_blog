@@ -3,19 +3,19 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Getting Started | NLP for Question Answering</title>
+<title>How to Build a QA System with BERT on Wikipedia | NLP for Question Answering</title>
 <meta name="generator" content="Jekyll v4.0.0" />
-<meta property="og:title" content="Getting Started" />
+<meta property="og:title" content="How to Build a QA System with BERT on Wikipedia" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="First steps towards building an IR-based QA system with BERT." />
-<meta property="og:description" content="First steps towards building an IR-based QA system with BERT." />
+<meta name="description" content="A high-level walk-through of building an IR-based QA system." />
+<meta property="og:description" content="A high-level walk-through of building an IR-based QA system." />
 <link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-04-27T00:00:00-05:00" />
+<meta property="article:published_time" content="2020-05-10T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"First steps towards building an IR-based QA system with BERT.","@type":"BlogPosting","headline":"Getting Started","dateModified":"2020-04-27T00:00:00-05:00","datePublished":"2020-04-27T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+{"description":"A high-level walk-through of building an IR-based QA system.","@type":"BlogPosting","headline":"How to Build a QA System with BERT on Wikipedia","dateModified":"2020-05-10T00:00:00-05:00","datePublished":"2020-05-10T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
 
@@ -24,19 +24,19 @@
 <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
 
 <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Getting Started | NLP for Question Answering</title>
+<title>How to Build a QA System with BERT on Wikipedia | NLP for Question Answering</title>
 <meta name="generator" content="Jekyll v4.0.0" />
-<meta property="og:title" content="Getting Started" />
+<meta property="og:title" content="How to Build a QA System with BERT on Wikipedia" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="First steps towards building an IR-based QA system with BERT." />
-<meta property="og:description" content="First steps towards building an IR-based QA system with BERT." />
+<meta name="description" content="A high-level walk-through of building an IR-based QA system." />
+<meta property="og:description" content="A high-level walk-through of building an IR-based QA system." />
 <link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-04-27T00:00:00-05:00" />
+<meta property="article:published_time" content="2020-05-10T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"First steps towards building an IR-based QA system with BERT.","@type":"BlogPosting","headline":"Getting Started","dateModified":"2020-04-27T00:00:00-05:00","datePublished":"2020-04-27T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+{"description":"A high-level walk-through of building an IR-based QA system.","@type":"BlogPosting","headline":"How to Build a QA System with BERT on Wikipedia","dateModified":"2020-05-10T00:00:00-05:00","datePublished":"2020-05-10T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
@@ -97,13 +97,13 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Getting Started</h1><p class="page-description">First steps towards building an IR-based QA system with BERT.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-04-27T00:00:00-05:00" itemprop="datePublished">
-        Apr 27, 2020
+    <h1 class="post-title p-name" itemprop="name headline">How to Build a QA System with BERT on Wikipedia</h1><p class="page-description">A high-level walk-through of building an IR-based QA system.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-10T00:00:00-05:00" itemprop="datePublished">
+        May 10, 2020
       </time>
        • <span class="read-time" title="Estimated read time">
     
     
-      2 min read
+      25 min read
     
 </span></p>
 
@@ -142,10 +142,35 @@ window.onload = wrap_img;
 
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
-<li class="toc-entry toc-h2"><a href="#So-you've-decided-to-build-a-QA-system.">So you&#39;ve decided to build a QA system. </a>
+<li class="toc-entry toc-h1"><a href="#So-you've-decided-to-build-a-QA-system.">So you&#39;ve decided to build a QA system. </a>
 <ul>
-<li class="toc-entry toc-h3"><a href="#Setting-up-your-virtual-environment">Setting up your virtual environment </a></li>
-<li class="toc-entry toc-h3"><a href="#Huggingface's-Transformer-library-and-training-script">Huggingface&#39;s Transformer library and training script </a></li>
+<li class="toc-entry toc-h2"><a href="#Setting-up-your-virtual-environment">Setting up your virtual environment </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#TODO---torch-for-gpu-vs-no-gpu">TODO - torch for gpu vs no gpu </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#HuggingFace-Transformers">HuggingFace Transformers </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Training-a-Transformer-model-for-Question-Answering">Training a Transformer model for Question Answering </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Training-Output">Training Output </a></li>
+<li class="toc-entry toc-h2"><a href="#Using-a-pre-trained-model-from-the-Hugging-Face-repository">Using a pre-trained model from the Hugging Face repository </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Let's-try-our-model!">Let&#39;s try our model! </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#QA-on-Wikipedia-pages">QA on Wikipedia pages </a></li>
+<li class="toc-entry toc-h1"><a href="#Put-it-all-together">Put it all together </a></li>
+<li class="toc-entry toc-h1"><a href="#Wrapping-Up">Wrapping Up </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#How-to-train-Transformers-with-GPUs-from-your-jupyter-notebook">How to train Transformers with GPUs from your jupyter notebook </a></li>
+<li class="toc-entry toc-h2"><a href="#How-to-make-sense-of-the-SQuAD-(and-other-QA)-datasets">How to make sense of the SQuAD (and other QA) datasets </a></li>
+<li class="toc-entry toc-h2"><a href="#How-to-evaluate-a-Transformer-model-on-a-QA-dataset">How to evaluate a Transformer model on a QA dataset </a></li>
+<li class="toc-entry toc-h2"><a href="#How-to-chose-the-right-Transformer-model-for-your-QA-system">How to chose the right Transformer model for your QA system </a></li>
+<li class="toc-entry toc-h2"><a href="#How-to-create-your-own-QA-dataset">How to create your own QA dataset </a></li>
 </ul>
 </li>
 </ul><!--
@@ -167,9 +192,9 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="So-you've-decided-to-build-a-QA-system.">
+<h1 id="So-you've-decided-to-build-a-QA-system.">
 <a class="anchor" href="#So-you've-decided-to-build-a-QA-system." aria-hidden="true"><span class="octicon octicon-link"></span></a>So you've decided to build a QA system.<a class="anchor-link" href="#So-you've-decided-to-build-a-QA-system."> </a>
-</h2>
+</h1>
 <p>You want to start with something general and straightforward so you plan to make it open domain using Wikipedia as a corpus for answering questions. You're going to use an IR-based design (see previous post) since you're working with a large collection of unstructured text. You want to use the best NLP that your compute resources allow (you're lucky enough to have access to a GPU) so you're going to focus on the big, flashy Transformer models that are all the rage these days.</p>
 <p>Sounds like a plan! So where do you start?</p>
 <p>This was our thought process when we first set out on this research path and in this post we'll discuss what you need to know to get going!</p>
@@ -179,23 +204,33 @@ window.onload = wrap_img;
 <li>Understanding the basic ins and outs of a BERT-esque model</li>
 <li>getting BERT to accept a full Wikipedia article as context for a question</li>
 </ul>
-<h3 id="Setting-up-your-virtual-environment">
+<h2 id="Setting-up-your-virtual-environment">
 <a class="anchor" href="#Setting-up-your-virtual-environment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up your virtual environment<a class="anchor-link" href="#Setting-up-your-virtual-environment"> </a>
-</h3>
+</h2>
 <p>A virtual environment is always best practice and we're using <code>venv</code> (though Melanie is also partial to <code>conda</code>). Here's the bare minimum that you'll need to do what I did. For this project we'll be using Pytorch (though everything we do can also be accomplished in Tensorflow). Pytorch handles the heavy lifting of deep differentiable learning. Transformers is a library by Huggingface that provides super easy to use implementations (in torch) of all the popular Transformer architectures (more on this later).</p>
 <ul>
 <li>PyTorch </li>
 <li>Transformers</li>
 <li>Wikipedia</li>
-<li>TensorboardX (optional)</li>
 </ul>
-<p>A note on PyTorch: our GPU machine sports an older version of CUDA (9.2) that we're getting around to updating... In the meantime, this forces us to use an older version of PyTorch that supports this CUDA version in order to access our GPU for training. Some older verisons of PyTorch might require that you also install <code>TensorboardX</code> which is used in Huggingface's <code>run_squad.py</code> script. If you have want to use your GPU (pretty much required if you plan to <em>fine tune</em> BERT on the SQuAD dataset) and you have CUDA 10+ you can use the most recent version of Pytorch and you won't need to install the additional TensorboardX package.</p>
-<p>Why are we using PyTorch instead of Tensorflow? Honestly? Because Tensorflow isn't playing nice with our GPU machine these days... You'll likely see some warning messages about it not being install properly in order to access the GPU. It's on our To Do list.</p>
-<h3 id="Huggingface's-Transformer-library-and-training-script">
-<a class="anchor" href="#Huggingface's-Transformer-library-and-training-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>Huggingface's Transformer library and training script<a class="anchor-link" href="#Huggingface's-Transformer-library-and-training-script"> </a>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="TODO---torch-for-gpu-vs-no-gpu">
+<a class="anchor" href="#TODO---torch-for-gpu-vs-no-gpu" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO - torch for gpu vs no gpu<a class="anchor-link" href="#TODO---torch-for-gpu-vs-no-gpu"> </a>
 </h3>
-<p>I'm new to PyTorch and Huggingface but I'm quickly becoming a convert!  Huggingface provides state-of-the-art general-purpose architecures for natural language understanding and natural language generation. They have tons of pre-trained models that work in dozens of languages. They even have interoperability between PyTorch and Tensorflow (all camps welcome!) which means if someone trained BERT using Tensorflow we can load those pre-trained weights through Huggingface methods and it will convert the weights to PyTorch for us! Yay.</p>
-<p>Huggingface provide more than just pre-trained models. They also have</p>
+<p>We used <code>venv</code> for our virtual environment. It comes standard with Python installations. Other great options include <code>virtualenv</code> and <code>Anaconda</code>. 
+You can recreate our env with the following commands in your command line (linux/MacOS users)</p>
+<div class="highlight"><pre><span></span>$ python3 -m venv myenv
+$ <span class="nb">source</span> myenv/bin/activate
+$ pip install torch
+$ pip install transformers
+$ pip install wikipedia
+</pre></div>
 
 </div>
 </div>
@@ -207,7 +242,230 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">qasystem</span> <span class="kn">import</span> <span class="n">DocumentReader</span><span class="p">,</span> <span class="n">MODEL_PATHS</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">wikipedia</span> <span class="k">as</span> <span class="nn">wiki</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Parenthetical note: our GPU machine sports an older version of CUDA (9.2 -- we're getting around to updating that). In the meantime, this requires us to use an older version of PyTorch for the necessary CUDA support. The HF script we're using for training (<code>run_squad.py</code>) requires some specific packages. More recent versions of PyTorch include these packages; however, older versions do not and thus may require that you also install <code>TensorboardX</code> (see the hidden code cell below).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide </span>
+
+<span class="c1"># line 69 of `run_squad.py` script shows why you might need to install </span>
+<span class="c1"># tensorboardX if you have an older version of torch</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="HuggingFace-Transformers">
+<a class="anchor" href="#HuggingFace-Transformers" aria-hidden="true"><span class="octicon octicon-link"></span></a>HuggingFace Transformers<a class="anchor-link" href="#HuggingFace-Transformers"> </a>
+</h2>
+<p>I'm new to PyTorch and even newer to HuggingFace (HF) but I'm quickly becoming a convert! The <a href="https://huggingface.co/transformers/#">HuggingFace Transformers</a> package provides state-of-the-art general-purpose architecures for natural language understanding and natural language generation. They host dozens of pre-trained models (like BERT) operating in over 100 languages that you can use right out of the box. All of these models come with deep interoperability between PyTorch and Tensorflow 2.0, which means you can move a model from TF2.0 to PyTorch and back again with a line or two of code!</p>
+<p>If you're new to Hugging Face, we strongly recommend working through the HF <a href="https://huggingface.co/transformers/quickstart.html">Quickstart guide</a> as well as their excellent <a href="https://huggingface.co/transformers/notebooks.html">Transformer Notebooks</a> (we did!), as we won't cover that material in this notebook. We'll be using HF <code>AutoClasses</code>, which serve as a wrapper around pretty much any of the base Transformer classes. So if we want to work with several models we don't have to import <code>transformers.BertModel</code>, and <code>transformers.XLNetModel</code>, and <code>transformers.RobertaModel</code>, etc. We can just import <code>transformers.AutoModel</code> and feed it the appropriate model name or path for each architecture we care about.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoModel</span><span class="p">,</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForQuestionAnswering</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Training-a-Transformer-model-for-Question-Answering">
+<a class="anchor" href="#Training-a-Transformer-model-for-Question-Answering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training a Transformer model for Question Answering<a class="anchor-link" href="#Training-a-Transformer-model-for-Question-Answering"> </a>
+</h1>
+<p>Not every Transformer architecture lends itself naturally to the task of Question Answering (GPT, for instance, does not do QA; similarly BERT does not do machine translation!).</p>
+<p>You can identify likely model families by ... Once you've found a model you'd like to work with (in a future post we'll go over the model families in more depth), the next step is to train it on some data!</p>
+<p>One of the canonical datasets for QA is the Stanford Question Answering Dataset, or SQuAD, which comes in two flavors: SQuAD 1.1 and SQuAD 2.0. HF helpfully provide a script that trains a Transformer model on one of the datasets, called <code>run_squad.py</code>. You can grab the script <a href="https://github.com/huggingface/transformers/blob/master/examples/question-answering/run_squad.py">here</a>.  This script is pretty complicated and in a later post we'll go through some of the details for those who really want to get into the nuts and bolts of fine-tuning. For now, however, we'll walk through the command to train BERT on SQuAD 1.1 or 2.0 datasets (or both, in succession!)</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Set paths</span>
+<span class="o">%</span><span class="k">env</span> DATA_DIR=./data/squad 
+<span class="o">%</span><span class="k">env</span> MODEL_DIR=./models # we'll store trained models here
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>env: DATA_DIR=./data/squad
+env: MODEL_DIR=./models # we'll store trained models here
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Download the data</span>
+
+<span class="k">def</span> <span class="nf">download_squad</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="o">!</span>wget -P <span class="nv">$SQUAD_DIR</span> https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json
+        <span class="o">!</span>wget -P <span class="nv">$SQUAD_DIR</span> https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json
+    <span class="k">else</span><span class="p">:</span>
+        <span class="o">!</span>wget -P <span class="nv">$SQUAD_DIR</span> https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json
+        <span class="o">!</span>wget -P <span class="nv">$SQUAD_DIR</span> https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json
+            
+<span class="n">download_squad</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>--2020-05-08 15:11:59--  https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json
+Resolving rajpurkar.github.io (rajpurkar.github.io)... 185.199.109.153, 185.199.110.153, 185.199.111.153, ...
+Connecting to rajpurkar.github.io (rajpurkar.github.io)|185.199.109.153|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 42123633 (40M) [application/json]
+Saving to: ‘./data/squad/train-v2.0.json.2’
+
+train-v2.0.json.2   100%[===================&gt;]  40.17M  16.6MB/s    in 2.4s    
+
+2020-05-08 15:12:01 (16.6 MB/s) - ‘./data/squad/train-v2.0.json.2’ saved [42123633/42123633]
+
+--2020-05-08 15:12:02--  https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json
+Resolving rajpurkar.github.io (rajpurkar.github.io)... 185.199.108.153, 185.199.109.153, 185.199.110.153, ...
+Connecting to rajpurkar.github.io (rajpurkar.github.io)|185.199.108.153|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 4370528 (4.2M) [application/json]
+Saving to: ‘./data/squad/dev-v2.0.json’
+
+dev-v2.0.json       100%[===================&gt;]   4.17M  4.84MB/s    in 0.9s    
+
+2020-05-08 15:12:03 (4.84 MB/s) - ‘./data/squad/dev-v2.0.json’ saved [4370528/4370528]
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Training your own model to do QA using HF's `run_squad.py`</span>
+<span class="c1"># Turn flags on and off according to the model you're training</span>
+
+<span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'python'</span><span class="p">,</span> 
+<span class="c1">#    '-m torch.distributed.launch --nproc_per_node 2', # use this to perform distributed training over multiple GPUs</span>
+    <span class="s1">'run_squad.py'</span><span class="p">,</span> 
+    
+    <span class="s1">'--model_type'</span><span class="p">,</span> <span class="s1">'bert'</span><span class="p">,</span>                            <span class="c1"># model type </span>
+    <span class="s1">'--model_name_or_path'</span><span class="p">,</span> <span class="s1">'bert-base-uncased'</span><span class="p">,</span>       <span class="c1"># specific model name of the given model type</span>
+    <span class="s1">'--output_dir'</span><span class="p">,</span> <span class="s1">'$DATA_DIR/bert/bbu_squad2'</span><span class="p">,</span>       <span class="c1"># directory for model checkpoints and predictions</span>
+<span class="c1">#    '--overwrite_output_dir',                         # use when adding output to a directory that is non-empty</span>
+    
+    <span class="s1">'--do_train'</span><span class="p">,</span>     
+    <span class="s1">'--train_file'</span><span class="p">,</span> <span class="s1">'$SQUAD_DIR/train-v2.0.json'</span><span class="p">,</span>      
+    <span class="s1">'--version_2_with_negative'</span><span class="p">,</span>                       <span class="c1"># MUST use this flag if training on SQuAD 2.0 dataset!</span>
+    <span class="s1">'--do_lower_case'</span><span class="p">,</span>                                 <span class="c1"># Set this flag if using an uncased model</span>
+    
+    <span class="s1">'--do_eval'</span><span class="p">,</span>                                       <span class="c1"># evaluate the model on the dev set after fine-tuning complete</span>
+    <span class="s1">'--predict_file'</span><span class="p">,</span> <span class="s1">'$SQUAD_DIR/dev-v2.0.json'</span><span class="p">,</span>
+    <span class="s1">'--eval_all_checkpoints'</span><span class="p">,</span>                          <span class="c1"># evaluate the model on the dev set at each checkpoint</span>
+    
+    <span class="s1">'--num_train_epochs'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span>                         <span class="c1"># model hyperparameters</span>
+    <span class="s1">'--learning_rate'</span><span class="p">,</span> <span class="s1">'3e-5'</span><span class="p">,</span>
+    <span class="s1">'--max_seq_length'</span><span class="p">,</span> <span class="s1">'384'</span><span class="p">,</span>
+    <span class="s1">'--doc_stride'</span><span class="p">,</span> <span class="s1">'128'</span><span class="p">,</span>
+    <span class="s1">'--per_gpu_eval_batch_size'</span><span class="p">,</span> <span class="s1">'12'</span><span class="p">,</span>
+    <span class="s1">'--per_gpu_train_batch_size'</span><span class="p">,</span> <span class="s1">'12'</span><span class="p">,</span>
+    
+    <span class="s1">'--save_steps'</span><span class="p">,</span> <span class="s1">'10000'</span><span class="p">,</span>                           <span class="c1"># How often checkpoints (complete model snapshot) are saved </span>
+    <span class="s1">'--threads'</span><span class="p">,</span> <span class="s1">'8'</span>                                   <span class="c1"># num of CPU threads to use for converting examples to features</span>
+<span class="p">]</span>
 </pre></div>
 
     </div>
@@ -224,7 +482,572 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">MODEL_PATHS</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Don't run this cell unless you're rocking at least one GPU</span>
+
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">STDOUT</span><span class="p">,</span> <span class="n">Popen</span>
+
+<span class="c1"># Live output from run_squad.py is through stderr (rather than stdout). The following command runs the process</span>
+<span class="c1"># and ports stderr to stdout</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span>
+          <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
+          <span class="n">stderr</span><span class="o">=</span><span class="n">STDOUT</span><span class="p">)</span>
+
+<span class="c1"># Default behavior when using bash cells is that you won't see the live output in the cell -- you can only see </span>
+<span class="c1"># output once the entire process has finished and then you get it all at once. This is terrible when training</span>
+<span class="c1"># models that can take hours or days of compute time! </span>
+
+<span class="c1"># This command combined with the above allows you to see the live output feed, though it is a bit asynchronous.</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="sa">b</span><span class="s1">''</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"&gt;&gt;&gt; "</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&gt;&gt;&gt; 2020-05-08 16:02:51.791650: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda/lib64:
+&gt;&gt;&gt; 2020-05-08 16:02:51.791724: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda/lib64:
+&gt;&gt;&gt; 2020-05-08 16:02:51.791733: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+&gt;&gt;&gt; 05/08/2020 16:02:52 - WARNING - __main__ -   Process rank: -1, device: cuda, n_gpu: 1, distributed training: False, 16-bits training: False
+&gt;&gt;&gt; 05/08/2020 16:02:53 - INFO - transformers.configuration_utils -   loading configuration file https://s3.amazonaws.com/models.huggingface.co/bert/distilbert-base-uncased-config.json from cache at /home/melanie/.cache/torch/transformers/a41e817d5c0743e29e86ff85edc8c257e61bc8d88e4271bb1b243b6e7614c633.8949e27aafafa845a18d98a0e3a88bc2d248bbc32a1b75947366664658f23b1c
+&gt;&gt;&gt; 05/08/2020 16:02:53 - INFO - transformers.configuration_utils -   Model config DistilBertConfig {
+&gt;&gt;&gt;   "_num_labels": 2,
+&gt;&gt;&gt;   "activation": "gelu",
+&gt;&gt;&gt;   "architectures": [
+&gt;&gt;&gt;     "DistilBertForMaskedLM"
+&gt;&gt;&gt;   ],
+&gt;&gt;&gt;   "attention_dropout": 0.1,
+&gt;&gt;&gt;   "bad_words_ids": null,
+&gt;&gt;&gt;   "bos_token_id": null,
+&gt;&gt;&gt;   "decoder_start_token_id": null,
+&gt;&gt;&gt;   "dim": 768,
+&gt;&gt;&gt;   "do_sample": false,
+&gt;&gt;&gt;   "dropout": 0.1,
+&gt;&gt;&gt;   "early_stopping": false,
+&gt;&gt;&gt;   "eos_token_id": null,
+&gt;&gt;&gt;   "finetuning_task": null,
+&gt;&gt;&gt;   "hidden_dim": 3072,
+&gt;&gt;&gt;   "id2label": {
+&gt;&gt;&gt;     "0": "LABEL_0",
+&gt;&gt;&gt;     "1": "LABEL_1"
+&gt;&gt;&gt;   },
+&gt;&gt;&gt;   "initializer_range": 0.02,
+&gt;&gt;&gt;   "is_decoder": false,
+&gt;&gt;&gt;   "is_encoder_decoder": false,
+&gt;&gt;&gt;   "label2id": {
+&gt;&gt;&gt;     "LABEL_0": 0,
+&gt;&gt;&gt;     "LABEL_1": 1
+&gt;&gt;&gt;   },
+&gt;&gt;&gt;   "length_penalty": 1.0,
+&gt;&gt;&gt;   "max_length": 20,
+&gt;&gt;&gt;   "max_position_embeddings": 512,
+&gt;&gt;&gt;   "min_length": 0,
+&gt;&gt;&gt;   "model_type": "distilbert",
+&gt;&gt;&gt;   "n_heads": 12,
+&gt;&gt;&gt;   "n_layers": 6,
+&gt;&gt;&gt;   "no_repeat_ngram_size": 0,
+&gt;&gt;&gt;   "num_beams": 1,
+&gt;&gt;&gt;   "num_return_sequences": 1,
+&gt;&gt;&gt;   "output_attentions": false,
+&gt;&gt;&gt;   "output_hidden_states": false,
+&gt;&gt;&gt;   "output_past": true,
+&gt;&gt;&gt;   "pad_token_id": 0,
+&gt;&gt;&gt;   "prefix": null,
+&gt;&gt;&gt;   "pruned_heads": {},
+&gt;&gt;&gt;   "qa_dropout": 0.1,
+&gt;&gt;&gt;   "repetition_penalty": 1.0,
+&gt;&gt;&gt;   "seq_classif_dropout": 0.2,
+&gt;&gt;&gt;   "sinusoidal_pos_embds": false,
+&gt;&gt;&gt;   "task_specific_params": null,
+&gt;&gt;&gt;   "temperature": 1.0,
+&gt;&gt;&gt;   "tie_weights_": true,
+&gt;&gt;&gt;   "top_k": 50,
+&gt;&gt;&gt;   "top_p": 1.0,
+&gt;&gt;&gt;   "torchscript": false,
+&gt;&gt;&gt;   "use_bfloat16": false,
+&gt;&gt;&gt;   "vocab_size": 30522,
+&gt;&gt;&gt;   "xla_device": null
+&gt;&gt;&gt; }
+&gt;&gt;&gt; 
+&gt;&gt;&gt; 05/08/2020 16:02:53 - INFO - transformers.tokenization_utils -   loading file https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt from cache at /home/melanie/.cache/torch/transformers/26bc1ad6c0ac742e9b52263248f6d0f00068293b33709fae12320c0e35ccfbbb.542ce4285a40d23a559526243235df47c5f75c197f04f37d1a0c124c32c9a084
+&gt;&gt;&gt; 05/08/2020 16:02:53 - INFO - transformers.modeling_utils -   loading weights file https://s3.amazonaws.com/models.huggingface.co/bert/distilbert-base-uncased-pytorch_model.bin from cache at /home/melanie/.cache/torch/transformers/7b8a8f0b21c4e7f6962451c9370a5d9af90372a5f64637a251f2de154d0fc72c.c2015533705b9dff680ae707e205a35e2860e8d148b45d35085419d74fe57ac5
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">KeyboardInterrupt</span>                         Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-48-0a58a906027f&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">     12</span> 
+<span class="ansi-green-intense-fg ansi-bold">     13</span> <span class="ansi-red-fg"># This command combined with the above allows you to see the live output feed, though it is a bit asynchronous.</span>
+<span class="ansi-green-fg">---&gt; 14</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">for</span> line <span class="ansi-green-fg">in</span> iter<span class="ansi-blue-fg">(</span>p<span class="ansi-blue-fg">.</span>stdout<span class="ansi-blue-fg">.</span>readline<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">b''</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">     15</span>     print<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">"&gt;&gt;&gt; "</span> <span class="ansi-blue-fg">+</span> line<span class="ansi-blue-fg">.</span>decode<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">.</span>rstrip<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">KeyboardInterrupt</span>: </pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Training-Output">
+<a class="anchor" href="#Training-Output" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training Output<a class="anchor-link" href="#Training-Output"> </a>
+</h3>
+<p>Successful completion of the <code>run_squad.py</code> script by Hugging Face outputs a slew of tanglibles, including the model weights, tokenizer, config, xxx, xxx, etc. These will all be found in the <code>--output_dir</code> directory. When loading your model for future use, this is the directory you'll point at and the HF API will take care of the rest.</p>
+<p>Files for the model's tokenizer, which converts text into tokens in a way that can be read by the model</p>
+<ul>
+<li><code>tokenizer_config.json</code></li>
+<li><code>vocab.txt</code></li>
+<li><code>special_tokens_map.json</code></li>
+</ul>
+<p>Files for the model itself</p>
+<ul>
+<li>
+<code>pytorch_model.bin</code>: these are the actual model weights (this file can be quite large)</li>
+<li>
+<code>config.json</code>: details of the model architecture</li>
+</ul>
+<p>Binary representation of the command line arguments used to train this model</p>
+<ul>
+<li><code>training_args.bin</code></li>
+</ul>
+<p>If you include <code>--do_eval</code>, you'll also see these files</p>
+<ul>
+<li>
+<code>predictions_.json</code>: the official best answer for each example</li>
+<li>
+<code>nbest_predictions_.json</code>: the top n best answers for each example</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Using-a-pre-trained-model-from-the-Hugging-Face-repository">
+<a class="anchor" href="#Using-a-pre-trained-model-from-the-Hugging-Face-repository" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using a pre-trained model from the Hugging Face repository<a class="anchor-link" href="#Using-a-pre-trained-model-from-the-Hugging-Face-repository"> </a>
+</h2>
+<p>If you don't have access to GPUs or don't have the time to fiddle and train models, you're in luck! Hugging Face is not just a slick API for Transformers -- it also hosts <a href="https://huggingface.co/models">a repository</a> for pre-trained and fine-tuned models contributed from the wide community of NLP practitioners. Searching for "squad" brings up a list of 55 models.</p>
+<p><img src="/images/copied_from_nb/my_icons/fastai_logo.png" alt=""></p>
+<p>Clicking one of these links gives explicit code for using the model, and, in some cases, information on how it was trained and what results were achieved.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># command for importing/downloading one of these pre-fine-tuned models from HF</span>
+
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForQuestionAnswering</span>
+
+<span class="c1"># Executing these commands for the first time initiates a download of the </span>
+<span class="c1"># model weights to ~/.cache/torch/transformers/</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"deepset/bert-base-cased-squad2"</span><span class="p">)</span> <span class="c1">#"ahotrod/xlnet_large_squad2_512"</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForQuestionAnswering</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"deepset/bert-base-cased-squad2"</span><span class="p">)</span> <span class="c1">#"deepset/bert-base-cased-squad2"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Toggle the field below to see what the model looks like in terms of its architecture.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="n">model</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BertForQuestionAnswering(
+  (bert): BertModel(
+    (embeddings): BertEmbeddings(
+      (word_embeddings): Embedding(28996, 768, padding_idx=0)
+      (position_embeddings): Embedding(512, 768)
+      (token_type_embeddings): Embedding(2, 768)
+      (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (encoder): BertEncoder(
+      (layer): ModuleList(
+        (0): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (1): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (2): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (3): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (4): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (5): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (6): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (7): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (8): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (9): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (10): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (11): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+    (pooler): BertPooler(
+      (dense): Linear(in_features=768, out_features=768, bias=True)
+      (activation): Tanh()
+    )
+  )
+  (qa_outputs): Linear(in_features=768, out_features=2, bias=True)
+)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Let's-try-our-model!">
+<a class="anchor" href="#Let's-try-our-model!" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let's try our model!<a class="anchor-link" href="#Let's-try-our-model!"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">question</span> <span class="o">=</span> <span class="s2">"Who ruled Macedonia"</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">"""Macedonia was an ancient kingdom on the periphery of Archaic and Classical Greece, </span>
+<span class="s2">and later the dominant state of Hellenistic Greece. The kingdom was founded and initially ruled </span>
+<span class="s2">by the Argead dynasty, followed by the Antipatrid and Antigonid dynasties. Home to the ancient </span>
+<span class="s2">Macedonians, it originated on the northeastern part of the Greek peninsula. Before the 4th </span>
+<span class="s2">century BC, it was a small kingdom outside of the area dominated by the city-states of Athens, </span>
+<span class="s2">Sparta and Thebes, and briefly subordinate to Achaemenid Persia."""</span>
+
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">)</span>
+
+<span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+
+<span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>  <span class="c1"># Get the most likely beginning of answer with the argmax of the score</span>
+<span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Get the most likely end of answer with the argmax of the score</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">]))</span>
 </pre></div>
 
     </div>
@@ -239,9 +1062,7 @@ window.onload = wrap_img;
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{'default_bert_base_uncased': 'bert-base-uncased',
- 'bert_base_uncased_squad1': '/home/ryan/work/ff14/src/models/bert/bert-base-uncased-tuned-squad-1.0',
- 'bert_base_cased_squad2': '/home/ryan/work/ff14/src/models/bert/bert-base-cased-tuned-squad-2.0/'}</pre>
+<pre>'the Argead dynasty'</pre>
 </div>
 
 </div>
@@ -252,6 +1073,17 @@ window.onload = wrap_img;
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="QA-on-Wikipedia-pages">
+<a class="anchor" href="#QA-on-Wikipedia-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>QA on Wikipedia pages<a class="anchor-link" href="#QA-on-Wikipedia-pages"> </a>
+</h1>
+<p>We saw our model work on some short questions with a few small snippets of context. But what if we want to search for answers in much longer documents? A typical Wikipedia page is much longer than any of the snippet examples presented above and it takes a bit of massaging befor we can use our model on these longer contexts.</p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -259,24 +1091,18 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reader</span> <span class="o">=</span> <span class="n">DocumentReader</span><span class="p">(</span><span class="n">MODEL_PATHS</span><span class="p">[</span><span class="s1">'bert_base_uncased_squad1'</span><span class="p">])</span>
-</pre></div>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">wikipedia</span> <span class="k">as</span> <span class="nn">wiki</span>
+<span class="kn">import</span> <span class="nn">pprint</span> <span class="k">as</span> <span class="nn">pp</span>
 
-    </div>
-</div>
-</div>
+<span class="n">question</span> <span class="o">=</span> <span class="s1">'What is the wingspan of an albatross?'</span>
 
-</div>
-    
+<span class="n">results</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Wikipedia search results for our question:</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reader</span>
+<span class="n">page</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">page</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">content</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">The </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> Wikipedia article contains </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="si">}</span><span class="s2"> characters."</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -288,12 +1114,23 @@ window.onload = wrap_img;
 
 <div class="output_area">
 
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Wikipedia search results for our question:
 
+['Albatross',
+ 'List of largest birds',
+ 'Black-browed albatross',
+ 'Argentavis',
+ 'Pterosaur',
+ 'Mollymawk',
+ 'Largest body part',
+ 'List of birds by flight speed',
+ 'Pelican',
+ 'Aspect ratio (aeronautics)']
 
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;qasystem.DocumentReader at 0x7f3141261e48&gt;</pre>
+The Albatross Wikipedia article contains 38200 characters.
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -302,6 +1139,586 @@ window.onload = wrap_img;
 </div>
     
 
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s1">'pt'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"This translates into </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> tokens."</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Token indices sequence length is longer than the specified maximum sequence length for this model (10 &gt; 512). Running this sequence through the model will result in indexing errors
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This translates into 8824 tokens.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">RuntimeError</span>                              Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-88-57152e2c4feb&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-red-fg"># collapse-hide</span>
+<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span>answer_start_scores<span class="ansi-blue-fg">,</span> answer_end_scores <span class="ansi-blue-fg">=</span> model<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">**</span>inputs<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/venv/lib/python3.6/site-packages/torch/nn/modules/module.py</span> in <span class="ansi-cyan-fg">__call__</span><span class="ansi-blue-fg">(self, *input, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    545</span>             result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_slow_forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    546</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 547</span><span class="ansi-red-fg">             </span>result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    548</span>         <span class="ansi-green-fg">for</span> hook <span class="ansi-green-fg">in</span> self<span class="ansi-blue-fg">.</span>_forward_hooks<span class="ansi-blue-fg">.</span>values<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    549</span>             hook_result <span class="ansi-blue-fg">=</span> hook<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> input<span class="ansi-blue-fg">,</span> result<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/transformers/src/transformers/modeling_bert.py</span> in <span class="ansi-cyan-fg">forward</span><span class="ansi-blue-fg">(self, input_ids, attention_mask, token_type_ids, position_ids, head_mask, inputs_embeds, start_positions, end_positions)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1478</span>             position_ids<span class="ansi-blue-fg">=</span>position_ids<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1479</span>             head_mask<span class="ansi-blue-fg">=</span>head_mask<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">-&gt; 1480</span><span class="ansi-red-fg">             </span>inputs_embeds<span class="ansi-blue-fg">=</span>inputs_embeds<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1481</span>         )
+<span class="ansi-green-intense-fg ansi-bold">   1482</span> 
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/venv/lib/python3.6/site-packages/torch/nn/modules/module.py</span> in <span class="ansi-cyan-fg">__call__</span><span class="ansi-blue-fg">(self, *input, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    545</span>             result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_slow_forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    546</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 547</span><span class="ansi-red-fg">             </span>result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    548</span>         <span class="ansi-green-fg">for</span> hook <span class="ansi-green-fg">in</span> self<span class="ansi-blue-fg">.</span>_forward_hooks<span class="ansi-blue-fg">.</span>values<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    549</span>             hook_result <span class="ansi-blue-fg">=</span> hook<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> input<span class="ansi-blue-fg">,</span> result<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/transformers/src/transformers/modeling_bert.py</span> in <span class="ansi-cyan-fg">forward</span><span class="ansi-blue-fg">(self, input_ids, attention_mask, token_type_ids, position_ids, head_mask, inputs_embeds, encoder_hidden_states, encoder_attention_mask)</span>
+<span class="ansi-green-intense-fg ansi-bold">    781</span> 
+<span class="ansi-green-intense-fg ansi-bold">    782</span>         embedding_output = self.embeddings(
+<span class="ansi-green-fg">--&gt; 783</span><span class="ansi-red-fg">             </span>input_ids<span class="ansi-blue-fg">=</span>input_ids<span class="ansi-blue-fg">,</span> position_ids<span class="ansi-blue-fg">=</span>position_ids<span class="ansi-blue-fg">,</span> token_type_ids<span class="ansi-blue-fg">=</span>token_type_ids<span class="ansi-blue-fg">,</span> inputs_embeds<span class="ansi-blue-fg">=</span>inputs_embeds
+<span class="ansi-green-intense-fg ansi-bold">    784</span>         )
+<span class="ansi-green-intense-fg ansi-bold">    785</span>         encoder_outputs = self.encoder(
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/venv/lib/python3.6/site-packages/torch/nn/modules/module.py</span> in <span class="ansi-cyan-fg">__call__</span><span class="ansi-blue-fg">(self, *input, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    545</span>             result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_slow_forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    546</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 547</span><span class="ansi-red-fg">             </span>result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    548</span>         <span class="ansi-green-fg">for</span> hook <span class="ansi-green-fg">in</span> self<span class="ansi-blue-fg">.</span>_forward_hooks<span class="ansi-blue-fg">.</span>values<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    549</span>             hook_result <span class="ansi-blue-fg">=</span> hook<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> input<span class="ansi-blue-fg">,</span> result<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/transformers/src/transformers/modeling_bert.py</span> in <span class="ansi-cyan-fg">forward</span><span class="ansi-blue-fg">(self, input_ids, token_type_ids, position_ids, inputs_embeds)</span>
+<span class="ansi-green-intense-fg ansi-bold">    172</span>         <span class="ansi-green-fg">if</span> inputs_embeds <span class="ansi-green-fg">is</span> <span class="ansi-green-fg">None</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    173</span>             inputs_embeds <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>word_embeddings<span class="ansi-blue-fg">(</span>input_ids<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">--&gt; 174</span><span class="ansi-red-fg">         </span>position_embeddings <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>position_embeddings<span class="ansi-blue-fg">(</span>position_ids<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    175</span>         token_type_embeddings <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>token_type_embeddings<span class="ansi-blue-fg">(</span>token_type_ids<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    176</span> 
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/venv/lib/python3.6/site-packages/torch/nn/modules/module.py</span> in <span class="ansi-cyan-fg">__call__</span><span class="ansi-blue-fg">(self, *input, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    545</span>             result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_slow_forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    546</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 547</span><span class="ansi-red-fg">             </span>result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>forward<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>input<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    548</span>         <span class="ansi-green-fg">for</span> hook <span class="ansi-green-fg">in</span> self<span class="ansi-blue-fg">.</span>_forward_hooks<span class="ansi-blue-fg">.</span>values<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    549</span>             hook_result <span class="ansi-blue-fg">=</span> hook<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> input<span class="ansi-blue-fg">,</span> result<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/venv/lib/python3.6/site-packages/torch/nn/modules/sparse.py</span> in <span class="ansi-cyan-fg">forward</span><span class="ansi-blue-fg">(self, input)</span>
+<span class="ansi-green-intense-fg ansi-bold">    112</span>         return F.embedding(
+<span class="ansi-green-intense-fg ansi-bold">    113</span>             input<span class="ansi-blue-fg">,</span> self<span class="ansi-blue-fg">.</span>weight<span class="ansi-blue-fg">,</span> self<span class="ansi-blue-fg">.</span>padding_idx<span class="ansi-blue-fg">,</span> self<span class="ansi-blue-fg">.</span>max_norm<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">--&gt; 114</span><span class="ansi-red-fg">             self.norm_type, self.scale_grad_by_freq, self.sparse)
+</span><span class="ansi-green-intense-fg ansi-bold">    115</span> 
+<span class="ansi-green-intense-fg ansi-bold">    116</span>     <span class="ansi-green-fg">def</span> extra_repr<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">/home/ryan/work/ff14/venv/lib/python3.6/site-packages/torch/nn/functional.py</span> in <span class="ansi-cyan-fg">embedding</span><span class="ansi-blue-fg">(input, weight, padding_idx, max_norm, norm_type, scale_grad_by_freq, sparse)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1465</span>         <span class="ansi-red-fg"># remove once script supports set_grad_enabled</span>
+<span class="ansi-green-intense-fg ansi-bold">   1466</span>         _no_grad_embedding_renorm_<span class="ansi-blue-fg">(</span>weight<span class="ansi-blue-fg">,</span> input<span class="ansi-blue-fg">,</span> max_norm<span class="ansi-blue-fg">,</span> norm_type<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">-&gt; 1467</span><span class="ansi-red-fg">     </span><span class="ansi-green-fg">return</span> torch<span class="ansi-blue-fg">.</span>embedding<span class="ansi-blue-fg">(</span>weight<span class="ansi-blue-fg">,</span> input<span class="ansi-blue-fg">,</span> padding_idx<span class="ansi-blue-fg">,</span> scale_grad_by_freq<span class="ansi-blue-fg">,</span> sparse<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1468</span> 
+<span class="ansi-green-intense-fg ansi-bold">   1469</span> 
+
+<span class="ansi-red-fg">RuntimeError</span>: index out of range: Tried to access index 512 out of table with 511 rows. at /pytorch/aten/src/TH/generic/THTensorEvenMoreMath.cpp:237</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The tokenizer takes the input and returns tokens. In general, tokenizers convert words or pieces of words into a model-ingestable format. The specific tokens and format are dependent on the type of model. For example, BERT tokenizes words differently from RoBERTa. This is why you must always use the associated tokenizer appropriate for your model.</p>
+<p>In this case, the tokenizer converts our text into 8824 tokens, but this far exceeds the maximum number of tokens that can be fed to the model at one time. Most BERT-esque models can only accept 512 tokens at once (check out the error cell above to see what happens when you try to exceed that). This means we'll have to split our input into chunks and each chunk must not exceed 512 tokens in total.</p>
+<p>When working with Question Answering, it's crucial that each chunk follows this format:</p>
+<p>[CLS] question tokens [SEP] context tokens [SEP]</p>
+<p>This means that, for each segment of the Wikipedia article, we must prepend the original question, followed by the next "chunk" of article tokens.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Time to chunk!</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="c1"># identify question tokens (token_type_ids = 0)</span>
+<span class="n">qmask</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s1">'token_type_ids'</span><span class="p">]</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">qt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">],</span> <span class="n">qmask</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The question consists of </span><span class="si">{</span><span class="n">qt</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> tokens."</span><span class="p">)</span>
+
+<span class="n">chunk_size</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_position_embeddings</span> <span class="o">-</span> <span class="n">qt</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># the "-1" accounts for</span>
+<span class="c1"># having to add an ending [SEP] token to the end</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Each chunk will contain </span><span class="si">{</span><span class="n">chunk_size</span> <span class="o">-</span> <span class="mi">2</span><span class="si">}</span><span class="s2"> tokens of the Wikipedia article."</span><span class="p">)</span>
+
+<span class="c1"># create a dict of dicts; each sub-dict mimics the structure of pre-chunked model input</span>
+<span class="n">chunked_input</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">qmask</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">~</span><span class="n">qmask</span><span class="p">)</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunked_input</span><span class="p">:</span>
+            <span class="n">chunked_input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">thing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">q</span><span class="p">,</span> <span class="n">chunk</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'input_ids'</span><span class="p">:</span>
+                <span class="n">thing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">thing</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">102</span><span class="p">])))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">thing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">thing</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">])))</span>
+
+        <span class="n">chunked_input</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The question consists of 12 tokens.
+Each chunk will contain 497 tokens of the Wikipedia article.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunked_input</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of tokens in chunk </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">chunked_input</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">'input_ids'</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of tokens in chunk 0: 512
+Number of tokens in chunk 1: 512
+Number of tokens in chunk 2: 512
+Number of tokens in chunk 3: 512
+Number of tokens in chunk 4: 512
+Number of tokens in chunk 5: 512
+Number of tokens in chunk 6: 512
+Number of tokens in chunk 7: 512
+Number of tokens in chunk 8: 512
+Number of tokens in chunk 9: 512
+Number of tokens in chunk 10: 512
+Number of tokens in chunk 11: 512
+Number of tokens in chunk 12: 512
+Number of tokens in chunk 13: 512
+Number of tokens in chunk 14: 512
+Number of tokens in chunk 15: 512
+Number of tokens in chunk 16: 512
+Number of tokens in chunk 17: 341
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Each of these chunks (except for the last one) has the structure:</p>
+<p>[CLS], 10 question tokens, [SEP], 497 tokens of the Wikipedia article, [SEP] token = 512 tokens</p>
+<p>Each of these chunks can now be fed to the model without causing indexing errors. We'll get an answer for each chunk. Most times, the chunk will not contain the answer (not every segment of a Wikipedia article is generally informative for our question). When the model determines that the context does not answer the question it returns the [CLS] token.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">convert_ids_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span><span class="n">input_ids</span><span class="p">))</span>
+
+<span class="n">answer</span> <span class="o">=</span> <span class="s1">''</span>
+
+<span class="c1"># Now we iterate over our chunks, looking for the best answer from each chunk</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunked_input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">chunk</span><span class="p">)</span>
+
+    <span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>
+    <span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">convert_ids_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">chunk</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">ans</span> <span class="o">!=</span> <span class="s1">'[CLS]'</span><span class="p">:</span>
+        <span class="n">answer</span> <span class="o">+=</span> <span class="n">ans</span> <span class="o">+</span> <span class="s2">" / "</span>
+        
+<span class="nb">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3 . 7 m / 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Put-it-all-together">
+<a class="anchor" href="#Put-it-all-together" aria-hidden="true"><span class="octicon octicon-link"></span></a>Put it all together<a class="anchor-link" href="#Put-it-all-together"> </a>
+</h1>
+<p>Time to put it all together now. We're using <code>wikipedia</code>'s information retrieval system (search engine) to return a list of candidate documents that we then feed into our Document Reader (in this case, BERT fine-tuned on SQuAD 2.0). We'll now use <code>Streamlit</code> to create a simple interface for our app. In order to make the app code easier to read, we'll first package our Document Reader into a class.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForQuestionAnswering</span>
+
+
+<span class="k">class</span> <span class="nc">DocumentReader</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pretrained_model_name_or_path</span><span class="o">=</span><span class="s1">'bert-large-uncased'</span><span class="p">):</span> <span class="c1"># 'bert-base-uncased'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">READER_PATH</span> <span class="o">=</span> <span class="n">pretrained_model_name_or_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">READER_PATH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForQuestionAnswering</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">READER_PATH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_position_embeddings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunked</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">add_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunkify</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chunked</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">chunkify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">""" </span>
+<span class="sd">        Break up a long article into chunks that fit within the max token</span>
+<span class="sd">        requirement for that Transformer model. </span>
+
+<span class="sd">        Calls to BERT / RoBERTa / ALBERT require the following format:</span>
+<span class="sd">        [CLS] question tokens [SEP] context tokens [SEP]</span>
+<span class="sd">        """</span>
+        
+        <span class="c1"># TODO: generalize this because not all models include token_type_ids (distilBERT)</span>
+        <span class="c1"># create question mask based on token_type_ids</span>
+        <span class="c1"># value is 0 for question tokens, 1 for context tokens</span>
+        <span class="n">qmask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'token_type_ids'</span><span class="p">]</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">qt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">],</span> <span class="n">qmask</span><span class="p">)</span>
+        <span class="n">chunk_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span> <span class="o">-</span> <span class="n">qt</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># the "-1" accounts for</span>
+        <span class="c1"># having to add an ending [SEP] token to the end</span>
+
+        <span class="c1"># create a dict of dicts; each sub-dict mimics the structure of pre-chunked model input</span>
+        <span class="n">chunked_input</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">qmask</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">~</span><span class="n">qmask</span><span class="p">)</span>
+            <span class="n">chunks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunked_input</span><span class="p">:</span>
+                    <span class="n">chunked_input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="n">thing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">q</span><span class="p">,</span> <span class="n">chunk</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'input_ids'</span><span class="p">:</span>
+                        <span class="n">thing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">thing</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">102</span><span class="p">])))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">thing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">thing</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">])))</span>
+
+                <span class="n">chunked_input</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">chunked_input</span>
+
+    <span class="k">def</span> <span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunked</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="s1">''</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">chunk</span><span class="p">)</span>
+
+                <span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>
+                <span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="n">ans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_ids_to_string</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">ans</span> <span class="o">!=</span> <span class="s1">'[CLS]'</span><span class="p">:</span>
+                    <span class="n">answer</span> <span class="o">+=</span> <span class="n">ans</span> <span class="o">+</span> <span class="s2">" / "</span>
+            <span class="k">return</span> <span class="n">answer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+
+            <span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>  <span class="c1"># Get the most likely beginning of answer with the argmax of the score</span>
+            <span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Get the most likely end of answer with the argmax of the score</span>
+        
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_ids_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span>
+                                              <span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">convert_ids_to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span><span class="n">input_ids</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+<span class="n">MODEL_PATHS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'default_bert_base_uncased'</span><span class="p">:</span> <span class="s1">'bert-base-uncased'</span><span class="p">,</span>
+    <span class="s1">'bert_base_uncased_squad1'</span><span class="p">:</span>
+        <span class="n">cwd</span><span class="o">+</span><span class="s2">"/models/bert/bert-base-uncased-tuned-squad-1.0"</span><span class="p">,</span>
+    <span class="s1">'bert_base_cased_squad2'</span><span class="p">:</span>
+        <span class="n">cwd</span><span class="o">+</span><span class="s2">"/models/bert/bert-base-cased-tuned-squad-2.0/"</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">questions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'When was Barack Obama born?'</span><span class="p">,</span>
+    <span class="s1">'Why is the sky blue?'</span><span class="p">,</span>
+    <span class="s1">'How many sides does a pentagon have?'</span>
+<span class="p">]</span>
+
+<span class="n">reader</span> <span class="o">=</span> <span class="n">DocumentReader</span><span class="p">(</span><span class="s2">"deepset/bert-base-cased-squad2"</span><span class="p">)</span> 
+
+<span class="c1"># if you trained your own model using the training cell earlier you can access it with this:</span>
+<span class="c1">#reader = DocumentReader("./models/bert/bbu_squad2")</span>
+
+<span class="k">for</span> <span class="n">question</span> <span class="ow">in</span> <span class="n">questions</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+    <span class="n">page</span> <span class="o">=</span> <span class="n">wiki</span><span class="o">.</span><span class="n">page</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Top result: </span><span class="si">{</span><span class="n">page</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">content</span>
+
+    <span class="n">reader</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Question: </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">get_answer</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Top result: &lt;WikipediaPage 'Barack Obama Sr.'&gt;
+Question: When was Barack Obama born?
+18 June 1936 / August 1961 / 4 August 1961 / 6 May 2011 . = = See also = = Family / 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#hidden-cell</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"transformers.tokenization_utils"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Wrapping-Up">
+<a class="anchor" href="#Wrapping-Up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Wrapping Up<a class="anchor-link" href="#Wrapping-Up"> </a>
+</h1>
+<p>There we have it! A working QA system on Wikipedia articles. This is great but it's admittedly not very sophisticated. Furthermore there are still a lot of unanswered questions:</p>
+<ol>
+<li>Why the SQuAD dataset and not something else? What other options are there? </li>
+<li>Why did we train BERT the way we did? Are there ways to make it better? What's the "best" BERT can be? <ul>
+<li>should we train on more than just SQuAD? </li>
+<li>If so, what other datasets should we train on?</li>
+<li>How much does this increase performance? </li>
+</ul>
+</li>
+<li>Why BERT and not another Transformer model? <ul>
+<li>What's the difference between all these Transformer models anyway? </li>
+</ul>
+</li>
+<li>How can we make our <code>get_answer</code> method more sophisticated and realistic?</li>
+<li>How can we improve our <code>chunkify</code> method? </li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="How-to-train-Transformers-with-GPUs-from-your-jupyter-notebook">
+<a class="anchor" href="#How-to-train-Transformers-with-GPUs-from-your-jupyter-notebook" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to train Transformers with GPUs from your jupyter notebook<a class="anchor-link" href="#How-to-train-Transformers-with-GPUs-from-your-jupyter-notebook"> </a>
+</h2>
+<h2 id="How-to-make-sense-of-the-SQuAD-(and-other-QA)-datasets">
+<a class="anchor" href="#How-to-make-sense-of-the-SQuAD-(and-other-QA)-datasets" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to make sense of the SQuAD (and other QA) datasets<a class="anchor-link" href="#How-to-make-sense-of-the-SQuAD-(and-other-QA)-datasets"> </a>
+</h2>
+<h2 id="How-to-evaluate-a-Transformer-model-on-a-QA-dataset">
+<a class="anchor" href="#How-to-evaluate-a-Transformer-model-on-a-QA-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to evaluate a Transformer model on a QA dataset<a class="anchor-link" href="#How-to-evaluate-a-Transformer-model-on-a-QA-dataset"> </a>
+</h2>
+<h2 id="How-to-chose-the-right-Transformer-model-for-your-QA-system">
+<a class="anchor" href="#How-to-chose-the-right-Transformer-model-for-your-QA-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to chose the right Transformer model for your QA system<a class="anchor-link" href="#How-to-chose-the-right-Transformer-model-for-your-QA-system"> </a>
+</h2>
+<h2 id="How-to-create-your-own-QA-dataset">
+<a class="anchor" href="#How-to-create-your-own-QA-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to create your own QA dataset<a class="anchor-link" href="#How-to-create-your-own-QA-dataset"> </a>
+</h2>
+</div>
+</div>
+</div>
 </div>
 
 
