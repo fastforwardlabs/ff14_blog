@@ -110,7 +110,19 @@ window.onload = wrap_img;
     
       <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
       
-        <a class="category-tags-link" href="/categories/#PyTorch HuggingFace Wikipedia BERT Transformer">PyTorch HuggingFace Wikipedia BERT Transformer</a>
+        <a class="category-tags-link" href="/categories/#PyTorch">PyTorch</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#HuggingFace">HuggingFace</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Wikipedia">Wikipedia</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#BERT">BERT</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Transformers">Transformers</a>
         
       
       </p>
@@ -144,8 +156,9 @@ window.onload = wrap_img;
     <ul class="section-nav">
 <li class="toc-entry toc-h1"><a href="#So-you've-decided-to-build-a-QA-system.">So you&#39;ve decided to build a QA system. </a></li>
 <li class="toc-entry toc-h1"><a href="#Setting-up-your-virtual-environment">Setting up your virtual environment </a></li>
-<li class="toc-entry toc-h1"><a href="#HuggingFace-Transformers">HuggingFace Transformers </a></li>
-<li class="toc-entry toc-h1"><a href="#Fine-tuning-a-Transformer-model-for-Question-Answering">Fine-tuning a Transformer model for Question Answering </a>
+<li class="toc-entry toc-h1"><a href="#HuggingFace-Transformers">HuggingFace Transformers </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#Fine-tuning-a-Transformer-model-for-Question-Answering">Fine-tuning a Transformer model for Question Answering </a>
 <ul>
 <li class="toc-entry toc-h3"><a href="#1.-Pick-a-Model">1. Pick a Model </a></li>
 <li class="toc-entry toc-h3"><a href="#2.-QA-dataset:-SQuAD">2. QA dataset: SQuAD </a></li>
@@ -153,10 +166,12 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h3"><a href="#Training-Output">Training Output </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h1"><a href="#Using-a-pre-fine-tuned-model-from-the-Hugging-Face-repository">Using a pre-fine-tuned model from the Hugging Face repository </a></li>
-<li class="toc-entry toc-h1"><a href="#Let's-try-our-model!">Let&#39;s try our model! </a></li>
+<li class="toc-entry toc-h2"><a href="#Using-a-pre-fine-tuned-model-from-the-Hugging-Face-repository">Using a pre-fine-tuned model from the Hugging Face repository </a></li>
+<li class="toc-entry toc-h2"><a href="#Let's-try-our-model!">Let&#39;s try our model! </a></li>
+</ul>
+</li>
 <li class="toc-entry toc-h1"><a href="#QA-on-Wikipedia-pages">QA on Wikipedia pages </a></li>
-<li class="toc-entry toc-h1"><a href="#Put-it-all-together">Put it all together </a></li>
+<li class="toc-entry toc-h1"><a href="#Putting-it-all-together">Putting it all together </a></li>
 <li class="toc-entry toc-h1"><a href="#Wrapping-Up">Wrapping Up </a></li>
 </ul><!--
 #################################################
@@ -177,14 +192,14 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="/images/copied_from_nb/my_icons/markus-spiske-C0koz3G1I4I-unsplash.jpg" alt=""></p>
+<p><img src="/images/copied_from_nb/my_icons/markus-spiske-C0koz3G1I4I-unsplash.jpg" alt="" title="Image by Markus Spiske at Unsplash.com"></p>
 <h1 id="So-you've-decided-to-build-a-QA-system.">
 <a class="anchor" href="#So-you've-decided-to-build-a-QA-system." aria-hidden="true"><span class="octicon octicon-link"></span></a>So you've decided to build a QA system.<a class="anchor-link" href="#So-you've-decided-to-build-a-QA-system."> </a>
 </h1>
 <p>You want to start with something simple and general so you plan to make it open domain using Wikipedia as a corpus for answering questions. You want to use the best NLP that your compute resources allow (you're lucky enough to have access to a GPU) so you're going to focus on the big, flashy Transformer models that are all the rage these days.</p>
 <p>Sounds like you're building an IR-based QA system. In our previous post (<a href="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html">Intro to Automated Question Answering</a>), we covered the general design of these systems, which typically require two main components: the document retriever (a search engine) that selects the <em>n</em> most relevant documents from a large collection; and a document reader that processes these candidate documents in search of an explicit answer span.</p>
 <p><img src="/images/copied_from_nb/my_icons/QAworkflow.png" alt="" title="IR-based automated question anwering workflow"></p>
-<p>In this post we'll build such a QA system. This post is chock full of code that demonstrates and explains our approach. We'll also highlight and clarify powerful resources, including off-the-shelf models and libraries, that you can use to quickly get going. We'll cover all the necessary steps including:</p>
+<p>This time we'll build this type of QA system! This post is chock full of code that walks through our approach. We'll also highlight and clarify powerful resources, including off-the-shelf models and libraries, that you can use to quickly get going on a QA system of your own. We'll cover all the necessary steps including:</p>
 <ul>
 <li>installing libraries and setting up an environment</li>
 <li>training a Transformer style model on the SQuAD dataset</li>
@@ -192,7 +207,8 @@ window.onload = wrap_img;
 <li>passing a full Wikipedia article as context for a question</li>
 </ul>
 <p>By the end of this post we'll have a working IR-based QA system with BERT as the document reader and Wikipedia's search engine as the document retriever - a fun toy model that that hints at potential real-world use cases.</p>
-<p>This article was originally developed in a Jupyter Notebook and, thanks to <a href="https://fastpages.fast.ai/">fastpages</a>, converted into a blog post. Clicking the "launch binder" button above will open an interactive notebook. Let's get started!</p>
+<p>This article was originally developed in a Jupyter Notebook and, thanks to <a href="https://fastpages.fast.ai/">fastpages</a>, converted to a blog post. Clicking the "launch binder" button above will open an interactive notebook.</p>
+<p>Let's get started!</p>
 <h1 id="Setting-up-your-virtual-environment">
 <a class="anchor" href="#Setting-up-your-virtual-environment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up your virtual environment<a class="anchor-link" href="#Setting-up-your-virtual-environment"> </a>
 </h1>
@@ -267,9 +283,9 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Fine-tuning-a-Transformer-model-for-Question-Answering">
+<h2 id="Fine-tuning-a-Transformer-model-for-Question-Answering">
 <a class="anchor" href="#Fine-tuning-a-Transformer-model-for-Question-Answering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fine-tuning a Transformer model for Question Answering<a class="anchor-link" href="#Fine-tuning-a-Transformer-model-for-Question-Answering"> </a>
-</h1>
+</h2>
 <p>To train a Transformer for QA with Hugging Face we'll need</p>
 <ol>
 <li>to pick a specific model architecture</li>
@@ -404,10 +420,12 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
                                                        <span class="c1"># for instance, when training crashes midway through and you need to restart it</span>
     
     <span class="s1">'--do_train'</span><span class="p">,</span>                                      <span class="c1"># execute the training method </span>
+    
     <span class="s1">'--train_file'</span><span class="p">,</span> <span class="s1">'$DATA_DIR/train-v2.0.json'</span><span class="p">,</span>       <span class="c1"># provide the training data</span>
     
     <span class="s1">'--version_2_with_negative'</span><span class="p">,</span>                       <span class="c1"># ** MUST use this flag if training on SQuAD 2.0! DO NOT use if training on SQuAD 1.1</span>
-    <span class="s1">'--do_lower_case'</span><span class="p">,</span>                                 <span class="c1"># ** Set this flag if using an uncased model</span>
+    
+    <span class="s1">'--do_lower_case'</span><span class="p">,</span>                                 <span class="c1"># ** Set this flag if using an uncased model; don't use for Cased Models</span>
     
     <span class="s1">'--do_eval'</span><span class="p">,</span>                                       <span class="c1"># execute the evaluation method on the dev set -- note: </span>
                                                        <span class="c1"># if coupled with --do_train, evaluation runs after fine-tuning </span>
@@ -416,16 +434,23 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
     
     <span class="s1">'--eval_all_checkpoints'</span><span class="p">,</span>                          <span class="c1"># evaluate the model on the dev set at each checkpoint</span>
     
-    <span class="c1"># Model Hyperparameters</span>
-    <span class="s1">'--num_train_epochs'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span>                         <span class="c1"># number of training epochs - usually 2-3 for SQuAD </span>
-    <span class="s1">'--learning_rate'</span><span class="p">,</span> <span class="s1">'3e-5'</span><span class="p">,</span>                         <span class="c1"># learning rate for the default optimizer (Adam in this case)</span>
-    <span class="s1">'--max_seq_length'</span><span class="p">,</span> <span class="s1">'384'</span><span class="p">,</span>                         <span class="c1"># maximum length allowed for the input sequence </span>
-    <span class="s1">'--doc_stride'</span><span class="p">,</span> <span class="s1">'128'</span><span class="p">,</span>                             <span class="c1"># </span>
     <span class="s1">'--per_gpu_eval_batch_size'</span><span class="p">,</span> <span class="s1">'12'</span><span class="p">,</span>                 <span class="c1"># evaluation batch size for each gpu</span>
+    
     <span class="s1">'--per_gpu_train_batch_size'</span><span class="p">,</span> <span class="s1">'12'</span><span class="p">,</span>                <span class="c1"># training batch size for each gpu</span>
     
     <span class="s1">'--save_steps'</span><span class="p">,</span> <span class="s1">'10000'</span><span class="p">,</span>                           <span class="c1"># How often checkpoints (complete model snapshot) are saved </span>
+    
     <span class="s1">'--threads'</span><span class="p">,</span> <span class="s1">'8'</span>                                   <span class="c1"># num of CPU threads to use for converting SQuAD examples to model features</span>
+    
+    <span class="c1"># --- Model and Feature Hyperparameters --- </span>
+    <span class="s1">'--num_train_epochs'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span>                         <span class="c1"># number of training epochs - usually 2-3 for SQuAD </span>
+    
+    <span class="s1">'--learning_rate'</span><span class="p">,</span> <span class="s1">'3e-5'</span><span class="p">,</span>                         <span class="c1"># learning rate for the default optimizer (Adam in this case)</span>
+    
+    <span class="s1">'--max_seq_length'</span><span class="p">,</span> <span class="s1">'384'</span><span class="p">,</span>                         <span class="c1"># maximum length allowed for the input sequence </span>
+    
+    <span class="s1">'--doc_stride'</span><span class="p">,</span> <span class="s1">'128'</span><span class="p">,</span>                             <span class="c1"># Used for long documents that must be chunked into multiple features -- </span>
+                                                       <span class="c1"># this "sliding window" controls the amount of stride between chunks</span>
 <span class="p">]</span>
 </pre></div>
 
@@ -574,9 +599,9 @@ python run_squad.py  <span class="se">\</span>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Using-a-pre-fine-tuned-model-from-the-Hugging-Face-repository">
+<h2 id="Using-a-pre-fine-tuned-model-from-the-Hugging-Face-repository">
 <a class="anchor" href="#Using-a-pre-fine-tuned-model-from-the-Hugging-Face-repository" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using a pre-fine-tuned model from the Hugging Face repository<a class="anchor-link" href="#Using-a-pre-fine-tuned-model-from-the-Hugging-Face-repository"> </a>
-</h1>
+</h2>
 <p>If you don't have access to GPUs or don't have the time to fiddle and train models, you're in luck! Hugging Face is more than a collection of slick Transformer classes -- it also hosts <a href="https://huggingface.co/models">a repository</a> for pre-trained and fine-tuned models contributed from the wide community of NLP practitioners. Searching for "squad" brings up at least 55 models.</p>
 <p><img src="/images/copied_from_nb/my_icons/HF_repo.png" alt=""></p>
 <p>Clicking one of these links gives explicit code for using the model, and, in some cases, information on how it was trained and what results were achieved. Let's load one of these pre-fine-tuned models.</p>
@@ -610,9 +635,9 @@ python run_squad.py  <span class="se">\</span>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Let's-try-our-model!">
+<h2 id="Let's-try-our-model!">
 <a class="anchor" href="#Let's-try-our-model!" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let's try our model!<a class="anchor-link" href="#Let's-try-our-model!"> </a>
-</h1>
+</h2>
 <p>Whether you fine-tuned your own or used a pre-fine-tuned model, it's time to play with it! There are three steps to QA:</p>
 <ol>
 <li>tokenize the input</li>
@@ -974,8 +999,8 @@ Number of tokens in chunk 17: 341
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Put-it-all-together">
-<a class="anchor" href="#Put-it-all-together" aria-hidden="true"><span class="octicon octicon-link"></span></a>Put it all together<a class="anchor-link" href="#Put-it-all-together"> </a>
+<h1 id="Putting-it-all-together">
+<a class="anchor" href="#Putting-it-all-together" aria-hidden="true"><span class="octicon octicon-link"></span></a>Putting it all together<a class="anchor-link" href="#Putting-it-all-together"> </a>
 </h1>
 <p>Let's recap. We've essentially built a simple IR-based QA system! We're using <code>wikipedia</code>'s search engine to return a list of candidate documents that we then feed into our Document Reader (in this case, BERT fine-tuned on SQuAD 2.0).  Let's make our code easier to read and more self-contained by packaging the Document Reader into a class.</p>
 
@@ -1191,7 +1216,7 @@ Answer: five /
 <h1 id="Wrapping-Up">
 <a class="anchor" href="#Wrapping-Up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Wrapping Up<a class="anchor-link" href="#Wrapping-Up"> </a>
 </h1>
-<p>There we have it! A working QA system on Wikipedia articles. This is great but it's admittedly not very sophisticated. Furthermore, I've left a lot of questions unanswered:</p>
+<p>There we have it! A working QA system on Wikipedia articles. This is great but it's admittedly not very sophisticated. Furthermore, we've left a lot of questions unanswered:</p>
 <ol>
 <li>Why the SQuAD dataset and not something else? What other options are there? </li>
 <li>We used default hyperparameters to fine-tune BERT but could we have done better? How good can BERT get? And how do we define "good"?</li>
