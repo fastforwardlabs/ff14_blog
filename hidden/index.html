@@ -163,7 +163,7 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h3"><a href="#1.-Pick-a-Model">1. Pick a Model </a></li>
 <li class="toc-entry toc-h3"><a href="#2.-QA-dataset:-SQuAD">2. QA dataset: SQuAD </a></li>
 <li class="toc-entry toc-h3"><a href="#3.-Fine-tuning-script">3. Fine-tuning script </a></li>
-<li class="toc-entry toc-h3"><a href="#Training-requirements">Training requirements </a>
+<li class="toc-entry toc-h3"><a href="#Time-to-train!">Time to train! </a>
 <ul>
 <li class="toc-entry toc-h4"><a href="#Training-on-the-command-line">Training on the command line </a></li>
 <li class="toc-entry toc-h4"><a href="#Training-in-Colab">Training in Colab </a></li>
@@ -320,10 +320,11 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 </h2>
 <p>To train a Transformer for QA with Hugging Face we'll need</p>
 <ol>
-<li>to pick a specific model architecture</li>
-<li>a QA dataset</li>
-<li>the training script</li>
+<li>to pick a specific model architecture,</li>
+<li>a QA dataset, and</li>
+<li>the training script.</li>
 </ol>
+<p>With these three things in hand we'll then walk through the fine-tuning process.</p>
 <h3 id="1.-Pick-a-Model">
 <a class="anchor" href="#1.-Pick-a-Model" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Pick a Model<a class="anchor-link" href="#1.-Pick-a-Model"> </a>
 </h3>
@@ -534,10 +535,11 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <li>Dev features are also saved to a cache file</li>
 <li>Evaluation commences and outputs a dizzying assortment of performance scores</li>
 </ol>
-<h3 id="Training-requirements">
-<a class="anchor" href="#Training-requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training requirements<a class="anchor-link" href="#Training-requirements"> </a>
+<h3 id="Time-to-train!">
+<a class="anchor" href="#Time-to-train!" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time to train!<a class="anchor-link" href="#Time-to-train!"> </a>
 </h3>
-<p>The following cells demonstrate two ways to fine-tune: on the command line and in a Colab notebook. We don't recommend fine-tuning a Transformer model unless you're rocking at least one GPU and a considerable amount of RAM. For context, our GPU is several years old (GeForce GTX TITAN X) and while it's not nearly as fast as the Tesla V100 (the current cadillac of GPUs) it gets the job done. Fine-tuning <code>bert-base-uncased</code> takes about 1.75 hours <em>per epoch</em>. Additionally, our workhorse machine has 16GB of RAM which is sufficient to train most models on either of the SQuAD datasets.</p>
+<p>But first, a note on compute requirements. We don't recommend fine-tuning a Transformer model unless you're rocking at least one GPU and a considerable amount of RAM. For context, our GPU is several years old (GeForce GTX TITAN X) and while it's not nearly as fast as the Tesla V100 (the current cadillac of GPUs) it gets the job done. Fine-tuning <code>bert-base-uncased</code> takes about 1.75 hours <em>per epoch</em>. Additionally, our workhorse machine has 32GB CPU and 12GB GPU memory which is sufficient for data processing and training most models on either of the SQuAD datasets.</p>
+<p>The following cells demonstrate two ways to fine-tune: on the command line and in a Colab notebook.</p>
 
 </div>
 </div>
@@ -587,7 +589,7 @@ python run_squad.py  <span class="se">\</span>
 <h4 id="Training-in-Colab">
 <a class="anchor" href="#Training-in-Colab" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training in Colab<a class="anchor-link" href="#Training-in-Colab"> </a>
 </h4>
-<p>Alternatively, you can execute training in the cell as shown below. Standard Colab environments only provide 12GB of RAM. Converting the SQuAD dataset to features is memory intensive and crashes the basic Colab environment. If you have a Colab instance with additional memory capacity (16GB+), this cell should work! Otherwise, skip it. In the next section we'll download a model that has already been fine-tuned.</p>
+<p>Alternatively, you can execute training in the cell as shown below, however, standard Colab environments only provide 12GB of RAM. Converting the SQuAD dataset to features is memory intensive and crashes the basic Colab environment. If you have a Colab instance with additional memory capacity (16GB+), this cell should work! Otherwise, skip it. In the next section we'll download a model that has already been fine-tuned.</p>
 
 </div>
 </div>
@@ -659,7 +661,7 @@ python run_squad.py  <span class="se">\</span>
 <li>
 <code>nbest_predictions_.json</code>: the top n best answers for each example</li>
 </ul>
-<p>Providing the path to this directory to <code>AutoModel</code> or <code>AutoModelForQuestionAnswering</code> will load your fine-tuned model for use.</p>
+<p>Providing the path to this directory to <code>AutoModel</code> or <code>AutoModelForQuestionAnswering</code> will load `pytorchyour fine-tuned model for use.</p>
 
 </div>
 </div>
