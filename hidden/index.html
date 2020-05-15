@@ -13,9 +13,9 @@
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-05-13T00:00:00-05:00" />
+<meta property="article:published_time" content="2020-05-14T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","headline":"Building a QA System with BERT on Wikipedia","dateModified":"2020-05-13T00:00:00-05:00","datePublished":"2020-05-13T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+{"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","headline":"Building a QA System with BERT on Wikipedia","dateModified":"2020-05-14T00:00:00-05:00","datePublished":"2020-05-14T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
 
@@ -34,9 +34,9 @@
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-05-13T00:00:00-05:00" />
+<meta property="article:published_time" content="2020-05-14T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","headline":"Building a QA System with BERT on Wikipedia","dateModified":"2020-05-13T00:00:00-05:00","datePublished":"2020-05-13T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+{"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","headline":"Building a QA System with BERT on Wikipedia","dateModified":"2020-05-14T00:00:00-05:00","datePublished":"2020-05-14T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
@@ -97,8 +97,8 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Building a QA System with BERT on Wikipedia</h1><p class="page-description">A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-13T00:00:00-05:00" itemprop="datePublished">
-        May 13, 2020
+    <h1 class="post-title p-name" itemprop="name headline">Building a QA System with BERT on Wikipedia</h1><p class="page-description">A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-14T00:00:00-05:00" itemprop="datePublished">
+        May 14, 2020
       </time>
        • <span class="read-time" title="Estimated read time">
     
@@ -218,7 +218,7 @@ window.onload = wrap_img;
 <h1 id="Setting-up-your-virtual-environment">
 <a class="anchor" href="#Setting-up-your-virtual-environment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up your virtual environment<a class="anchor-link" href="#Setting-up-your-virtual-environment"> </a>
 </h1>
-<p>A virtual environment is always best practice and we're using <code>venv</code> (though I'm also partial to <code>conda</code>) on our workhorse machine. For this project we'll be using PyTorch, which handles the heavy lifting of deep differentiable learning. If you have a GPU you'll want a PyTorch build that includes CUDA support, however, most cells in this notebook will work without a GPU. Check out <a href="https://pytorch.org/">PyTorch's quick install guide</a> to determine the best build for your GPU and OS. We'll also be using the <a href="https://huggingface.co/transformers/index.html">Transformers</a> libarary, which provides easy-to-use implementations of all the popular Transformer architectures, like BERT. Finally, we'll need the <a href="https://pypi.org/project/wikipedia/">wikipedia</a> library for easy access and parsing of Wikipedia pages.</p>
+<p>A virtual environment is always best practice and we're using <code>venv</code> on our workhorse machine. For this project we'll be using PyTorch, which handles the heavy lifting of deep differentiable learning. If you have a GPU you'll want a PyTorch build that includes CUDA support, though most cells in this notebook will work fine without one. Check out <a href="https://pytorch.org/">PyTorch's quick install guide</a> to determine the best build for your GPU and OS. We'll also be using the <a href="https://huggingface.co/transformers/index.html">Transformers</a> libarary, which provides easy-to-use implementations of all the popular Transformer architectures, like BERT. Finally, we'll need the <a href="https://pypi.org/project/wikipedia/">wikipedia</a> library for easy access and parsing of Wikipedia pages.</p>
 
 </div>
 </div>
@@ -328,7 +328,7 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <h3 id="1.-Pick-a-Model">
 <a class="anchor" href="#1.-Pick-a-Model" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Pick a Model<a class="anchor-link" href="#1.-Pick-a-Model"> </a>
 </h3>
-<p>Not every Transformer architecture lends itself naturally to the task of question answering. For example, GPT does not do QA; similarly BERT does not do machine translation!  HF identify the following model types for the QA task:</p>
+<p>Not every Transformer architecture lends itself naturally to the task of question answering. For example, GPT does not do QA; similarly BERT does not do machine translation.  HF identify the following model types for the QA task:</p>
 <ul>
 <li>BERT</li>
 <li>distilBERT </li>
@@ -447,7 +447,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This script takes care of all the hard work that goes into fine-tuning a model and as such, it's pretty complicated. It hosts no fewer than 45 arguments, providing an impressive amount of flexibility and utility for those who do a lot of training. While the details of this script will have to be left for another day, for now we'll walk through the basic command to fine-tune BERT on SQuAD 1.1 or 2.0. Below are the most important arguments for the <code>run_squad.py</code> fine-tuning script.</p>
+<p>This script takes care of all the hard work that goes into fine-tuning a model and as such, it's pretty complicated. It hosts no fewer than 45 arguments, providing an impressive amount of flexibility and utility for those who do a lot of training. We'll leave the details of this script for another day, and focus instead on the basic command to fine-tune BERT on SQuAD 1.1 or 2.0. Below are the most important arguments for the <code>run_squad.py</code> fine-tuning script.</p>
 
 </div>
 </div>
@@ -497,9 +497,9 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
     
     <span class="s1">'--per_gpu_train_batch_size'</span><span class="p">,</span> <span class="s1">'12'</span><span class="p">,</span>                <span class="c1"># training batch size for each gpu</span>
     
-    <span class="s1">'--save_steps'</span><span class="p">,</span> <span class="s1">'5000'</span><span class="p">,</span>                           <span class="c1"># How often checkpoints (complete model snapshot) are saved </span>
+    <span class="s1">'--save_steps'</span><span class="p">,</span> <span class="s1">'5000'</span><span class="p">,</span>                            <span class="c1"># How often checkpoints (complete model snapshot) are saved </span>
     
-    <span class="s1">'--threads'</span><span class="p">,</span> <span class="s1">'8'</span>                                   <span class="c1"># num of CPU threads to use for converting SQuAD examples to model features</span>
+    <span class="s1">'--threads'</span><span class="p">,</span> <span class="s1">'8'</span><span class="p">,</span>                                  <span class="c1"># num of CPU threads to use for converting SQuAD examples to model features</span>
     
     <span class="c1"># --- Model and Feature Hyperparameters --- </span>
     <span class="s1">'--num_train_epochs'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span>                         <span class="c1"># number of training epochs - usually 2-3 for SQuAD </span>
@@ -508,7 +508,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
     
     <span class="s1">'--max_seq_length'</span><span class="p">,</span> <span class="s1">'384'</span><span class="p">,</span>                         <span class="c1"># maximum length allowed for the full input sequence </span>
     
-    <span class="s1">'--doc_stride'</span><span class="p">,</span> <span class="s1">'128'</span><span class="p">,</span>                             <span class="c1"># Used for long documents that must be chunked into multiple features -- </span>
+    <span class="s1">'--doc_stride'</span><span class="p">,</span> <span class="s1">'128'</span>                              <span class="c1"># Used for long documents that must be chunked into multiple features -- </span>
                                                        <span class="c1"># this "sliding window" controls the amount of stride between chunks</span>
 <span class="p">]</span>
 </pre></div>
@@ -525,15 +525,14 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here's what to expect when executing <code>run_squad.py</code> for the first time:</p>
 <ol>
-<li>Pre-trained model weights for the specified model type (i.e., <code>bert-base-uncased</code>) are downloaded</li>
-<li>SQuAD training examples are converted into features (takes 15-30 minutes depending on dataset size and number of threads)</li>
-<li>Training features are saved to a cache file (so that you don't have to do this again <em>for this model type</em>)</li>
-<li>If <code>--do_train</code>, training commences for as many epochs as you specify, saving the model weights every <code>--save_steps</code> steps until training finishes</li>
-<li>The final model weights and peripheral files are saved to <code>--output_dir</code>
-</li>
-<li>If <code>--do_eval</code>, SQuAD dev examples are converted into features</li>
-<li>Dev features are also saved to a cache file</li>
-<li>Evaluation commences and outputs a dizzying assortment of performance scores</li>
+<li>Pre-trained model weights for the specified model type (i.e., <code>bert-base-uncased</code>) are downloaded.</li>
+<li>SQuAD training examples are converted into features (takes 15-30 minutes depending on dataset size and number of threads).</li>
+<li>Training features are saved to a cache file (so that you don't have to do this again <em>for this model type</em>).</li>
+<li>If <code>--do_train</code>, training commences for as many epochs as you specify, saving the model weights every <code>--save_steps</code> steps until training finishes. These checkpoints are saved in <code>[--output_dir]/checkpoint-[step number]</code> subdirectories.</li>
+<li>The final model weights and peripheral files are saved to <code>--output_dir</code>.</li>
+<li>If <code>--do_eval</code>, SQuAD dev examples are converted into features.</li>
+<li>Dev features are also saved to a cache file.</li>
+<li>Evaluation commences and outputs a dizzying assortment of performance scores.</li>
 </ol>
 <h3 id="Time-to-train!">
 <a class="anchor" href="#Time-to-train!" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time to train!<a class="anchor-link" href="#Time-to-train!"> </a>
@@ -564,19 +563,22 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 python run_squad.py  <span class="se">\</span>
     --model_type bert   <span class="se">\</span>
     --model_name_or_path bert-base-uncased  <span class="se">\</span>
-    --output_dir <span class="nv">$MODEL_DIR</span>/bert/bbu_squad2/ <span class="se">\</span>
+    --output_dir models/bert/ <span class="se">\</span>
+    --data_dir data/squad   <span class="se">\</span>
     --overwrite_output_dir <span class="se">\</span>
+    --overwrite_cache <span class="se">\</span>
     --do_train  <span class="se">\</span>
-    --train_file <span class="nv">$DATA_DIR</span>/train-v2.0.json   <span class="se">\</span>
+    --train_file train-v2.0.json   <span class="se">\</span>
     --version_2_with_negative <span class="se">\</span>
     --do_lower_case  <span class="se">\</span>
     --do_eval   <span class="se">\</span>
-    --predict_file <span class="nv">$DATA_DIR</span>/dev-v2.0.json   <span class="se">\</span>
-    --per_gpu_train_batch_size <span class="m">12</span>   <span class="se">\</span>
+    --predict_file dev-v2.0.json   <span class="se">\</span>
+    --per_gpu_train_batch_size <span class="m">2</span>   <span class="se">\</span>
     --learning_rate 3e-5   <span class="se">\</span>
     --num_train_epochs <span class="m">2</span>.0   <span class="se">\</span>
     --max_seq_length <span class="m">384</span>   <span class="se">\</span>
     --doc_stride <span class="m">128</span>   <span class="se">\</span>
+    --threads <span class="m">10</span>   <span class="se">\</span>
     --save_steps <span class="m">5000</span>
 </pre></div>
 
@@ -589,7 +591,7 @@ python run_squad.py  <span class="se">\</span>
 <h4 id="Training-in-Colab">
 <a class="anchor" href="#Training-in-Colab" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training in Colab<a class="anchor-link" href="#Training-in-Colab"> </a>
 </h4>
-<p>Alternatively, you can execute training in the cell as shown below, however, standard Colab environments only provide 12GB of RAM. Converting the SQuAD dataset to features is memory intensive and crashes the basic Colab environment. If you have a Colab instance with additional memory capacity (16GB+), this cell should work! Otherwise, skip it. In the next section we'll download a model that has already been fine-tuned.</p>
+<p>Alternatively, you can execute training in the cell as shown below. We note that standard Colab environments only provide 12GB of RAM. Converting the SQuAD dataset to features is memory intensive and may cause the basic Colab environment to fail silently. If you have a Colab instance with additional memory capacity (16GB+), this cell should execute fully. Either way, in the next section we'll download a model that has already been fine-tuned.</p>
 
 </div>
 </div>
@@ -646,7 +648,7 @@ python run_squad.py  <span class="se">\</span>
 <p>Files for the model itself:</p>
 <ul>
 <li>
-<code>pytorch_model.bin</code>: these are the actual model weights (this file can be quite large)</li>
+<code>pytorch_model.bin</code>: these are the actual model weights (this file can be several GB for some models)</li>
 <li>
 <code>config.json</code>: details of the model architecture</li>
 </ul>
@@ -661,7 +663,7 @@ python run_squad.py  <span class="se">\</span>
 <li>
 <code>nbest_predictions_.json</code>: the top n best answers for each example</li>
 </ul>
-<p>Providing the path to this directory to <code>AutoModel</code> or <code>AutoModelForQuestionAnswering</code> will load `pytorchyour fine-tuned model for use.</p>
+<p>Providing the path to this directory to <code>AutoModel</code> or <code>AutoModelForQuestionAnswering</code> will load your fine-tuned model for use.</p>
 
 </div>
 </div>
@@ -804,7 +806,7 @@ python run_squad.py  <span class="se">\</span>
 <h1 id="QA-on-Wikipedia-pages">
 <a class="anchor" href="#QA-on-Wikipedia-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>QA on Wikipedia pages<a class="anchor-link" href="#QA-on-Wikipedia-pages"> </a>
 </h1>
-<p>We tried our model on a question paired with a short passage. But what if we want to search for answers in longer documents? A typical Wikipedia page is much longer than the example above and we need to do a bit of massaging before we can use our model on longer contexts.</p>
+<p>We tried our model on a question paired with a short passage, but what if we want to retrieve an answer from a longer document? A typical Wikipedia page is much longer than the example above and we need to do a bit of massaging before we can use our model on longer contexts.</p>
 <p>Let's start by pulling up a Wikipedia page.</p>
 
 </div>
@@ -1295,7 +1297,7 @@ Answer: five /
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We got 2 out of 3 questions right!</p>
-<p>Notice that, at least for the current questions I've chosen, the QA systems fails not because of BERT but because of  Wikipedia's default search engine! It pulls up the wrong page for two of our questions: a page about Barack Obama Sr. instead of the former US President, and an article about the US's Dept of Defense building "The Pentagon" instead of a page about geometry. In the latter case we ended up with the correct answer by coincidence! This illustrates that any successful IR-based QA system requires a search engine (document retriever) as good as the document reader.</p>
+<p>Notice that, at least for the current questions I've chosen, the QA systems fails because of Wikipedia's default search engine, not BERT! It pulls up the wrong page for two of our questions: a page about Barack Obama Sr. instead of the former US President, and an article about the US's Dept of Defense building "The Pentagon" instead of a page about geometry. In the latter case we ended up with the correct answer by coincidence! This illustrates that any successful IR-based QA system requires a search engine (document retriever) as good as the document reader.</p>
 
 </div>
 </div>
