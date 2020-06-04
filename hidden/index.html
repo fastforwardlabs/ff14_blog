@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Everything you (n)ever wanted to know about SQuAD evaluation | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Everything you (n)ever wanted to know about SQuAD evaluation" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A deep dive into computing QA predictions and evaluating a model on SQuAD2.0" />
+<meta property="og:description" content="A deep dive into computing QA predictions and evaluating a model on SQuAD2.0" />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-09T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"A deep dive into computing QA predictions and evaluating a model on SQuAD2.0","@type":"BlogPosting","headline":"Everything you (n)ever wanted to know about SQuAD evaluation","dateModified":"2020-06-09T00:00:00-05:00","datePublished":"2020-06-09T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Everything you (n)ever wanted to know about SQuAD evaluation | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Everything you (n)ever wanted to know about SQuAD evaluation" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A deep dive into computing QA predictions and evaluating a model on SQuAD2.0" />
+<meta property="og:description" content="A deep dive into computing QA predictions and evaluating a model on SQuAD2.0" />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-09T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"A deep dive into computing QA predictions and evaluating a model on SQuAD2.0","@type":"BlogPosting","headline":"Everything you (n)ever wanted to know about SQuAD evaluation","dateModified":"2020-06-09T00:00:00-05:00","datePublished":"2020-06-09T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">NLP for Question Answering</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Us</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Everything you (n)ever wanted to know about SQuAD evaluation</h1><p class="page-description">A deep dive into computing QA predictions and evaluating a model on SQuAD2.0</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-09T00:00:00-05:00" itemprop="datePublished">
+        Jun 9, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      22 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#PyTorch">PyTorch</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Hugging Face">Hugging Face</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Wikipedia">Wikipedia</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#BERT">BERT</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Transformers">Transformers</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/fastforwardlabs/ff14_blog/tree/master/_notebooks/2020-06-09-Evaluating_BERT_on_SQuAD.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/fastforwardlabs/ff14_blog/master?filepath=_notebooks%2F2020-06-09-Evaluating_BERT_on_SQuAD.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/fastforwardlabs/ff14_blog/blob/master/_notebooks/2020-06-09-Evaluating_BERT_on_SQuAD.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h3"><a href="#Prerequisites:">Prerequisites: </a></li>
+<li class="toc-entry toc-h3"><a href="#What-you'll-learn">What you&#39;ll learn </a></li>
+<li class="toc-entry toc-h3"><a href="#Walk-through-the-process:">Walk through the process: </a></li>
+<li class="toc-entry toc-h1"><a href="#Answering-Questions-is-hard">Answering Questions is hard </a></li>
+<li class="toc-entry toc-h1"><a href="#More-about-SQuAD">More about SQuAD </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Load-the-SQuAD-2.0-dev-set-using-HF-data-processors">Load the SQuAD 2.0 dev set using HF data processors </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#A-SQuAD-example">A SQuAD example </a></li>
+<li class="toc-entry toc-h4"><a href="#A-SQuAD-negative-example">A SQuAD negative example </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Metrics-for-QA">Metrics for QA </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Exact-Match">Exact Match </a></li>
+<li class="toc-entry toc-h3"><a href="#F1">F1 </a></li>
+<li class="toc-entry toc-h3"><a href="#Load-a-Transformer-model-fine-tuned-on-SQuAD-2.0">Load a Transformer model fine-tuned on SQuAD 2.0 </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Evaluating-a-model-on-the-squad-dev-set">Evaluating a model on the squad dev set </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Computing-predictions">Computing predictions </a></li>
+<li class="toc-entry toc-h3"><a href="#So-what?">So what? </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-09-Evaluating_BERT_on_SQuAD.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Prerequisites:">
+<a class="anchor" href="#Prerequisites:" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites:<a class="anchor-link" href="#Prerequisites:"> </a>
+</h3>
+<p>(See our previous post XXX)</p>
+<ul>
+<li>A basic understanding of Transformers and PyTorch</li>
+<li>A Transformer fine-tuned on squad (preferably on squad2.0)</li>
+<li>The SQuAD dev set</li>
+</ul>
+<h3 id="What-you'll-learn">
+<a class="anchor" href="#What-you'll-learn" aria-hidden="true"><span class="octicon octicon-link"></span></a>What you'll learn<a class="anchor-link" href="#What-you'll-learn"> </a>
+</h3>
+<ol>
+<li>how to evaluate bert on squad</li>
+<li>metrics for evaluating qa </li>
+<li>How to handle the Null Response -- when a question doesn't have answer in the passage</li>
+<li>Implementing a more robust answering method for your QA system</li>
+</ol>
+<h3 id="Walk-through-the-process:">
+<a class="anchor" href="#Walk-through-the-process:" aria-hidden="true"><span class="octicon octicon-link"></span></a>Walk through the process:<a class="anchor-link" href="#Walk-through-the-process:"> </a>
+</h3>
+<ol>
+<li>Overview of the squad 2.0 dev set</li>
+<li>Overview of the EM and F1 metrics</li>
+<li>Evaluating a model on the squad dev set and understanding the outputs<ol>
+<li>preds and nbest_preds</li>
+<li>the null_odds json</li>
+</ol>
+</li>
+<li>Using the null_odds json to determine the best null answer threshold<ol>
+<li>wait, what? </li>
+<li>visualizing the null answer PR curve</li>
+</ol>
+</li>
+<li>Implementing a more robust get_answer() method<ol>
+<li>checks to prevent impossible answers</li>
+<li>finds one answer for examples that are parsed into multiple features</li>
+<li>allows for null response</li>
+</ol>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForQuestionAnswering</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In our last post <a href="https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html">Building a QA System with BERT on Wikipedia</a> we used the HuggingFace framework to train BERT on the SQuAD dataset and built a simple QA system on top of the Wikipedia search engine. This time, we'll look at the quality of BERT for Question Answering. We'll cover what metrics are used to quantify quality, how to evaluate BERT with the HuggingFace framework and how to incorporate the "null response" into your model for more realistic QA output.</p>
+<h1 id="Answering-Questions-is-hard">
+<a class="anchor" href="#Answering-Questions-is-hard" aria-hidden="true"><span class="octicon octicon-link"></span></a>Answering Questions is hard<a class="anchor-link" href="#Answering-Questions-is-hard"> </a>
+</h1>
+<p>Quantifying the success of answering a question is a tricky task. When you or I ask a question, the correct answer could take multiple forms. Let's look at an example.</p>
+<p>In our previous post, BERT answered the question, "Why is the sky blue?" with "Rayleigh scattering" but another correct answer would be</p>
+<p>"The Earth's atmosphere scatters short-wavelength light more efficiently than that of longer wavelengths. Because its wavelengths are shorter, blue light is more strongly scattered than the longer-wavelength lights, red or green. Hence the result that when looking at the sky away from the direct incident sunlight, the human eye perceives the sky to be blue."</p>
+<p>Both of these passages can be found in the Wikipedia article Diffuse Sky Radiation and both are correct but only one of these responses is returned as the answer.</p>
+<p><strong>Need a different example</strong></p>
+<p>In order to determine whether BERT is correctly answering questions, we of course need a gold standard set of questions and answers! This is exactly what the SQuAD dataset provides.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="More-about-SQuAD">
+<a class="anchor" href="#More-about-SQuAD" aria-hidden="true"><span class="octicon octicon-link"></span></a>More about SQuAD<a class="anchor-link" href="#More-about-SQuAD"> </a>
+</h1>
+<p>The SQuAD dataset comes in two flavors: SQuAD 1.1 and SQuAD 2.0. The latter contains the same questions and answers as the former but also includes additional questions that <em>cannot</em> be answered by the accompanying passage. This is intended to provide a more realistic question answering task because often times there really won't be an answer to the question in the document we're parsing. This ability to properly identify when a question does not have an answer is much more challenging for Transformer models and it's why we focused on this dataset rather than SQuAD 1.1.</p>
+<p>SQuAD 2.0 consists of more than 130k questions, of which a full third do not have an answer that can be found in the associated passage. The dev set in particular contains a 50/50 split of answerable questions. SQuAD examples consist of questions + context pairs. The context is a single paragraph from a Wikipedia article. Each paragraph will have several questions (both answerable and unanswerable) associated with it. Paragraphs are drawn from 35 Wikipedia articles. Every paragraph in the article has at least one question associated with it.  The full SQuAD stats is shown below from the paper XXX.</p>
+<p><img src="/images/copied_from_nb/my_icons/squad_datasets.png" alt="" title="SQuAD Stats"></p>
+<h3 id="Load-the-SQuAD-2.0-dev-set-using-HF-data-processors">
+<a class="anchor" href="#Load-the-SQuAD-2.0-dev-set-using-HF-data-processors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load the SQuAD 2.0 dev set using HF data processors<a class="anchor-link" href="#Load-the-SQuAD-2.0-dev-set-using-HF-data-processors"> </a>
+</h3>
+<p>HuggingFace provide the <a href="https://huggingface.co/transformers/main_classes/processors.html">Processors</a> library for fascilitating basic processing tasks with some canonical NLP datasets. The processors can be used for loading datasets and converting their examples to features for direct use in the model. We'll be using the <a href="https://huggingface.co/transformers/main_classes/processors.html#squad">SQuAD processors</a>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">transformers.data.processors.squad</span> <span class="kn">import</span> <span class="n">SquadV2Processor</span>
+
+<span class="n">processor</span> <span class="o">=</span> <span class="n">SquadV2Processor</span><span class="p">()</span>
+<span class="n">examples</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="n">get_dev_examples</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">dev_set_file</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>100%|██████████| 35/35 [00:05&lt;00:00,  6.64it/s]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># generate some maps to help us identify examples of interest</span>
+<span class="n">qid_to_example_index</span> <span class="o">=</span> <span class="p">{</span><span class="n">example</span><span class="o">.</span><span class="n">qas_id</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">examples</span><span class="p">)}</span>
+<span class="n">qid_to_has_answer</span> <span class="o">=</span> <span class="p">{</span><span class="n">example</span><span class="o">.</span><span class="n">qas_id</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">answers</span><span class="p">)</span> <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">}</span>
+<span class="n">answer_qids</span> <span class="o">=</span> <span class="p">[</span><span class="n">qas_id</span> <span class="k">for</span> <span class="n">qas_id</span><span class="p">,</span> <span class="n">has_answer</span> <span class="ow">in</span> <span class="n">qid_to_has_answer</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">has_answer</span><span class="p">]</span>
+<span class="n">no_answer_qids</span> <span class="o">=</span> <span class="p">[</span><span class="n">qas_id</span> <span class="k">for</span> <span class="n">qas_id</span><span class="p">,</span> <span class="n">has_answer</span> <span class="ow">in</span> <span class="n">qid_to_has_answer</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">has_answer</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">display_example</span><span class="p">(</span><span class="n">qid</span><span class="p">):</span>    
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">qid_to_example_index</span><span class="p">[</span><span class="n">qid</span><span class="p">]</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">question_text</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">context_text</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">answer</span><span class="p">[</span><span class="s1">'text'</span><span class="p">]</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">answers</span><span class="p">]</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Example </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">---------------------'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Q: </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Context: </span><span class="se">\n</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"True Answers:</span><span class="se">\n</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="A-SQuAD-example">
+<a class="anchor" href="#A-SQuAD-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>A SQuAD example<a class="anchor-link" href="#A-SQuAD-example"> </a>
+</h4>
+<p>Approximately 50% of the examples in the dev set are questions that have answers contained within their corresponding passage. In these cases, up to five possible correct answers are provided (questions and answers were generated and identified by crowd-sourced workers). Answers must be direct excerpts from the passage but we can see there are several ways to have a "correct" answer.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">display_example</span><span class="p">(</span><span class="n">answer_qids</span><span class="p">[</span><span class="mi">1300</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Example 2548 of 11873
+---------------------
+Q: Where on Earth is free oxygen found?
+
+Context: 
+Free oxygen also occurs in solution in the world's water bodies. The increased solubility of O
+2 at lower temperatures (see Physical properties) has important implications for ocean life, as polar oceans support a much higher density of life due to their higher oxygen content. Water polluted with plant nutrients such as nitrates or phosphates may stimulate growth of algae by a process called eutrophication and the decay of these organisms and other biomaterials may reduce amounts of O
+2 in eutrophic water bodies. Scientists assess this aspect of water quality by measuring the water's biochemical oxygen demand, or the amount of O
+2 needed to restore it to a normal concentration.
+
+True Answers:
+['water', "in solution in the world's water bodies", "the world's water bodies"]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="A-SQuAD-negative-example">
+<a class="anchor" href="#A-SQuAD-negative-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>A SQuAD negative example<a class="anchor-link" href="#A-SQuAD-negative-example"> </a>
+</h4>
+<p>The other half of the questions in dev set do not have an answer in the corresponding passage. These questions were generated by crowd-sourced workers to be related and relevant to the passage but unanswerable by that passage. There are thus no True Answers associated with these questions as we see in the example below.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">display_example</span><span class="p">(</span><span class="n">no_answer_qids</span><span class="p">[</span><span class="mi">2500</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Example 4954 of 11873
+---------------------
+Q: Why is the theory of evolution so complex?
+
+Context: 
+The principle of faunal succession is based on the appearance of fossils in sedimentary rocks. As organisms exist at the same time period throughout the world, their presence or (sometimes) absence may be used to provide a relative age of the formations in which they are found. Based on principles laid out by William Smith almost a hundred years before the publication of Charles Darwin's theory of evolution, the principles of succession were developed independently of evolutionary thought. The principle becomes quite complex, however, given the uncertainties of fossilization, the localization of fossil types due to lateral changes in habitat (facies change in sedimentary strata), and that not all fossils may be found globally at the same time.
+
+True Answers:
+[]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Metrics-for-QA">
+<a class="anchor" href="#Metrics-for-QA" aria-hidden="true"><span class="octicon octicon-link"></span></a>Metrics for QA<a class="anchor-link" href="#Metrics-for-QA"> </a>
+</h1>
+<p>There are two dominant metrics used by many question answering datasets: exact match (EM) and F1 score. These scores are computed on individual question+answer pairs. When multiple correct answers are possible for a given question, the maximum score is computed. Scores over all examples are averaged providing a final EM and F1 score for the dev set.</p>
+<h3 id="Exact-Match">
+<a class="anchor" href="#Exact-Match" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exact Match<a class="anchor-link" href="#Exact-Match"> </a>
+</h3>
+<p>This metric is as simple as it sounds. For each question/answer pair, if the characters of the model's prediction exactly match the characters of the known answer, EM = 1, otherwise EM = 0. This is a strict all-or-nothing metric; being off by a single character would result in a score of 0 for that prediciton. When assessing against a negative example, if the model predicts any text at all it automatically receives a 0 for that example.</p>
+<h3 id="F1">
+<a class="anchor" href="#F1" aria-hidden="true"><span class="octicon octicon-link"></span></a>F1<a class="anchor-link" href="#F1"> </a>
+</h3>
+<p>This metric can be found in many analyses so it shouldn't be a surprise to see here. F1 is the harmonic mean of the precision and recall. In this case, it's computed over the individual words in the prediction against those in the true answer. The number of shared words provides the basis of the f1 score.</p>
+<p><img src="/images/copied_from_nb/my_icons/f1score.png" alt="" title="F1 score"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Load-a-Transformer-model-fine-tuned-on-SQuAD-2.0">
+<a class="anchor" href="#Load-a-Transformer-model-fine-tuned-on-SQuAD-2.0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load a Transformer model fine-tuned on SQuAD 2.0<a class="anchor-link" href="#Load-a-Transformer-model-fine-tuned-on-SQuAD-2.0"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"twmkn9/distilbert-base-uncased-squad2"</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForQuestionAnswering</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"twmkn9/distilbert-base-uncased-squad2"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">qid</span><span class="p">):</span>
+    <span class="c1"># given a question id (qas_id or qid), load the example, get the model outputs and generate an answer</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="n">qid_to_example_index</span><span class="p">[</span><span class="n">qid</span><span class="p">]]</span><span class="o">.</span><span class="n">question_text</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="n">qid_to_example_index</span><span class="p">[</span><span class="n">qid</span><span class="p">]]</span><span class="o">.</span><span class="n">context_text</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s1">'pt'</span><span class="p">)</span>
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># Get the most likely beginning of answer with the argmax of the score</span>
+    <span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span> 
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">answer</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can soften the blow of the Exact Match metric by normalizing the text before computation. Removing articles and punctuation, and standardizing whitespace are all typical text processing steps.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># These functions are heavily influenced by the HF squad_metrics.py script</span>
+<span class="k">def</span> <span class="nf">normalize_text</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">string</span><span class="o">,</span> <span class="nn">re</span>
+    <span class="sd">"""Lower text and remove punctuation, articles and extra whitespace."""</span>
+
+    <span class="k">def</span> <span class="nf">remove_articles</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\b(a|an|the)\b"</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">white_space_fix</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">remove_punc</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ch</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">if</span> <span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">lower</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">white_space_fix</span><span class="p">(</span><span class="n">remove_articles</span><span class="p">(</span><span class="n">remove_punc</span><span class="p">(</span><span class="n">lower</span><span class="p">(</span><span class="n">s</span><span class="p">))))</span>
+
+<span class="k">def</span> <span class="nf">compute_exact_match</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">truth</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">normalize_text</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span> <span class="o">==</span> <span class="n">normalize_text</span><span class="p">(</span><span class="n">truth</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">compute_f1</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">truth</span><span class="p">):</span>
+    <span class="n">pred_tokens</span> <span class="o">=</span> <span class="n">normalize_text</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">truth_tokens</span> <span class="o">=</span> <span class="n">normalize_text</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    
+    <span class="c1"># if either the prediction or the truth is no-answer then f1 = 1 if they agree, 0 otherwise</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_tokens</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth_tokens</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">pred_tokens</span> <span class="o">==</span> <span class="n">truth_tokens</span><span class="p">)</span>
+    
+    <span class="n">common_tokens</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pred_tokens</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">truth_tokens</span><span class="p">)</span>
+    
+    <span class="c1"># if there are no common tokens then f1 = 0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_tokens</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="n">prec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_tokens</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_tokens</span><span class="p">)</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_tokens</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth_tokens</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">prec</span> <span class="o">*</span> <span class="n">rec</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">prec</span> <span class="o">+</span> <span class="n">rec</span><span class="p">)</span>
+    
+<span class="k">def</span> <span class="nf">get_gold_answers</span><span class="p">(</span><span class="n">example</span><span class="p">):</span>
+    <span class="n">gold_answers</span> <span class="o">=</span> <span class="p">[</span><span class="n">answer</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">example</span><span class="o">.</span><span class="n">answers</span> <span class="k">if</span> <span class="n">answer</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]]</span>
+
+    <span class="c1"># if gold_answers doesn't exist it's because this is a negative example - </span>
+    <span class="c1"># the only correct answer is an empty string</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">gold_answers</span><span class="p">:</span>
+        <span class="n">gold_answers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">""</span><span class="p">]</span>
+        
+    <span class="k">return</span> <span class="n">gold_answers</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction</span> <span class="o">=</span> <span class="n">get_answer_from_qid</span><span class="p">(</span><span class="n">answer_qids</span><span class="p">[</span><span class="mi">1300</span><span class="p">])</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="n">qid_to_example_index</span><span class="p">[</span><span class="n">answer_qids</span><span class="p">[</span><span class="mi">1300</span><span class="p">]]]</span>
+
+<span class="n">gold_answers</span> <span class="o">=</span> <span class="n">get_gold_answers</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+
+<span class="n">em_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">compute_exact_match</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">answer</span><span class="p">))</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">gold_answers</span><span class="p">)</span>
+<span class="n">f1_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">compute_f1</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">answer</span><span class="p">))</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">gold_answers</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">em_score</span><span class="p">,</span> <span class="n">f1_score</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0 0.8
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction</span> <span class="o">=</span> <span class="n">get_answer_from_qid</span><span class="p">(</span><span class="n">no_answer_qids</span><span class="p">[</span><span class="mi">2500</span><span class="p">])</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="n">qid_to_example_index</span><span class="p">[</span><span class="n">no_answer_qids</span><span class="p">[</span><span class="mi">2500</span><span class="p">]]]</span>
+
+<span class="n">gold_answers</span> <span class="o">=</span> <span class="n">get_gold_answers</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+
+<span class="n">em_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">compute_exact_match</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">answer</span><span class="p">))</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">gold_answers</span><span class="p">)</span>
+<span class="n">f1_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">compute_f1</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">answer</span><span class="p">))</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">gold_answers</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">em_score</span><span class="p">,</span> <span class="n">f1_score</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0 0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Evaluating-a-model-on-the-squad-dev-set">
+<a class="anchor" href="#Evaluating-a-model-on-the-squad-dev-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluating a model on the squad dev set<a class="anchor-link" href="#Evaluating-a-model-on-the-squad-dev-set"> </a>
+</h1>
+<p>The same <code>run_squad.py</code> script we used to fine-tune a Transformer for question answering can also be used to evaluate the model! Below are the arguments you'll need to properly evaluate a fine-tuned model for question answering on the SQuAD dev set. Because we using SQuAD 2.0 it is <strong>crucial</strong> that you include the <code>--version_2_with_negative</code> flag!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>python run_squad.py  <span class="err">\</span>
+    <span class="o">--</span><span class="n">model_type</span> <span class="n">distilbert</span>   \
+    <span class="o">--</span><span class="n">model_name_or_path</span> <span class="n">twmkn9</span><span class="o">/</span><span class="n">distilbert</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">uncased</span><span class="o">-</span><span class="n">squad2</span>  \
+    <span class="o">--</span><span class="n">output_dir</span> <span class="n">models</span><span class="o">/</span><span class="n">distilbert</span><span class="o">/</span><span class="n">twmkn9_distilbert</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">uncased</span><span class="o">-</span><span class="n">squad2</span> \
+    <span class="o">--</span><span class="n">data_dir</span> <span class="n">data</span><span class="o">/</span><span class="n">squad</span>   \
+    <span class="o">--</span><span class="n">predict_file</span> <span class="n">dev</span><span class="o">-</span><span class="n">v2</span><span class="o">.</span><span class="mf">0.</span><span class="n">json</span>   \
+    <span class="o">--</span><span class="n">do_eval</span>   \
+    <span class="o">--</span><span class="n">version_2_with_negative</span> \
+    <span class="o">--</span><span class="n">do_lower_case</span>  \
+    <span class="o">--</span><span class="n">per_gpu_eval_batch_size</span> <span class="mi">12</span>   \
+    <span class="o">--</span><span class="n">max_seq_length</span> <span class="mi">384</span>   \
+    <span class="o">--</span><span class="n">doc_stride</span> <span class="mi">128</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2020-06-02 19:14:41.314546: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda/lib64:
+2020-06-02 19:14:41.314635: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda/lib64:
+2020-06-02 19:14:41.314648: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+06/02/2020 19:14:42 - WARNING - __main__ -   Process rank: -1, device: cuda, n_gpu: 1, distributed training: False, 16-bits training: False
+06/02/2020 19:14:42 - INFO - transformers.configuration_utils -   loading configuration file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/config.json from cache at /home/melanie/.cache/torch/transformers/a3920afc5879111d09b0c1e74e7e674b82a7cd96109c2094b1abd8e57f50a126.eba6ca264db629858c65c1b534a0393d738537aad02120c2ac4fa8dd94820d0b
+06/02/2020 19:14:42 - INFO - transformers.configuration_utils -   Model config DistilBertConfig {
+  "_num_labels": 2,
+  "activation": "gelu",
+  "architectures": [
+    "DistilBertForQuestionAnswering"
+  ],
+  "attention_dropout": 0.1,
+  "bad_words_ids": null,
+  "bos_token_id": null,
+  "decoder_start_token_id": null,
+  "dim": 768,
+  "do_sample": false,
+  "dropout": 0.1,
+  "early_stopping": false,
+  "eos_token_id": null,
+  "eos_token_ids": null,
+  "finetuning_task": null,
+  "hidden_dim": 3072,
+  "id2label": {
+    "0": "LABEL_0",
+    "1": "LABEL_1"
+  },
+  "initializer_range": 0.02,
+  "is_decoder": false,
+  "is_encoder_decoder": false,
+  "label2id": {
+    "LABEL_0": 0,
+    "LABEL_1": 1
+  },
+  "length_penalty": 1.0,
+  "max_length": 20,
+  "max_position_embeddings": 512,
+  "min_length": 0,
+  "model_type": "distilbert",
+  "n_heads": 12,
+  "n_layers": 6,
+  "no_repeat_ngram_size": 0,
+  "num_beams": 1,
+  "num_return_sequences": 1,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "output_past": true,
+  "pad_token_id": 0,
+  "prefix": null,
+  "pruned_heads": {},
+  "qa_dropout": 0.1,
+  "repetition_penalty": 1.0,
+  "seq_classif_dropout": 0.2,
+  "sinusoidal_pos_embds": false,
+  "task_specific_params": null,
+  "temperature": 1.0,
+  "tie_weights_": true,
+  "top_k": 50,
+  "top_p": 1.0,
+  "torchscript": false,
+  "use_bfloat16": false,
+  "vocab_size": 30522,
+  "xla_device": null
+}
+
+06/02/2020 19:14:42 - INFO - transformers.tokenization_utils -   Model name 'twmkn9/distilbert-base-uncased-squad2' not found in model shortcut name list (distilbert-base-uncased, distilbert-base-uncased-distilled-squad, distilbert-base-cased, distilbert-base-cased-distilled-squad, distilbert-base-german-cased, distilbert-base-multilingual-cased). Assuming 'twmkn9/distilbert-base-uncased-squad2' is a path, a model identifier, or url to a directory containing tokenizer files.
+06/02/2020 19:14:43 - INFO - transformers.tokenization_utils -   loading file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/vocab.txt from cache at /home/melanie/.cache/torch/transformers/a6078a0000db15a7f37a4c934bf07641f2ce917d7e6d19e8250b7b087948d0bb.542ce4285a40d23a559526243235df47c5f75c197f04f37d1a0c124c32c9a084
+06/02/2020 19:14:43 - INFO - transformers.tokenization_utils -   loading file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/added_tokens.json from cache at None
+06/02/2020 19:14:43 - INFO - transformers.tokenization_utils -   loading file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/special_tokens_map.json from cache at /home/melanie/.cache/torch/transformers/112632b7c7669e4ebb3bbda33d84526efe839633b66db00007aa1e616521262f.275045728fbf41c11d3dae08b8742c054377e18d92cc7b72b6351152a99b64e4
+06/02/2020 19:14:43 - INFO - transformers.tokenization_utils -   loading file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/tokenizer_config.json from cache at /home/melanie/.cache/torch/transformers/ff910ad3f01a29bfc80c754346974acfe80b3ec108facc01c68a5b86f282bdf0.071a6c67df33940f411dddb070d8c2e69b425ca06b9d813035dae545ab90c616
+06/02/2020 19:14:43 - INFO - transformers.modeling_utils -   loading weights file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/pytorch_model.bin from cache at /home/melanie/.cache/torch/transformers/3d3d52586249e1f364d8f19dd13d14226dffdeaa18bb3ff1625bd5389db027b0.a9ad8185141adee62a5e0039ff540a444c26257146ac66a7ce69b7ec018b7a7c
+06/02/2020 19:14:48 - INFO - __main__ -   Training/evaluation parameters Namespace(adam_epsilon=1e-08, cache_dir='', config_name='', data_dir='data/squad', device=device(type='cuda'), do_eval=True, do_lower_case=True, do_train=False, doc_stride=128, eval_all_checkpoints=False, evaluate_during_training=False, fp16=False, fp16_opt_level='O1', gradient_accumulation_steps=1, lang_id=0, learning_rate=5e-05, local_rank=-1, logging_steps=500, max_answer_length=30, max_grad_norm=1.0, max_query_length=64, max_seq_length=384, max_steps=-1, model_name_or_path='twmkn9/distilbert-base-uncased-squad2', model_type='distilbert', n_best_size=20, n_gpu=1, no_cuda=False, null_score_diff_threshold=0.0, num_train_epochs=3.0, output_dir='models/distilbert/twmkn9_distilbert-base-uncased-squad2', overwrite_cache=False, overwrite_output_dir=False, per_gpu_eval_batch_size=12, per_gpu_train_batch_size=8, predict_file='dev-v2.0.json', save_steps=500, seed=42, server_ip='', server_port='', threads=1, tokenizer_name='', train_file=None, verbose_logging=False, version_2_with_negative=True, warmup_steps=0, weight_decay=0.0)
+06/02/2020 19:14:48 - INFO - __main__ -   Loading checkpoint twmkn9/distilbert-base-uncased-squad2 for evaluation
+06/02/2020 19:14:48 - INFO - __main__ -   Evaluate the following checkpoints: ['twmkn9/distilbert-base-uncased-squad2']
+06/02/2020 19:14:48 - INFO - transformers.configuration_utils -   loading configuration file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/config.json from cache at /home/melanie/.cache/torch/transformers/a3920afc5879111d09b0c1e74e7e674b82a7cd96109c2094b1abd8e57f50a126.eba6ca264db629858c65c1b534a0393d738537aad02120c2ac4fa8dd94820d0b
+06/02/2020 19:14:48 - INFO - transformers.configuration_utils -   Model config DistilBertConfig {
+  "_num_labels": 2,
+  "activation": "gelu",
+  "architectures": [
+    "DistilBertForQuestionAnswering"
+  ],
+  "attention_dropout": 0.1,
+  "bad_words_ids": null,
+  "bos_token_id": null,
+  "decoder_start_token_id": null,
+  "dim": 768,
+  "do_sample": false,
+  "dropout": 0.1,
+  "early_stopping": false,
+  "eos_token_id": null,
+  "eos_token_ids": null,
+  "finetuning_task": null,
+  "hidden_dim": 3072,
+  "id2label": {
+    "0": "LABEL_0",
+    "1": "LABEL_1"
+  },
+  "initializer_range": 0.02,
+  "is_decoder": false,
+  "is_encoder_decoder": false,
+  "label2id": {
+    "LABEL_0": 0,
+    "LABEL_1": 1
+  },
+  "length_penalty": 1.0,
+  "max_length": 20,
+  "max_position_embeddings": 512,
+  "min_length": 0,
+  "model_type": "distilbert",
+  "n_heads": 12,
+  "n_layers": 6,
+  "no_repeat_ngram_size": 0,
+  "num_beams": 1,
+  "num_return_sequences": 1,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "output_past": true,
+  "pad_token_id": 0,
+  "prefix": null,
+  "pruned_heads": {},
+  "qa_dropout": 0.1,
+  "repetition_penalty": 1.0,
+  "seq_classif_dropout": 0.2,
+  "sinusoidal_pos_embds": false,
+  "task_specific_params": null,
+  "temperature": 1.0,
+  "tie_weights_": true,
+  "top_k": 50,
+  "top_p": 1.0,
+  "torchscript": false,
+  "use_bfloat16": false,
+  "vocab_size": 30522,
+  "xla_device": null
+}
+
+06/02/2020 19:14:49 - INFO - transformers.modeling_utils -   loading weights file https://s3.amazonaws.com/models.huggingface.co/bert/twmkn9/distilbert-base-uncased-squad2/pytorch_model.bin from cache at /home/melanie/.cache/torch/transformers/3d3d52586249e1f364d8f19dd13d14226dffdeaa18bb3ff1625bd5389db027b0.a9ad8185141adee62a5e0039ff540a444c26257146ac66a7ce69b7ec018b7a7c
+06/02/2020 19:14:50 - INFO - __main__ -   Creating features from dataset file at data/squad
+100%|███████████████████████████████████████████| 35/35 [00:05&lt;00:00,  6.54it/s]
+convert squad examples to features: 100%|█| 11873/11873 [02:02&lt;00:00, 97.08it/s]
+add example index and unique id: 100%|█| 11873/11873 [00:00&lt;00:00, 461404.92it/s
+06/02/2020 19:16:59 - INFO - __main__ -   Saving features into cached file data/squad/cached_dev_distilbert-base-uncased-squad2_384
+06/02/2020 19:17:20 - INFO - __main__ -   ***** Running evaluation  *****
+06/02/2020 19:17:20 - INFO - __main__ -     Num examples = 12232
+06/02/2020 19:17:20 - INFO - __main__ -     Batch size = 12
+Evaluating: 100%|███████████████████████████| 1020/1020 [02:23&lt;00:00,  7.13it/s]
+06/02/2020 19:19:43 - INFO - __main__ -     Evaluation done in total 143.126918 secs (0.011701 sec per example)
+06/02/2020 19:19:43 - INFO - transformers.data.metrics.squad_metrics -   Writing predictions to: models/distilbert/twmkn9_distilbert-base-uncased-squad2/predictions_.json
+06/02/2020 19:19:43 - INFO - transformers.data.metrics.squad_metrics -   Writing nbest to: models/distilbert/twmkn9_distilbert-base-uncased-squad2/nbest_predictions_.json
+06/02/2020 19:20:46 - INFO - __main__ -   Results: {'exact': 66.25958056093658, 'f1': 69.66994428499025, 'total': 11873, 'HasAns_exact': 68.91025641025641, 'HasAns_f1': 75.74076391627662, 'HasAns_total': 5928, 'NoAns_exact': 63.61648444070648, 'NoAns_f1': 63.61648444070648, 'NoAns_total': 5945, 'best_exact': 66.25958056093658, 'best_exact_thresh': 0.0, 'best_f1': 69.66994428499046, 'best_f1_thresh': 0.0}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We've evaluated a <code>distilbert</code> model that was fine-tuned on SQuAD2.0 by a member of the NLP community. When running the evaluation we see a number of steps performed:</p>
+<ol>
+<li>the dev set is loaded from disk </li>
+<li>the examples are converted to features that can be directly fed to the model</li>
+<li>these features are cached to disk</li>
+<li>Evaluation proceeds in batches of 12 and finishes in about 2.5 minutes (this is because distilBERT is much faster and more lightweight than BERT)</li>
+<li>a slew of prediction outputs are written to disk</li>
+<li>Overall model results are displayed</li>
+</ol>
+<p>Let's start with the overall model results.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Results</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Scores averaged over all examples in the dev set</span>
+    <span class="s1">'exact'</span><span class="p">:</span> <span class="mf">66.25958056093658</span><span class="p">,</span>         
+    <span class="s1">'f1'</span><span class="p">:</span> <span class="mf">69.66994428499025</span><span class="p">,</span>            
+    <span class="s1">'total'</span><span class="p">:</span> <span class="mi">11873</span><span class="p">,</span>  <span class="c1"># number of examples in the dev set</span>
+    
+    <span class="c1"># Scores averaged over only positive examples (have answers)</span>
+    <span class="s1">'HasAns_exact'</span><span class="p">:</span> <span class="mf">68.91025641025641</span><span class="p">,</span>  
+    <span class="s1">'HasAns_f1'</span><span class="p">:</span> <span class="mf">75.74076391627662</span><span class="p">,</span>     
+    <span class="s1">'HasAns_total'</span><span class="p">:</span> <span class="mi">5928</span><span class="p">,</span> <span class="c1"># number of positive examples</span>
+    
+    <span class="c1"># Scores averaged over only negative examples (no answers)</span>
+    <span class="s1">'NoAns_exact'</span><span class="p">:</span> <span class="mf">63.61648444070648</span><span class="p">,</span> 
+    <span class="s1">'NoAns_f1'</span><span class="p">:</span> <span class="mf">63.61648444070648</span><span class="p">,</span> 
+    <span class="s1">'NoAns_total'</span><span class="p">:</span> <span class="mi">5945</span><span class="p">,</span> <span class="c1"># number of negative examples</span>
+    
+    <span class="c1"># ***Given probabilities of no-answer for each example, what would the best scores and thresholds be? ***</span>
+    <span class="s1">'best_exact'</span><span class="p">:</span> <span class="mf">66.25958056093658</span><span class="p">,</span> 
+    <span class="s1">'best_exact_thresh'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> 
+    <span class="s1">'best_f1'</span><span class="p">:</span> <span class="mf">69.66994428499046</span><span class="p">,</span> 
+    <span class="s1">'best_f1_thresh'</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first three blocks of the <code>Results</code> output are pretty straightforward. EM and F1 scores are reported over the full dev set, the set of positive examples, and the set of negative examples. This can give you some insight into whether your model is performing adequately on both answer and no-answer questions (this particular model is pretty bad at no-answer questions).</p>
+<p>However, what's going on with that fourth block? This portion of the output is not useful unless you supply the evaluation with additional information. And for that we'll need to dig a bit deeper into the evaluation process.</p>
+<h3 id="Computing-predictions">
+<a class="anchor" href="#Computing-predictions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing predictions<a class="anchor-link" href="#Computing-predictions"> </a>
+</h3>
+<p>When the tokenized question+context is passed to the model, the output consists of two sets of logits: one for the start of the answer span, the other for the end of the answer span. These logits represent the likelihood of any given token being the start or end of the answer. Every token passed to the model is assigned a logit, including special tokens (e.g, [CLS], [SEP]), and tokens corresponding to the question itself.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">question_text</span><span class="p">,</span> <span class="n">example</span><span class="o">.</span><span class="n">context_text</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s1">'pt'</span><span class="p">)</span>
+<span class="n">start_logits</span><span class="p">,</span> <span class="n">end_logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Look at how large the logit is in the [CLS] position!  Strong possibility that this question has no answer... </span>
+<span class="n">start_logits</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tensor([[  3.7929,  -9.1130,  -9.6885,  -7.7843,  -8.2340, -10.3993,  -9.6347,
+          -9.7876,  -9.9708,  -9.9662,  -8.7785,  -3.9508,  -5.5454,  -9.6513,
+          -4.6236,  -9.8807,  -7.4872,  -8.7846,  -6.8423,  -8.9985,  -6.0774,
+          -5.4852,  -9.7361,  -4.5017,  -9.2640,  -5.3205,  -7.2865,  -8.4630,
+          -5.2088,  -4.2374,  -8.6602,  -9.9352,  -9.4512, -10.2235,  -9.5926,
+         -10.6912, -10.3315, -10.6619,  -9.3309,  -9.5508,  -4.9999,  -6.2900,
+         -10.5532,  -9.6481,  -9.9048, -10.9416,  -5.4683,  -9.1218, -10.2717,
+          -9.9383,  -7.1546,  -7.1813,  -7.5937,  -6.7924,  -8.4716, -10.7609,
+          -9.9768,  -9.2098,  -9.6693, -11.1971, -10.4625, -11.2761,  -8.7499,
+          -8.4402,  -4.4782,  -8.3395,  -5.5925,  -9.0272, -10.4382, -10.0390,
+          -7.3458,  -9.6450,  -8.6492,  -9.4535,  -9.6644, -10.3202,  -9.7984,
+          -8.6443,  -9.0967,  -9.9739,  -6.8935,  -9.6771, -10.1303,  -9.9340,
+          -8.6770, -10.0878,  -8.4293,  -7.1896,  -2.5745,  -4.5659,  -9.6147,
+          -6.0050,  -6.9271,  -7.7112,  -5.7470, -10.3048,  -6.4189,  -7.5704,
+          -7.0742,  -2.5894,  -5.3958,  -7.9872,  -7.1073,  -5.6698,  -5.0910,
+          -6.4828,  -3.3321,   5.7303,   5.2198,   6.3693,  -3.1278,  -6.2212,
+           2.2868,  -3.8247,  -2.5946,   4.9523,   3.4599,  -3.7496,  -6.2692,
+          -0.4519,  -4.1322,   0.9551,  -4.4014,   2.4303,  -1.8346,  -5.5038,
+          -3.2300,  -5.0857,  -1.5053,  -9.6386,  -5.7745,  -9.3498,  -6.2898,
+          -6.2146,  -4.9307,  -4.8388,  -4.4953,  -1.7197,  -2.3445,  -8.5993,
+          -5.6596,  -9.6108, -10.8523,  -9.9367,  -7.6639, -10.1629, -10.0598,
+         -10.7275,  -8.3669,  -4.5888,  -8.7782]], grad_fn=&lt;SqueezeBackward1&gt;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In our simple QA system, we predicted the best answer by selecting the start and end tokens with the largest logits, but that's not very robust. In practice, these logits are passed to a method that computes prediction scores. Tokens corresponding to the <em>n</em> largest start_logits and the <em>n</em> largest end_logits are selected as candidates. Any sensible combination of these start + end tokens is considered a candidate answer, however, several consistency checks must first be performed. For example, an answer wherein the end token falls <em>before</em> the start token should be excluded because that just doesn't amke sense, even if these tokens were associated with the largest logits. Candidate answers wherein the start or end tokens are associated with question tokens are also excluded because the answer to the question should obviously not be in the question itself! It is important to note that the [CLS] token is <strong>not</strong> removed because this token indicates the null answer.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We can sort our list of start_logits by logit score and keep track of which token they're associated with</span>
+<span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="n">start_logits</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">start_logits</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">end_logits</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">end_logits</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">start_idx_and_logit</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">start_logits</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">end_idx_and_logit</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">end_logits</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># The null answer token index (0) is in the top five, along with some other possible answer-start context tokens</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">start_idx_and_logit</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">end_idx_and_logit</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(109, 6.369344711303711), (107, 5.730345249176025), (108, 5.2197771072387695), (115, 4.952322483062744), (0, 3.792943000793457)]
+[(113, 6.066335201263428), (126, 4.7193193435668945), (120, 4.3211588859558105), (134, 4.181004524230957), (0, 3.5367705821990967)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">start_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">logit</span> <span class="ow">in</span> <span class="n">start_idx_and_logit</span><span class="p">[:</span><span class="mi">5</span><span class="p">]]</span>
+<span class="n">end_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">logit</span> <span class="ow">in</span> <span class="n">end_idx_and_logit</span><span class="p">[:</span><span class="mi">5</span><span class="p">]]</span>
+
+<span class="n">tokens</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># question tokens are defined as those between the CLS token (101, at position 0) and first SEP (102) token </span>
+<span class="n">question_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">tokens</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">102</span><span class="p">)])]</span>
+<span class="n">question_indexes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[1, 2, 3, 4, 5, 6, 7, 8, 9]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="c1"># keep track of all preliminary predictions</span>
+<span class="n">PrelimPrediction</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span>  <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="s2">"PrelimPrediction"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"start_index"</span><span class="p">,</span> <span class="s2">"end_index"</span><span class="p">,</span> <span class="s2">"start_logit"</span><span class="p">,</span> <span class="s2">"end_logit"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">prelim_preds</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">start_index</span> <span class="ow">in</span> <span class="n">start_indexes</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">end_index</span> <span class="ow">in</span> <span class="n">end_indexes</span><span class="p">:</span>
+        <span class="c1"># throw out invalid predictions</span>
+        <span class="k">if</span> <span class="n">start_index</span> <span class="ow">in</span> <span class="n">question_indexes</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">end_index</span> <span class="ow">in</span> <span class="n">question_indexes</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">end_index</span> <span class="o">&lt;</span> <span class="n">start_index</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">prelim_preds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">PrelimPrediction</span><span class="p">(</span>
+                <span class="n">start_index</span> <span class="o">=</span> <span class="n">start_index</span><span class="p">,</span>
+                <span class="n">end_index</span> <span class="o">=</span> <span class="n">end_index</span><span class="p">,</span>
+                <span class="n">start_logit</span> <span class="o">=</span> <span class="n">start_logits</span><span class="p">[</span><span class="n">start_index</span><span class="p">],</span>
+                <span class="n">end_logit</span> <span class="o">=</span> <span class="n">end_logits</span><span class="p">[</span><span class="n">end_index</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Prediction scores are computed on the remaining answer candidates' start and end tokens as the sum of their start and end logits. For a candidate answer i, score_i = start_logit_i + end_logit_i. The <code>n_best</code> candidate answers with the highest scores are retained (this number can be set using the <code>--n_best_size</code> flag of <code>run_squad.py</code> and defaults to 20). If the list of candidate answers does not contain the prediction score for the null answer, it is computed and added. The null answer score is computed as the sum of the logits corresponding to the [CLS] token in both the start_logits and end_logits lists.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sort preliminary predictions by their score</span>
+<span class="n">prelim_preds</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">prelim_preds</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">start_logit</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">end_logit</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">prelim_preds</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>20</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tokens</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># keep track of all best predictions</span>
+<span class="n">BestPrediction</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span>  <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="s2">"BestPrediction"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"text"</span><span class="p">,</span> <span class="s2">"start_logit"</span><span class="p">,</span> <span class="s2">"end_logit"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">nbest</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">seen_predictions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">prelim_preds</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">pred</span><span class="o">.</span><span class="n">start_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># non-null answers have start_index &gt; 0</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span>
+            <span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span>
+                <span class="n">tokens</span><span class="p">[</span><span class="n">pred</span><span class="o">.</span><span class="n">start_index</span><span class="p">:</span><span class="n">pred</span><span class="o">.</span><span class="n">end_index</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Clean whitespace</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">seen_predictions</span><span class="p">:</span>
+        <span class="k">continue</span>
+    
+    <span class="n">seen_predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>    
+    <span class="n">nbest</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BestPrediction</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">start_logit</span><span class="o">=</span><span class="n">pred</span><span class="o">.</span><span class="n">start_logit</span><span class="p">,</span> <span class="n">end_logit</span><span class="o">=</span><span class="n">pred</span><span class="o">.</span><span class="n">end_logit</span><span class="p">))</span>
+
+<span class="c1"># include the null answer</span>
+<span class="n">nbest</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BestPrediction</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">start_logit</span><span class="o">=</span><span class="n">start_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end_logit</span><span class="o">=</span><span class="n">end_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These top <em>n</em> best answers are computed and a null answer score is computed.  The list of <code>n_best</code> answers for each question is saved to disk as <code>nbest_predictions_.json</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">nbest</span><span class="p">)</span>
+<span class="n">nbest</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[BestPrediction(text='uncertainties of fossil', start_logit=6.369344711303711, end_logit=6.066335201263428),
+ BestPrediction(text='given the uncertainties of fossil', start_logit=5.730345249176025, end_logit=6.066335201263428),
+ BestPrediction(text='the uncertainties of fossil', start_logit=5.2197771072387695, end_logit=6.066335201263428),
+ BestPrediction(text='uncertainties of fossilization , the localization of fossil types due to lateral changes in', start_logit=6.369344711303711, end_logit=4.7193193435668945),
+ BestPrediction(text='uncertainties of fossilization , the localization of fossil', start_logit=6.369344711303711, end_logit=4.3211588859558105),
+ BestPrediction(text='uncertainties of fossilization , the localization of fossil types due to lateral changes in habitat ( facies change in sedimentary strata', start_logit=6.369344711303711, end_logit=4.181004524230957),
+ BestPrediction(text='given the uncertainties of fossilization , the localization of fossil types due to lateral changes in', start_logit=5.730345249176025, end_logit=4.7193193435668945),
+ BestPrediction(text='given the uncertainties of fossilization , the localization of fossil', start_logit=5.730345249176025, end_logit=4.3211588859558105),
+ BestPrediction(text='the uncertainties of fossilization , the localization of fossil types due to lateral changes in', start_logit=5.2197771072387695, end_logit=4.7193193435668945),
+ BestPrediction(text='given the uncertainties of fossilization , the localization of fossil types due to lateral changes in habitat ( facies change in sedimentary strata', start_logit=5.730345249176025, end_logit=4.181004524230957),
+ BestPrediction(text='the localization of fossil types due to lateral changes in', start_logit=4.952322483062744, end_logit=4.7193193435668945),
+ BestPrediction(text='the uncertainties of fossilization , the localization of fossil', start_logit=5.2197771072387695, end_logit=4.3211588859558105),
+ BestPrediction(text='the uncertainties of fossilization , the localization of fossil types due to lateral changes in habitat ( facies change in sedimentary strata', start_logit=5.2197771072387695, end_logit=4.181004524230957),
+ BestPrediction(text='the localization of fossil', start_logit=4.952322483062744, end_logit=4.3211588859558105),
+ BestPrediction(text='the localization of fossil types due to lateral changes in habitat ( facies change in sedimentary strata', start_logit=4.952322483062744, end_logit=4.181004524230957),
+ BestPrediction(text='', start_logit=3.792943000793457, end_logit=3.5367705821990967)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The last step is to compute the odds of the null answer. According to the original BERT paper,</p>
+<blockquote>
+<p>We predict a non-null answer when sˆi,j &gt; s_null + τ , where the threshold τ is selected on the dev set to maximize F1.</p>
+</blockquote>
+<p>Restating that relationship, we can compute the difference between the null score and the non-null score:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># finally, we can compute the odds of the null answer</span>
+<span class="n">score_null</span> <span class="o">=</span> <span class="n">start_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">end_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">score_diff</span> <span class="o">=</span> <span class="n">score_null</span> <span class="o">-</span> <span class="n">nbest</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_logit</span> <span class="o">-</span> <span class="n">nbest</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_logit</span>
+
+<span class="n">score_diff</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>-5.105966329574585</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This <code>score_diff</code> is computed for every example in the dev set and these scores are saved to disk in the <code>null_odds_.json</code>. Let's pull up the score stored for the example we're using and see how we did!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">'models/distilbert/twmkn9_distilbert-base-uncased-squad2/null_odds_.json'</span>
+<span class="n">null_odds</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">'rb'</span><span class="p">))</span>
+
+<span class="n">example</span><span class="o">.</span><span class="n">qas_id</span>
+<span class="n">null_odds</span><span class="p">[</span><span class="n">example</span><span class="o">.</span><span class="n">qas_id</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>-5.105948209762573</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nailed it down to four decimal places! Good enough for me.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="So-what?">
+<a class="anchor" href="#So-what?" aria-hidden="true"><span class="octicon octicon-link"></span></a>So what?<a class="anchor-link" href="#So-what?"> </a>
+</h3>
+<p>Now that we have an understanding of the prediction process, how to compute scores, and the difference between null scores and non-null scores, we can start to make sense of the fourth block of the results output with the help of the <code>null_odds_.json</code> file!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="fastforwardlabs/ff14_blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/hidden/" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>CFF builds a state-of-the-art QA application with the latest NLP techniques</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastforwardlabs" title="fastforwardlabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/FastForwardLabs" title="FastForwardLabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
