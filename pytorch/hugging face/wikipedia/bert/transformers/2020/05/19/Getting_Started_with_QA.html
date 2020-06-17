@@ -103,7 +103,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      24 min read
+      23 min read
     
 </span></p>
 
@@ -154,7 +154,7 @@ window.onload = wrap_img;
 
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
-<li class="toc-entry toc-h1"><a href="#So-you've-decided-to-build-a-QA-system.">So you&#39;ve decided to build a QA system. </a></li>
+<li class="toc-entry toc-h1"><a href="#So-you've-decided-to-build-a-QA-system">So you&#39;ve decided to build a QA system </a></li>
 <li class="toc-entry toc-h1"><a href="#Setting-up-your-virtual-environment">Setting up your virtual environment </a></li>
 <li class="toc-entry toc-h1"><a href="#Hugging-Face-Transformers">Hugging Face Transformers </a>
 <ul>
@@ -199,26 +199,27 @@ window.onload = wrap_img;
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="/images/copied_from_nb/my_icons/markus-spiske-C0koz3G1I4I-unsplash.jpg" alt="" title="Image by Markus Spiske at Unsplash.com"></p>
-<h1 id="So-you've-decided-to-build-a-QA-system.">
-<a class="anchor" href="#So-you've-decided-to-build-a-QA-system." aria-hidden="true"><span class="octicon octicon-link"></span></a>So you've decided to build a QA system.<a class="anchor-link" href="#So-you've-decided-to-build-a-QA-system."> </a>
+<h1 id="So-you've-decided-to-build-a-QA-system">
+<a class="anchor" href="#So-you've-decided-to-build-a-QA-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>So you've decided to build a QA system<a class="anchor-link" href="#So-you've-decided-to-build-a-QA-system"> </a>
 </h1>
-<p>You want to start with something simple and general so you plan to make it open domain using Wikipedia as a corpus for answering questions. You want to use the best NLP that your compute resources allow (you're lucky enough to have access to a GPU) so you're going to focus on the big, flashy Transformer models that are all the rage these days.</p>
-<p>Sounds like you're building an IR-based QA system. In our previous post (<a href="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html">Intro to Automated Question Answering</a>), we covered the general design of these systems, which typically require two main components: the document retriever (a search engine) that selects the <em>n</em> most relevant documents from a large collection; and a document reader that processes these candidate documents in search of an explicit answer span.</p>
-<p><img src="/images/copied_from_nb/my_icons/QAworkflow.png" alt="" title="IR-based automated question anwering workflow"></p>
-<p>This time we're going to build it! This post is chock full of code that walks through our approach. We'll also highlight and clarify some powerful resources, including off-the-shelf models and libraries, that you can use to quickly get going on a QA system of your own. We'll cover all the necessary steps including:</p>
+<p>You want to start with something simple and general, so you plan to make it open domain, using Wikipedia as a corpus for answering questions. You want to use the best NLP that your compute resources allow (you're lucky enough to have access to a GPU), so you're going to focus on the big, flashy Transformer models that are all the rage these days.</p>
+<p>Sounds like you're building an IR-based QA system. In our previous post (<a href="https://qa.fastforwardlabs.com/methods/background/2020/04/28/Intro-to-QA.html">Intro to Automated Question Answering</a>), we covered the general design of these systems, which typically require two main components: the document <em>retriever</em> (a search engine) that selects the n most relevant documents from a large collection, and a document <em>reader</em> that processes these candidate documents in search of an explicit answer span.</p>
+<p><img src="/images/copied_from_nb/my_icons/QAworkflow.png" alt="" title="IR-based automated question answering workflow"></p>
+<p>Now we're going to build it!</p>
+<p>This post is chock full of code that walks through our approach. We'll also highlight and clarify some powerful resources (including off-the-shelf models and libraries) that you can use to quickly get going on a QA system of your own. We'll cover all the necessary steps including:</p>
 <ul>
-<li>installing libraries and setting up an environment</li>
-<li>training a Transformer style model on the SQuAD dataset</li>
-<li>understanding Hugging Face's <code>run_squad.py</code> training script and output</li>
-<li>passing a full Wikipedia article as context for a question</li>
+<li>installing libraries and setting up an environment,</li>
+<li>training a Transformer style model on the SQuAD dataset,</li>
+<li>understanding Hugging Face's run_squad.py training script and output,</li>
+<li>and passing a full Wikipedia article as context for a question.</li>
 </ul>
-<p>By the end of this post we'll have a working IR-based QA system with BERT as the document reader and Wikipedia's search engine as the document retriever - a fun toy model that that hints at potential real-world use cases.</p>
-<p>This article was originally developed in a Jupyter Notebook and, thanks to <a href="https://fastpages.fast.ai/">fastpages</a>, converted to a blog post. For an interactive environment, click the "Open in Colab" button above, though we note that, due to Colab's system constraints, some of the cells in this notebook might not be fully executable. We'll note when this is the case, but don't worry -- you'll still be able to play around with all the fun stuff.</p>
+<p>By the end of this post we'll have a working IR-based QA system, with BERT as the document reader and Wikipedia's search engine as the document retriever - a fun toy model that hints at potential real-world use cases.</p>
+<p>This article was originally developed in a Jupyter Notebook and, thanks to <a href="https://fastpages.fast.ai/">fastpages</a>, converted to a blog post. For an interactive environment, click the "Open in Colab" button above (though we note that, due to Colab's system constraints, some of the cells in this notebook might not be fully executable. We'll highlight when this is the case, but don't worry -- you'll still be able to play around with all the fun stuff.)</p>
 <p>Let's get started!</p>
 <h1 id="Setting-up-your-virtual-environment">
 <a class="anchor" href="#Setting-up-your-virtual-environment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up your virtual environment<a class="anchor-link" href="#Setting-up-your-virtual-environment"> </a>
 </h1>
-<p>A virtual environment is always best practice and we're using <code>venv</code> on our workhorse machine. For this project we'll be using PyTorch, which handles the heavy lifting of deep differentiable learning. If you have a GPU you'll want a PyTorch build that includes CUDA support, though most cells in this notebook will work fine without one. Check out <a href="https://pytorch.org/">PyTorch's quick install guide</a> to determine the best build for your GPU and OS. We'll also be using the <a href="https://huggingface.co/transformers/index.html">Transformers</a> libarary, which provides easy-to-use implementations of all the popular Transformer architectures, like BERT. Finally, we'll need the <a href="https://pypi.org/project/wikipedia/">wikipedia</a> library for easy access and parsing of Wikipedia pages.</p>
+<p>A virtual environment is always best practice and we're using <code>venv</code> on our workhorse machine. For this project, we'll be using PyTorch, which handles the heavy lifting of deep differentiable learning. If you have a GPU you'll want a PyTorch build that includes CUDA support, though most cells in this notebook will work fine without one. Check out <a href="https://pytorch.org/">PyTorch's quick install guide</a> to determine the best build for your GPU and OS. We'll also be using the <a href="https://huggingface.co/transformers/index.html">Transformers</a> library, which provides easy-to-use implementations of all the popular Transformer architectures, like BERT. Finally, we'll need the <a href="https://pypi.org/project/wikipedia/">wikipedia</a> library for easy access and parsing of Wikipedia pages.</p>
 
 </div>
 </div>
@@ -240,7 +241,7 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note: Our GPU machine sports an older version of CUDA (9.2 -- we're getting around to updating that), so we need to use an older version of PyTorch for the necessary CUDA support.  The training script we'll be using requires some specific packages. More recent versions of PyTorch include these packages; however, older versions do not. If you have to work with an older version of PyTorch you might need to install <code>TensorboardX</code> (see the hidden code cell below).</p>
+<p>Note: Our GPU machine sports an older version of CUDA (9.2 -- we're getting around to updating that), so we need to use an older version of PyTorch for the necessary CUDA support.  The training script we'll be using requires some specific packages. More recent versions of PyTorch include these packages; however, older versions do not. If you have to work with an older version of PyTorch, you might need to install <code>TensorboardX</code> (see the hidden code cell below).</p>
 
 </div>
 </div>
@@ -306,7 +307,7 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <h1 id="Hugging-Face-Transformers">
 <a class="anchor" href="#Hugging-Face-Transformers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hugging Face Transformers<a class="anchor-link" href="#Hugging-Face-Transformers"> </a>
 </h1>
-<p>I'm new to PyTorch and even newer to Hugging Face (HF) but I'm quickly becoming a convert! The <a href="https://huggingface.co/transformers/#">Hugging Face Transformers</a> package provides state-of-the-art general-purpose architecures for natural language understanding and natural language generation. They host dozens of pre-trained models operating in over 100 languages that you can use right out of the box. All of these models come with deep interoperability between PyTorch and Tensorflow 2.0, which means you can move a model from TF2.0 to PyTorch and back again with a line or two of code!</p>
+<p>The <a href="https://huggingface.co/transformers/#">Hugging Face Transformers</a> package provides state-of-the-art general-purpose architectures for natural language understanding and natural language generation. They host dozens of pre-trained models operating in over 100 languages that you can use right out of the box. All of these models come with deep interoperability between PyTorch and Tensorflow 2.0, which means you can move a model from TF2.0 to PyTorch and back again with just a line or two of code!</p>
 <p>If you're new to Hugging Face, we strongly recommend working through the HF <a href="https://huggingface.co/transformers/quickstart.html">Quickstart guide</a> as well as their excellent <a href="https://huggingface.co/transformers/notebooks.html">Transformer Notebooks</a> (we did!), as we won't cover that material in this notebook. We'll be using <code>AutoClasses</code>, which serve as a wrapper around pretty much any of the base Transformer classes.</p>
 
 </div>
@@ -318,7 +319,7 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <h2 id="Fine-tuning-a-Transformer-model-for-Question-Answering">
 <a class="anchor" href="#Fine-tuning-a-Transformer-model-for-Question-Answering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fine-tuning a Transformer model for Question Answering<a class="anchor-link" href="#Fine-tuning-a-Transformer-model-for-Question-Answering"> </a>
 </h2>
-<p>To train a Transformer for QA with Hugging Face we'll need</p>
+<p>To train a Transformer for QA with Hugging Face, we'll need</p>
 <ol>
 <li>to pick a specific model architecture,</li>
 <li>a QA dataset, and</li>
@@ -328,7 +329,7 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <h3 id="1.-Pick-a-Model">
 <a class="anchor" href="#1.-Pick-a-Model" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Pick a Model<a class="anchor-link" href="#1.-Pick-a-Model"> </a>
 </h3>
-<p>Not every Transformer architecture lends itself naturally to the task of question answering. For example, GPT does not do QA; similarly BERT does not do machine translation.  HF identify the following model types for the QA task:</p>
+<p>Not every Transformer architecture lends itself naturally to the task of question answering. For example, GPT does not do QA; similarly BERT does not do machine translation.  HF identifies the following model types for the QA task:</p>
 <ul>
 <li>BERT</li>
 <li>distilBERT </li>
@@ -338,7 +339,7 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <li>XLM</li>
 <li>FlauBERT</li>
 </ul>
-<p>We'll stick with the now-classic BERT model in this notebook, but feel free to try out some others (we will - and we'll let you know when we do). Next up -- a training set.</p>
+<p>We'll stick with the now-classic BERT model in this notebook, but feel free to try out some others (we will - and we'll let you know when we do). Next up: a training set.</p>
 <h3 id="2.-QA-dataset:-SQuAD">
 <a class="anchor" href="#2.-QA-dataset:-SQuAD" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. QA dataset: SQuAD<a class="anchor-link" href="#2.-QA-dataset:-SQuAD"> </a>
 </h3>
@@ -355,10 +356,10 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Set path with magic</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># set path with magic</span>
 <span class="o">%</span><span class="k">env</span> DATA_DIR=./data/squad 
 
-<span class="c1"># Download the data</span>
+<span class="c1"># download the data</span>
 <span class="k">def</span> <span class="nf">download_squad</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="o">!</span>wget -P <span class="nv">$DATA_DIR</span> https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json
@@ -420,8 +421,8 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <a class="anchor" href="#3.-Fine-tuning-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Fine-tuning script<a class="anchor-link" href="#3.-Fine-tuning-script"> </a>
 </h3>
 <p>We've chosen a model and we've got some data. Time to train!</p>
-<p>All the standard models that HF support have been pre-trained, which means they've all been fed massive unsupervised training sets in order to learn basic language modeling. In order to perform well at specific tasks, like question answering, they must be trained further -- fine-tuned -- on specific datasets and tasks.</p>
-<p>HF helpfully provide a script that fine-tunes a Transformer model on one of the SQuAD datasets, called <code>run_squad.py</code>. You can grab the script <a href="https://github.com/huggingface/transformers/blob/master/examples/question-answering/run_squad.py">here</a> or run the cell below.</p>
+<p>All the standard models that HF supports have been pre-trained, which means they've all been fed massive unsupervised training sets in order to learn basic language modeling. In order to perform well at specific tasks (like question answering), they must be trained further -- fine-tuned -- on specific datasets and tasks.</p>
+<p>HF helpfully provides a script that fine-tunes a Transformer model on one of the SQuAD datasets, called <code>run_squad.py</code>. You can grab the script <a href="https://github.com/huggingface/transformers/blob/master/examples/question-answering/run_squad.py">here</a> or run the cell below.</p>
 
 </div>
 </div>
@@ -433,7 +434,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Download the run_squad.py training script</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># download the run_squad.py training script</span>
 <span class="o">!</span>curl -L -O https://raw.githubusercontent.com/huggingface/transformers/master/examples/question-answering/run_squad.py
 </pre></div>
 
@@ -447,7 +448,8 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This script takes care of all the hard work that goes into fine-tuning a model and as such, it's pretty complicated. It hosts no fewer than 45 arguments, providing an impressive amount of flexibility and utility for those who do a lot of training. We'll leave the details of this script for another day, and focus instead on the basic command to fine-tune BERT on SQuAD 1.1 or 2.0. Below are the most important arguments for the <code>run_squad.py</code> fine-tuning script.</p>
+<p>This script takes care of all the hard work that goes into fine-tuning a model and, as such, it's pretty complicated. It hosts no fewer than 45 arguments, providing an impressive amount of flexibility and utility for those who do a lot of training. We'll leave the details of this script for another day, and focus instead on the basic command to fine-tune BERT on SQuAD 1.1 or 2.0.</p>
+<p>Below are the most important arguments for the <code>run_squad.py</code> fine-tuning script.</p>
 
 </div>
 </div>
@@ -459,8 +461,8 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fine-tuning your own model for QA using HF's `run_squad.py`</span>
-<span class="c1"># Turn flags on and off according to the model you're training</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># fine-tuning your own model for QA using HF's `run_squad.py`</span>
+<span class="c1"># turn flags on and off according to the model you're training</span>
 
 <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">'python'</span><span class="p">,</span> 
@@ -497,7 +499,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
     
     <span class="s1">'--per_gpu_train_batch_size'</span><span class="p">,</span> <span class="s1">'12'</span><span class="p">,</span>                <span class="c1"># training batch size for each gpu</span>
     
-    <span class="s1">'--save_steps'</span><span class="p">,</span> <span class="s1">'5000'</span><span class="p">,</span>                            <span class="c1"># How often checkpoints (complete model snapshot) are saved </span>
+    <span class="s1">'--save_steps'</span><span class="p">,</span> <span class="s1">'5000'</span><span class="p">,</span>                            <span class="c1"># how often checkpoints (complete model snapshot) are saved </span>
     
     <span class="s1">'--threads'</span><span class="p">,</span> <span class="s1">'8'</span><span class="p">,</span>                                  <span class="c1"># num of CPU threads to use for converting SQuAD examples to model features</span>
     
@@ -508,7 +510,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
     
     <span class="s1">'--max_seq_length'</span><span class="p">,</span> <span class="s1">'384'</span><span class="p">,</span>                         <span class="c1"># maximum length allowed for the full input sequence </span>
     
-    <span class="s1">'--doc_stride'</span><span class="p">,</span> <span class="s1">'128'</span>                              <span class="c1"># Used for long documents that must be chunked into multiple features -- </span>
+    <span class="s1">'--doc_stride'</span><span class="p">,</span> <span class="s1">'128'</span>                              <span class="c1"># used for long documents that must be chunked into multiple features -- </span>
                                                        <span class="c1"># this "sliding window" controls the amount of stride between chunks</span>
 <span class="p">]</span>
 </pre></div>
@@ -537,7 +539,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <h3 id="Time-to-train!">
 <a class="anchor" href="#Time-to-train!" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time to train!<a class="anchor-link" href="#Time-to-train!"> </a>
 </h3>
-<p>But first, a note on compute requirements. We don't recommend fine-tuning a Transformer model unless you're rocking at least one GPU and a considerable amount of RAM. For context, our GPU is several years old (GeForce GTX TITAN X) and while it's not nearly as fast as the Tesla V100 (the current cadillac of GPUs) it gets the job done. Fine-tuning <code>bert-base-uncased</code> takes about 1.75 hours <em>per epoch</em>. Additionally, our workhorse machine has 32GB CPU and 12GB GPU memory which is sufficient for data processing and training most models on either of the SQuAD datasets.</p>
+<p>But first, a note on compute requirements. We don't recommend fine-tuning a Transformer model unless you're rocking at least one GPU and a considerable amount of RAM. For context, our GPU is several years old (GeForce GTX TITAN X), and while it's not nearly as fast as the Tesla V100 (the current Cadillac of GPUs), it gets the job done. Fine-tuning <code>bert-base-uncased</code> takes about 1.75 hours <em>per epoch</em>. Additionally, our workhorse machine has 32GB CPU and 12GB GPU memory, which is sufficient for data processing and training most models on either of the SQuAD datasets.</p>
 <p>The following cells demonstrate two ways to fine-tune: on the command line and in a Colab notebook.</p>
 
 </div>
@@ -549,7 +551,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <h4 id="Training-on-the-command-line">
 <a class="anchor" href="#Training-on-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training on the command line<a class="anchor-link" href="#Training-on-the-command-line"> </a>
 </h4>
-<p>I save the following as a shell script (<code>run_squad.sh</code>) and run on the command line (<code>$ source run_squad.sh</code>) of our workhorse GPU machine.  Shell scripts help prevent numerous mistakes and mis-keys when typing args to a command line, especially for complex scripts like this. They also allow you to keep track of which arguments were used last (though, as we'll see below, the <code>run_squad.py</code> script has a solution for that). I actually keep two shell scripts -- one explicitly for training and another for evaluation.</p>
+<p>We saved the following as a shell script (<code>run_squad.sh</code>) and ran on the command line (<code>$ source run_squad.sh</code>) of our workhorse GPU machine. Shell scripts help prevent numerous mistakes and mis-keys when typing args to a command line, especially for complex scripts like this. They also allow you to keep track of which arguments were used last (though, as we'll see below, the <code>run_squad.py</code> script has a solution for that). We actually kept two shell scripts -- one explicitly for training and another for evaluation.</p>
 
 </div>
 </div>
@@ -591,7 +593,7 @@ python run_squad.py  <span class="se">\</span>
 <h4 id="Training-in-Colab">
 <a class="anchor" href="#Training-in-Colab" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training in Colab<a class="anchor-link" href="#Training-in-Colab"> </a>
 </h4>
-<p>Alternatively, you can execute training in the cell as shown below. We note that standard Colab environments only provide 12GB of RAM. Converting the SQuAD dataset to features is memory intensive and may cause the basic Colab environment to fail silently. If you have a Colab instance with additional memory capacity (16GB+), this cell should execute fully. Either way, in the next section we'll download a model that has already been fine-tuned.</p>
+<p>Alternatively, you can execute training in the cell as shown below. We note that standard Colab environments only provide 12GB of RAM. Converting the SQuAD dataset to features is memory intensive and may cause the basic Colab environment to fail silently. If you have a Colab instance with additional memory capacity (16GB+), this cell should execute fully.</p>
 
 </div>
 </div>
@@ -697,7 +699,7 @@ python run_squad.py  <span class="se">\</span>
 </h2>
 <p>If you don't have access to GPUs or don't have the time to fiddle and train models, you're in luck! Hugging Face is more than a collection of slick Transformer classes -- it also hosts <a href="https://huggingface.co/models">a repository</a> for pre-trained and fine-tuned models contributed from the wide community of NLP practitioners. Searching for "squad" brings up at least 55 models.</p>
 <p><img src="/images/copied_from_nb/my_icons/HF_repo.png" alt=""></p>
-<p>Clicking one of these links gives explicit code for using the model, and, in some cases, information on how it was trained and what results were achieved. Let's load one of these pre-fine-tuned models.</p>
+<p>Each of these links provides explicit code for using the model, and, in some cases, information on how it was trained and what results were achieved. Let's load one of these pre-fine-tuned models.</p>
 
 </div>
 </div>
@@ -712,7 +714,7 @@ python run_squad.py  <span class="se">\</span>
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForQuestionAnswering</span>
 
-<span class="c1"># Executing these commands for the first time initiates a download of the </span>
+<span class="c1"># executing these commands for the first time initiates a download of the </span>
 <span class="c1"># model weights to ~/.cache/torch/transformers/</span>
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"deepset/bert-base-cased-squad2"</span><span class="p">)</span> 
 <span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForQuestionAnswering</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"deepset/bert-base-cased-squad2"</span><span class="p">)</span>
@@ -760,19 +762,19 @@ python run_squad.py  <span class="se">\</span>
 
 
 <span class="c1"># 1. TOKENIZE THE INPUT</span>
-<span class="c1"># Note: if you don't include return_tensors='pt' you'll get a list of lists which is easier for </span>
+<span class="c1"># note: if you don't include return_tensors='pt' you'll get a list of lists which is easier for </span>
 <span class="c1"># exploration but you cannot feed that into a model. </span>
 <span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">)</span> 
 
 <span class="c1"># 2. OBTAIN MODEL SCORES</span>
-<span class="c1"># The AutoModelForQuestionAnswering class includes a span predictor on top of the model. </span>
-<span class="c1"># The model returns answer start and end scores for each word in the text</span>
+<span class="c1"># the AutoModelForQuestionAnswering class includes a span predictor on top of the model. </span>
+<span class="c1"># the model returns answer start and end scores for each word in the text</span>
 <span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
-<span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>  <span class="c1"># Get the most likely beginning of answer with the argmax of the score</span>
-<span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Get the most likely end of answer with the argmax of the score</span>
+<span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>  <span class="c1"># get the most likely beginning of answer with the argmax of the score</span>
+<span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># get the most likely end of answer with the argmax of the score</span>
 
 <span class="c1"># 3. GET THE ANSWER SPAN</span>
-<span class="c1"># Once we have the most likely start and end tokens, we grab all the tokens between them</span>
+<span class="c1"># once we have the most likely start and end tokens, we grab all the tokens between them</span>
 <span class="c1"># and convert tokens back to words!</span>
 <span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">]))</span>
 </pre></div>
@@ -806,7 +808,7 @@ python run_squad.py  <span class="se">\</span>
 <h1 id="QA-on-Wikipedia-pages">
 <a class="anchor" href="#QA-on-Wikipedia-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>QA on Wikipedia pages<a class="anchor-link" href="#QA-on-Wikipedia-pages"> </a>
 </h1>
-<p>We tried our model on a question paired with a short passage, but what if we want to retrieve an answer from a longer document? A typical Wikipedia page is much longer than the example above and we need to do a bit of massaging before we can use our model on longer contexts.</p>
+<p>We tried our model on a question paired with a short passage, but what if we want to retrieve an answer from a longer document? A typical Wikipedia page is much longer than the example above, and we need to do a bit of massaging before we can use our model on longer contexts.</p>
 <p>Let's start by pulling up a Wikipedia page.</p>
 
 </div>
@@ -910,7 +912,7 @@ The Albatross Wikipedia article contains 38200 characters.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The tokenizer takes the input as text and returns tokens. In general, tokenizers convert words or pieces of words into a model-ingestable format. The specific tokens and format are dependent on the type of model. For example, BERT tokenizes words differently from RoBERTa, so be sure to always use the associated tokenizer appropriate for your model.</p>
+<p>The tokenizer takes the input as text and returns tokens. In general, tokenizers convert words or pieces of words into a model-ingestible format. The specific tokens and format are dependent on the type of model. For example, BERT tokenizes words differently from RoBERTa, so be sure to always use the associated tokenizer appropriate for your model.</p>
 <p>In this case, the tokenizer converts our input text into 8824 tokens, but this far exceeds the maximum number of tokens that can be fed to the model at one time. Most BERT-esque models can only accept 512 tokens at once, thus the (somewhat confusing) warning above (how is 10 &gt; 512?). This means we'll have to split our input into chunks and each chunk must not exceed 512 tokens in total.</p>
 <p>When working with Question Answering, it's crucial that each chunk follows this format:</p>
 <p>[CLS] question tokens [SEP] context tokens [SEP]</p>
@@ -926,7 +928,7 @@ The Albatross Wikipedia article contains 38200 characters.
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Time to chunk!</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># time to chunk!</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="c1"># identify question tokens (token_type_ids = 0)</span>
@@ -1035,7 +1037,7 @@ Number of tokens in chunk 17: 341
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Each of these chunks (except for the last one) has the following structure:</p>
 <p>[CLS], 12 question tokens, [SEP], 497 tokens of the Wikipedia article, [SEP] token = 512 tokens</p>
-<p>Each of these chunks can now be fed to the model without causing indexing errors. We'll get an "answer" for each chunk, however not all answers are useful since not every segment of a Wikipedia article is informative for our question. The model will return the [CLS] token when it determines that the context does not contain an answer to the question.</p>
+<p>Each of these chunks can now be fed to the model without causing indexing errors. We'll get an "answer" for each chunk; however, not all answers are useful, since not every segment of a Wikipedia article is informative for our question. The model will return the [CLS] token when it determines that the context does not contain an answer to the question.</p>
 
 </div>
 </div>
@@ -1052,7 +1054,7 @@ Number of tokens in chunk 17: 341
 
 <span class="n">answer</span> <span class="o">=</span> <span class="s1">''</span>
 
-<span class="c1"># Now we iterate over our chunks, looking for the best answer from each chunk</span>
+<span class="c1"># now we iterate over our chunks, looking for the best answer from each chunk</span>
 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunked_input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">chunk</span><span class="p">)</span>
 
@@ -1061,7 +1063,7 @@ Number of tokens in chunk 17: 341
 
     <span class="n">ans</span> <span class="o">=</span> <span class="n">convert_ids_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">chunk</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">])</span>
     
-    <span class="c1"># If the ans == [CLS] then the model did not find a real answer in this chunk</span>
+    <span class="c1"># if the ans == [CLS] then the model did not find a real answer in this chunk</span>
     <span class="k">if</span> <span class="n">ans</span> <span class="o">!=</span> <span class="s1">'[CLS]'</span><span class="p">:</span>
         <span class="n">answer</span> <span class="o">+=</span> <span class="n">ans</span> <span class="o">+</span> <span class="s2">" / "</span>
         
@@ -1095,7 +1097,7 @@ Number of tokens in chunk 17: 341
 <h1 id="Putting-it-all-together">
 <a class="anchor" href="#Putting-it-all-together" aria-hidden="true"><span class="octicon octicon-link"></span></a>Putting it all together<a class="anchor-link" href="#Putting-it-all-together"> </a>
 </h1>
-<p>Let's recap. We've essentially built a simple IR-based QA system! We're using <code>wikipedia</code>'s search engine to return a list of candidate documents that we then feed into our Document Reader (in this case, BERT fine-tuned on SQuAD 2.0).  Let's make our code easier to read and more self-contained by packaging the Document Reader into a class.</p>
+<p>Let's recap. We've essentially built a simple IR-based QA system! We're using <code>wikipedia</code>'s search engine to return a list of candidate documents that we then feed into our document reader (in this case, BERT fine-tuned on SQuAD 2.0). Let's make our code easier to read and more self-contained by packaging the document reader into a class.</p>
 
 </div>
 </div>
@@ -1132,7 +1134,7 @@ Number of tokens in chunk 17: 341
 <span class="sd">        requirement for that Transformer model. </span>
 
 <span class="sd">        Calls to BERT / RoBERTa / ALBERT require the following format:</span>
-<span class="sd">        [CLS] question tokens [SEP] context tokens [SEP]</span>
+<span class="sd">        [CLS] question tokens [SEP] context tokens [SEP].</span>
 <span class="sd">        """</span>
 
         <span class="c1"># create question mask based on token_type_ids</span>
@@ -1179,8 +1181,8 @@ Number of tokens in chunk 17: 341
         <span class="k">else</span><span class="p">:</span>
             <span class="n">answer_start_scores</span><span class="p">,</span> <span class="n">answer_end_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 
-            <span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>  <span class="c1"># Get the most likely beginning of answer with the argmax of the score</span>
-            <span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Get the most likely end of answer with the argmax of the score</span>
+            <span class="n">answer_start</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_start_scores</span><span class="p">)</span>  <span class="c1"># get the most likely beginning of answer with the argmax of the score</span>
+            <span class="n">answer_end</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">answer_end_scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># get the most likely end of answer with the argmax of the score</span>
         
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_ids_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'input_ids'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span>
                                               <span class="n">answer_start</span><span class="p">:</span><span class="n">answer_end</span><span class="p">])</span>
@@ -1216,7 +1218,7 @@ Number of tokens in chunk 17: 341
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide </span>
 
-<span class="c1"># To make the following output more readable I'll turn off the token sequence length warning</span>
+<span class="c1"># to make the following output more readable I'll turn off the token sequence length warning</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"transformers.tokenization_utils"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 </pre></div>
@@ -1244,7 +1246,7 @@ Number of tokens in chunk 17: 341
 
 <span class="n">reader</span> <span class="o">=</span> <span class="n">DocumentReader</span><span class="p">(</span><span class="s2">"deepset/bert-base-cased-squad2"</span><span class="p">)</span> 
 
-<span class="c1"># if you trained your own model using the training cell earlier you can access it with this:</span>
+<span class="c1"># if you trained your own model using the training cell earlier, you can access it with this:</span>
 <span class="c1">#reader = DocumentReader("./models/bert/bbu_squad2")</span>
 
 <span class="k">for</span> <span class="n">question</span> <span class="ow">in</span> <span class="n">questions</span><span class="p">:</span>
@@ -1296,8 +1298,8 @@ Answer: five /
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We got 2 out of 3 questions right!</p>
-<p>Notice that, at least for the current questions I've chosen, the QA systems fails because of Wikipedia's default search engine, not BERT! It pulls up the wrong page for two of our questions: a page about Barack Obama Sr. instead of the former US President, and an article about the US's Dept of Defense building "The Pentagon" instead of a page about geometry. In the latter case we ended up with the correct answer by coincidence! This illustrates that any successful IR-based QA system requires a search engine (document retriever) as good as the document reader.</p>
+<p>It got 2 out of 3 questions right!</p>
+<p>Notice that, at least for the current questions we've chosen, the QA system fails because of Wikipedia's default search engine, not because of BERT! It pulls up the wrong page for two of our questions: a page about Barack Obama Sr. instead of the former US President, and an article about the US's Department of Defense building "The Pentagon" instead of a page about geometry. In the latter case, we ended up with the correct answer by coincidence! This illustrates that any successful IR-based QA system requires a search engine (document retriever) as good as the document reader.</p>
 
 </div>
 </div>
