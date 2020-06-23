@@ -1,0 +1,2592 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Evaluating the Retriever &amp; End-to-End System | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Evaluating the Retriever &amp; End-to-End System" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A review of Information Retrieval and the role it plays in a QA system" />
+<meta property="og:description" content="A review of Information Retrieval and the role it plays in a QA system" />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-30T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"A review of Information Retrieval and the role it plays in a QA system","@type":"BlogPosting","headline":"Evaluating the Retriever &amp; End-to-End System","dateModified":"2020-06-30T00:00:00-05:00","datePublished":"2020-06-30T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Evaluating the Retriever &amp; End-to-End System | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Evaluating the Retriever &amp; End-to-End System" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A review of Information Retrieval and the role it plays in a QA system" />
+<meta property="og:description" content="A review of Information Retrieval and the role it plays in a QA system" />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-30T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"A review of Information Retrieval and the role it plays in a QA system","@type":"BlogPosting","headline":"Evaluating the Retriever &amp; End-to-End System","dateModified":"2020-06-30T00:00:00-05:00","datePublished":"2020-06-30T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden/"},"url":"https://qa.fastforwardlabs.com/hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">NLP for Question Answering</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Us</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Evaluating the Retriever &amp; End-to-End System</h1><p class="page-description">A review of Information Retrieval and the role it plays in a QA system</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-30T00:00:00-05:00" itemprop="datePublished">
+        Jun 30, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      29 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/fastforwardlabs/ff14_blog/tree/master/_notebooks/2020-06-30-Evaluating_the_Retriever_&_End_to_End_System.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/fastforwardlabs/ff14_blog/master?filepath=_notebooks%2F2020-06-30-Evaluating_the_Retriever_%26_End_to_End_System.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/fastforwardlabs/ff14_blog/blob/master/_notebooks/2020-06-30-Evaluating_the_Retriever_&_End_to_End_System.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h3"><a href="#Prerequisites">Prerequisites </a></li>
+<li class="toc-entry toc-h1"><a href="#Retrieving-the-right-document-is-important">Retrieving the right document is important </a></li>
+<li class="toc-entry toc-h1"><a href="#Elasticsearch-as-an-IR-Tool">Elasticsearch as an IR Tool </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Inverted-Index">Inverted Index </a></li>
+<li class="toc-entry toc-h2"><a href="#Using-Elasticsearch-with-SQuAD2.0">Using Elasticsearch with SQuAD2.0 </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Download-and-Prepare-SQUAD2.0">Download and Prepare SQUAD2.0 </a></li>
+<li class="toc-entry toc-h3"><a href="#Download-Elasticsearch">Download Elasticsearch </a></li>
+<li class="toc-entry toc-h3"><a href="#Getting-Data-into-Elasticsearch">Getting Data into Elasticsearch </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Create-an-Index">Create an Index </a></li>
+<li class="toc-entry toc-h4"><a href="#Populate-the-Index">Populate the Index </a></li>
+<li class="toc-entry toc-h4"><a href="#Search-the-Index">Search the Index </a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Evaluating-Retriever-Performance">Evaluating Retriever Performance </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Recall">Recall </a></li>
+<li class="toc-entry toc-h4"><a href="#Mean-Average-Precision">Mean Average Precision </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Improving-Search-Results-with-Custom-Analyzers-&-Query-Enrichment">Improving Search Results with Custom Analyzers &amp; Query Enrichment </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Build-new-index">Build new index </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Query-improvement">Query improvement </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Impact-of-Retriever-in-End-to-End-QA-System">Impact of Retriever in End-to-End QA System </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-30-Evaluating_the_Retriever_&_End_to_End_System.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In our last post, <a href="https://qa.fastforwardlabs.com/no%20answer/null%20threshold/bert/distilbert/exact%20match/f1/robust%20predictions/2020/06/09/Evaluating_BERT_on_SQuAD.html">Evaluating QA: Metrics, Predictions, and the Null Response</a>, we took a deep dive look at how to asses the quality of a BERT-like Reader for Question Answering (QA) using the Hugging Face framework. In this post, we'll focus on the former component of an end-to-end QA system - the Retriever. Specifically, we'll introduce Elasticsearch as a powerful and efficient Information Retrieval (IR) tool that can be used to scour through large corpora and retrieve relevant documents. Through the post, we'll explain how to implement and evaluate a Retriever in the context of Question Answering and demonstrate the impact it has on an end-to-end QA system.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Prerequisites">
+<a class="anchor" href="#Prerequisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites<a class="anchor-link" href="#Prerequisites"> </a>
+</h3>
+<ul>
+<li>a basic understanding of Information Retrieval (IR) &amp; Search</li>
+<li>a basic understanding of IR based QA systems (see previous posts)</li>
+<li>a basic understanding of Transformers and PyTorch</li>
+<li>a basic understanding of the SQuAD2.0 dataset</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Retrieving-the-right-document-is-important">
+<a class="anchor" href="#Retrieving-the-right-document-is-important" aria-hidden="true"><span class="octicon octicon-link"></span></a>Retrieving the right document is important<a class="anchor-link" href="#Retrieving-the-right-document-is-important"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/images/copied_from_nb/my_icons/michael_scott_quote.jpg" alt="" title="You miss 100% of the shots you don't take"></p>
+<p>We believe that what Michael Scott really mean to say is:</p>
+<blockquote>
+<p>"<strong><em>You miss 100% of the questions if the answer doesn't appear in the input context</em></strong>"</p>
+</blockquote>
+<p>[Andrew] - Find a better intro ^^^</p>
+<p>As we have discussed throughout this blog series, many modern QA systems take a two-staged approach to answering questions. In the first stage, a document retriever selects $N$ potentially relevant documents from a given corpus. Subsequently, a machine comprehension model processes each of the $N$ documents to determine an answer to the input question. Because of recent advances in NLP and deep learning (i.e. flashy Transformer models), the machine comprehension component of question answering has typically been the main focus of evaluation for these systems. Stage one of these systems has recieved limited attention despite its obvious importance...stage two is bounded by performance at stage one. Let's get more specific.</p>
+<p>We <a href="">recently explained methods</a> that enable BERT-like models to produce robust answers given a question and context passage by selectively processing predictions and by refraining from answering certain questions at all. While the ability to properly comprehend a passage and produce a correct answer is a very important feature of any QA tool, the success of the overall system is highly dependent on first providing a correct passage to read through. Without being fed a context passage that actually contains the ground-truth answer to a given question, the overall system's performance is limited to how well it can predict no-answer questions. To demonstrate, we'll revisit an example from our <a href="https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html">second blog post</a> where three questions were asked of the Wikipedia search engine based QA system:</p>
+
+<pre><code>**Example 1: Incorrect**
+Question: When was Barack Obama born?
+Top wiki result: &lt;WikipediaPage 'Barack Obama Sr.'&gt;
+Answer: 18 June 1936 / February 2 , 1961 / 
+
+**Example 2: Correct**
+Question: Why is the sky blue?
+Top wiki result: &lt;WikipediaPage 'Diffuse sky radiation'&gt;
+Answer: Rayleigh scattering / 
+
+**Example 3: Correct**
+Question: How many sides does a pentagon have?
+Top wiki result: &lt;WikipediaPage 'The Pentagon'&gt;
+Answer: five /</code></pre>
+<p>In Example 1, the Reader had no chance of producing the correct answer because of its outright absence from the context article served up by the Retriever. Namely, the Retriever erroneously provided a page about Barack Obama Sr. instead of his son, the former US President. In this case, the only way the Reader could have possibly produced the correct answer was if the correct answer was actually not to answer at all. On the flip side, in Example 3, the Retriever did not identify the globally "correct" document - it returned an article about "The Pentagon" instead of a page about geometry - but nonetheless, it provided enough context for the Reader to succeed.</p>
+<p>These quick examples illustrate  why an effective Retriever is critical for an end-to-end QA system. Now let's take a deeper look at a classic tool used for information retrieval - Elasticsearch.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Elasticsearch-as-an-IR-Tool">
+<a class="anchor" href="#Elasticsearch-as-an-IR-Tool" aria-hidden="true"><span class="octicon octicon-link"></span></a>Elasticsearch as an IR Tool<a class="anchor-link" href="#Elasticsearch-as-an-IR-Tool"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/images/copied_from_nb/my_icons/elasticsearch-logo.png" alt="" title="Elasticsearch"></p>
+<p>Modern QA systems employ a variety of techniques for the task of information retrieval ranging from traditional sparse vector word matching (ex. Elasticsearch) to <a href="https://arxiv.org/pdf/2004.04906.pdf">novel approaches</a> using dense representations of encoded passages combined with <a href="https://github.com/facebookresearch/faiss">efficient search capabilities</a>. Despite the flurry of contemporary research efforts in this area, the traditional sparse vector approach performs very well overall and has only recently been overtaken by embedding-based systems for end-to-end QA retrieval tasks. For that reason, we'll explore Elasticsearch as a simple and easy to use framework for document retrieval. So, what exactly is Elasticsearch?</p>
+<p>Elasticsearch is a powerful open-source search and analytics engine built on the <a href="https://lucene.apache.org/">Apache Lucene</a> library that is capable of handling all types of data including textual, numerical, geospatial, structrured, and unstructured. It is built to scale with a robust set of features, rich ecosystem, and diverse set of client libraries making it easy to integrate and use. In the context of information retrieval for automated question answering, we are keenly interested in the features surrounding full-text search. Elasticsearch provides a convenient way to index documents so they can easily be queried for nearest neighbor search using a TF-IDF based similarity metric. Specifically, it uses <a href="https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/">BM25</a> term weighting to represent question and context passages as high-dimensional, sparse vectors that are efficiently searched in an inverted index. Let's unpack those ideas a bit.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Inverted-Index">
+<a class="anchor" href="#Inverted-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inverted Index<a class="anchor-link" href="#Inverted-Index"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The purpose of an inverted index is to store text in a data structure that allows for efficient and fast full-text searches. An inverted index is essentially just a mapping between unique terms and documents which contain those terms. For example, let's consider the following two documents and a depiction of an inverted index built from them:</p>
+<ol>
+<li>"Elasticsearch is a powerful technique for search!"</li>
+<li>"Manual search is a slow technique."</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Term</th>
+<th style="text-align:center">Document 1</th>
+<th style="text-align:center">Document 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">a</td>
+<td style="text-align:center">x</td>
+<td style="text-align:center">x</td>
+</tr>
+<tr>
+<td style="text-align:center">elasticsearch</td>
+<td style="text-align:center">x</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">for</td>
+<td style="text-align:center">x</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">is</td>
+<td style="text-align:center">x</td>
+<td style="text-align:center">x</td>
+</tr>
+<tr>
+<td style="text-align:center">manual</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">x</td>
+</tr>
+<tr>
+<td style="text-align:center">powerful</td>
+<td style="text-align:center">x</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">search</td>
+<td style="text-align:center">x</td>
+<td style="text-align:center">x</td>
+</tr>
+<tr>
+<td style="text-align:center">slow</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">x</td>
+</tr>
+<tr>
+<td style="text-align:center">technique</td>
+<td style="text-align:center">x</td>
+<td style="text-align:center">x</td>
+</tr>
+</tbody>
+</table>
+<p>Notice that the unique set of terms from both documents are contained in the index, and we can easily lookup which document contains which terms. Searching this inverted index for the phrase "search technique" would return both documents because both terms are present in each document, while searching for the phrase "powerful technique" would return only Document 1. Search itself is quite a bit more complicated than the boolean logic depicted here as it involves relevance scoring (among other query dependent logic), however this oversimplification is intended to demonstrate the quick and powerful nature of the inverted index data structure.
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>In the example above, all tokens have been lowercased and punctuation removed. This happens as part of an important preprocessing pipeline that we’ll explain in more detail later in the post.
+</div>
+The inverted index representation is considered <em>sparse</em> by construction because for each document, you end up with a vector containing few terms relative to all terms in the index. This indexing process is what allows Elasticsearch to search large collections of text documents orders of magnitude faster than traditional SQL databases. While the exact match nature of search in this data structure is powerful and effective, it isn't without flaws. The word matching approach is limited in its ability to take semantically related concepts into search consideration. For example, consider the following question and context:
+<blockquote>
+<p><strong>Question:</strong> "Who is the bad guy in lord of the rings?"&gt; <strong>Context:</strong> "Sala Baker is an actor and stuntman from New Zealand. He is best known for portraying the villain Sauron in the Lord of the Rings trilogy..."
+A exact match based system like Elasticsearch would struggle to retrieve this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". Modern document retrieval systems that take advantage of learned, dense representations of text would perform better in this situation.</p>
+</blockquote>
+<p>[ANDREW] - this example ^ was taken from <a href="https://arxiv.org/pdf/2004.04906.pdf">DPR</a>. Either cite it or come up with different example</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Using-Elasticsearch-with-SQuAD2.0">
+<a class="anchor" href="#Using-Elasticsearch-with-SQuAD2.0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Elasticsearch with SQuAD2.0<a class="anchor-link" href="#Using-Elasticsearch-with-SQuAD2.0"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With this basic understanding of how Elasticsearch works, let's dive in and build our own Document Retrieval system by indexing a set of Wikipedia article paragraphs that support questions and answers in the SQuAD2.0 dataset. Before we get started, we'll need to download and prepare data from the SQuAD2.0 train set.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Download-and-Prepare-SQUAD2.0">
+<a class="anchor" href="#Download-and-Prepare-SQUAD2.0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download and Prepare SQUAD2.0<a class="anchor-link" href="#Download-and-Prepare-SQUAD2.0"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+
+<span class="c1"># Download the SQuAD2.0 train set</span>
+<span class="o">!</span>wget -P data/squad/ https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json
+    
+<span class="kn">import</span> <span class="nn">json</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following <code>parse_qa_records</code> function will extract question/answer examples, as well as article content from the train set. A common practice in IR for QA is to segment large articles into smaller passages before indexing for two reasons:</p>
+<ol>
+<li>Transformer based Readers are very slow - providing an entire Wikipedia article to BERT for processing takes a considerable amount of time and also defeats the purpose of using an IR tool to narrow the search space for the Reader.</li>
+<li>Smaller passages reduce noise - by identifying a more concise context passage for BERT to read through, we reduce the chance of BERT getting lost.</li>
+</ol>
+<p>Of course the chunking method proposed here doesn't come without a cost. Larger document size means each document contains more information. By reducing passage size, we are potentially trading off system recall for speed - though there are techniques to alleviate this as we will disucss later in the post.</p>
+<p>With our chunking approach, each article paragraph will be prepended with the article title and collectively serve as a corpus of documents for which our Elasticsearch Retriever will search over. In practice, open-domain QA systems sit atop massive collections of documents (think all of Wikipedia) to provide a breadth of information to answer general-knowledge questions from. For the purposes of demonstrating Elasticsearch functionality, we will limit our corpus to only the Wikipedia articles supporting SQuAD2.0 train questions.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">parse_qa_records</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Loop through SQuAD2.0 dataset and parse out question/answer examples and unique article paragraphs</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        qa_records (list) - question/answer examples as list of dictionaries</span>
+<span class="sd">        wiki_articles (list) - unique Wikipedia titles and article paragraphs recreated from SQuAD data</span>
+<span class="sd">    </span>
+<span class="sd">    '''</span>
+    <span class="n">num_with_ans</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">num_without_ans</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">qa_records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">wiki_articles</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">paragraph</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">article</span><span class="p">[</span><span class="s1">'paragraphs'</span><span class="p">]):</span>
+            
+            <span class="n">wiki_articles</span><span class="p">[</span><span class="n">article</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="o">+</span><span class="sa">f</span><span class="s1">'_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">article</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">' '</span> <span class="o">+</span> <span class="n">paragraph</span><span class="p">[</span><span class="s1">'context'</span><span class="p">]</span>
+            
+            <span class="k">for</span> <span class="n">questions</span> <span class="ow">in</span> <span class="n">paragraph</span><span class="p">[</span><span class="s1">'qas'</span><span class="p">]:</span>
+                
+                <span class="n">qa_record</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">qa_record</span><span class="p">[</span><span class="s1">'example_id'</span><span class="p">]</span> <span class="o">=</span> <span class="n">questions</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span>
+                <span class="n">qa_record</span><span class="p">[</span><span class="s1">'document_title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">article</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span>
+                <span class="n">qa_record</span><span class="p">[</span><span class="s1">'question_text'</span><span class="p">]</span> <span class="o">=</span> <span class="n">questions</span><span class="p">[</span><span class="s1">'question'</span><span class="p">]</span>
+                
+                <span class="k">try</span><span class="p">:</span> 
+                    <span class="n">qa_record</span><span class="p">[</span><span class="s1">'short_answer'</span><span class="p">]</span> <span class="o">=</span> <span class="n">questions</span><span class="p">[</span><span class="s1">'answers'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">'text'</span><span class="p">]</span>
+                    <span class="n">num_with_ans</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">qa_record</span><span class="p">[</span><span class="s1">'short_answer'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">""</span>
+                    <span class="n">num_without_ans</span> <span class="o">+=</span> <span class="mi">1</span>
+                    
+                <span class="n">qa_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qa_record</span><span class="p">)</span>
+        
+        
+    <span class="n">wiki_articles</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">'document_title'</span><span class="p">:</span><span class="n">title</span><span class="p">,</span> <span class="s1">'document_text'</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>\
+                         <span class="k">for</span> <span class="n">title</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">wiki_articles</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+                
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Data contains </span><span class="si">{</span><span class="n">num_with_ans</span><span class="si">}</span><span class="s1"> question/answer pairs with a short answer, and </span><span class="si">{</span><span class="n">num_without_ans</span><span class="si">}</span><span class="s1"> without.'</span><span class="o">+</span>
+          <span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wiki_articles</span><span class="p">)</span><span class="si">}</span><span class="s1"> unique wikipedia article paragraphs.'</span><span class="p">)</span>
+                
+    <span class="k">return</span> <span class="n">qa_records</span><span class="p">,</span> <span class="n">wiki_articles</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load and parse data</span>
+<span class="n">train_file</span> <span class="o">=</span> <span class="s2">"data/squad/train-v2.0.json"</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="s1">'rb'</span><span class="p">))</span>
+
+<span class="n">qa_records</span><span class="p">,</span> <span class="n">wiki_articles</span> <span class="o">=</span> <span class="n">parse_qa_records</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="s1">'data'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Data contains 86821 question/answer pairs with a short answer, and 43498 without.
+There are 19035 unique wikipedia article paragraphs.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Show parsed record example</span>
+<span class="n">qa_records</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'example_id': '56d43c5f2ccc5a1400d830ab',
+ 'document_title': 'Beyoncé',
+ 'question_text': 'What was the first album Beyoncé released as a solo artist?',
+ 'short_answer': 'Dangerously in Love'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Show example of parsed wiki article paragraph</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wiki_articles</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{'document_title': 'Beyoncé_10', 'document_text': 'Beyoncé Beyoncé\'s first solo recording was a feature on Jay Z\'s "\'03 Bonnie &amp; Clyde" that was released in October 2002, peaking at number four on the U.S. Billboard Hot 100 chart. Her first solo album Dangerously in Love was released on June 24, 2003, after Michelle Williams and Kelly Rowland had released their solo efforts. The album sold 317,000 copies in its first week, debuted atop the Billboard 200, and has since sold 11 million copies worldwide. The album\'s lead single, "Crazy in Love", featuring Jay Z, became Beyoncé\'s first number-one single as a solo artist in the US. The single "Baby Boy" also reached number one, and singles, "Me, Myself and I" and "Naughty Girl", both reached the top-five. The album earned Beyoncé a then record-tying five awards at the 46th Annual Grammy Awards; Best Contemporary R&amp;B Album, Best Female R&amp;B Vocal Performance for "Dangerously in Love 2", Best R&amp;B Song and Best Rap/Sung Collaboration for "Crazy in Love", and Best R&amp;B Performance by a Duo or Group with Vocals for "The Closer I Get to You" with Luther Vandross.'}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Download-Elasticsearch">
+<a class="anchor" href="#Download-Elasticsearch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download Elasticsearch<a class="anchor-link" href="#Download-Elasticsearch"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With our data ready to go, let's download, install, and configure Elasticsearch using one of the two following methods (Colab recommended). After executing the setup, we will have an Elasticsearch service running locally.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># If running locally - Run Elasticsearch using Docker (assumes Docker is installed)</span>
+<span class="o">!</span>docker run -d -p <span class="m">9200</span>:9200 -e <span class="s2">"discovery.type=single-node"</span> elasticsearch:7.6.2
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>docker: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?.
+See 'docker run --help'.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+
+<span class="c1"># If using Colab - Start Elasticsearch from source</span>
+<span class="o">!</span> wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-linux-x86_64.tar.gz -q
+<span class="o">!</span> tar -xzf elasticsearch-7.6.2-linux-x86_64.tar.gz
+<span class="o">!</span> chown -R daemon:daemon elasticsearch-7.6.2
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">STDOUT</span>
+<span class="n">es_server</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">([</span><span class="s1">'elasticsearch-7.6.2/bin/elasticsearch'</span><span class="p">],</span>
+                   <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">STDOUT</span><span class="p">,</span>
+                   <span class="n">preexec_fn</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">setuid</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># as daemon</span>
+                  <span class="p">)</span>
+<span class="c1"># wait until ES has started</span>
+<span class="o">!</span> sleep <span class="m">30</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Getting-Data-into-Elasticsearch">
+<a class="anchor" href="#Getting-Data-into-Elasticsearch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Data into Elasticsearch<a class="anchor-link" href="#Getting-Data-into-Elasticsearch"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll use the <a href="https://elasticsearch-py.readthedocs.io/en/master/">official low-level Python client library</a> for interacting with Elasticsearch.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+
+<span class="o">!</span>pip install elasticsearch
+<span class="o">!</span>pip install tqdm
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By default, Elasticsearch is launched locally on port 9200. We first need to instantiate an Elasticsearch client object and connect to the service.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'host'</span><span class="p">:</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="s1">'port'</span><span class="p">:</span><span class="mi">9200</span><span class="p">}</span>
+<span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">([</span><span class="n">config</span><span class="p">])</span>
+
+<span class="c1"># test connection</span>
+<span class="n">es</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Before we go further, let's introduce a few concepts that are specific to Elasticsearch and the process of indexing data. In Elasticsearch, an <strong><em>index</em></strong> is a collection of documents that have common characteristics (similar to a database schema in an RDBMS). <strong><em>Documents</em></strong> are JSON objects having their own set of key-value pairs consisting of various data types (similar to rows/fields in RDBMS). When we add a document into an index, the value for the document's text fields go through an analysis process prior to being indexed. This means that when executing a search query against an existing index, we are actually searching against the post-processed representation that is stored in the inverted index, not the raw input document itself.</p>
+<p><img src="/images/copied_from_nb/my_icons/elastic_index_process.png" alt="Elasticsearch Index Process"></p>
+<p>The anaysis process is a customizable pipeline carried out by a dedicated <strong><em>Analyzer</em></strong>. Elasticsearch analyzers are comprised of three components that make up the processing pipeline: <em>character filters, a tokenizer, and token filters.</em> Each of these components modify the input stream of text according to some configurable settings.</p>
+<ul>
+<li>
+<strong>Character Filters:</strong> First, character filters have the ability to add, remove, or replace specific items in the text field. A common application of this filter is to strip <code>html</code> tags from the raw input. </li>
+<li>
+<strong>Tokenizer:</strong> After applying character filters, the transformed text is then passed to a tokenizer which breaks up the input string into individual tokens with a provided strategy. By default, the <code>standard</code> tokenizer splits tokens whenever it encounters a whitespace character, and also splits on most symbols (like commas, periods, semicolons, etc.)</li>
+<li>
+<strong>Token Filters:</strong> Finally, the token stream is passed to a token filter which acts to add, remove, or modify tokens. Typical token filters include <code>lowercase</code> which converts all tokens to lowercase form, and <code>stop</code> which removes commonly occuring tokens called stopwords. </li>
+</ul>
+<p>Elasticsearch comes with several built-in Analyzers that satisfy common use cases with the default being the <code>Standard Analyzer</code>. The Standard Analyzer doesn't contain any character filters, uses a <code>standard</code> tokenizer, and applies a <code>lowercase</code> token filter. Let's take a look at one of the example sentences from above as its passed through this pipeline.</p>
+<p>[ANDREW] - recreate these images/flows on my own with my own examples. Include a blurb saying "we found this blog post helpful in understanding Analyzers"</p>
+<p><img src="/images/copied_from_nb/my_icons/elasticsearch_standard_analyzer.png" alt="Elasticsearch Analyzer Pipeline"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Create-an-Index">
+<a class="anchor" href="#Create-an-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create an Index<a class="anchor-link" href="#Create-an-Index"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's create a new index and add our Wikipedia articles to it. To create an index, we provide a name and optionally some index configurations. Here we are specifying a set of <code>mappings</code> that indicate our anticipated index schema, data types, and how the text fields should be processed. If no <code>body</code> is passed, Elasticsearch will automatically infer fields and data types from incoming documents, as well as apply the <code>Standard Analyzer</code> to any text fields.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"settings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"analysis"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"standard_analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"standard"</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">"mappings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"dynamic"</span><span class="p">:</span> <span class="s2">"strict"</span><span class="p">,</span> 
+        <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"document_title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"standard_analyzer"</span><span class="p">},</span>
+            <span class="s2">"document_text"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"standard_analyzer"</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="n">index_name</span> <span class="o">=</span> <span class="s1">'squad-standard-index'</span>
+<span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">index_config</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'acknowledged': True,
+ 'shards_acknowledged': True,
+ 'index': 'squad-standard-index'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Populate-the-Index">
+<a class="anchor" href="#Populate-the-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Populate the Index<a class="anchor-link" href="#Populate-the-Index"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can then loop through our list of Wikipedia titles &amp; articles and add them to our newly created Elasticsearch index.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="k">def</span> <span class="nf">populate_index</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">evidence_corpus</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Loads records into an existing Elasticsearch index</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        es_obj (elasticsearch.client.Elasticsearch)</span>
+<span class="sd">        index_name (str)</span>
+<span class="sd">        evidence_corpus (list) - list of dicts containing data records</span>
+
+<span class="sd">    '''</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">evidence_corpus</span><span class="p">)):</span>
+    
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index_status</span> <span class="o">=</span> <span class="n">es_obj</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">rec</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Unable to load document </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.'</span><span class="p">)</span>
+            
+    <span class="n">n_records</span> <span class="o">=</span> <span class="n">es_obj</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">)[</span><span class="s1">'count'</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Succesfully loaded </span><span class="si">{</span><span class="n">n_records</span><span class="si">}</span><span class="s1"> into </span><span class="si">{</span><span class="n">index_name</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+    <span class="k">return</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populate_index</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">evidence_corpus</span><span class="o">=</span><span class="n">wiki_articles</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Succesfully loaded 19035 into squad-standard-index
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Search-the-Index">
+<a class="anchor" href="#Search-the-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Search the Index<a class="anchor-link" href="#Search-the-Index"> </a>
+</h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Wahoo! We now have some documents loaded into into an index. Elasticsearch provides a rich <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html">query language</a> that supports a diverse range of query types. For this example, we'll use the standard query for performing full-text search called a "match" query. By default, Elasticsearch sorts and returns a JSON reponse of search results based on a computed a <a href="https://qbox.io/blog/practical-guide-elasticsearch-scoring-relevancy#:~:text=Together%2C%20these%20combine%20into%20a,number%20known%20as%20the%20_score.">relevance score</a> which indicates how well a given document matches the query. Along with the relevance score of each matched document, the search response also includes the amount of time the query took to run.</p>
+<p>Let's look at a simple match query used to search the <code>document_text</code> field in our newly created index.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Execute an Elasticsearch query on a specified index</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        es_obj - Elasticsearch client object</span>
+<span class="sd">        index_name (str) - Name of index to query</span>
+<span class="sd">        query (dict) - Query DSL</span>
+<span class="sd">        n_results (int) - Number of results to return</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">        res - Elasticsearch response object</span>
+<span class="sd">    </span>
+<span class="sd">    '''</span>
+    
+    <span class="n">res</span> <span class="o">=</span> <span class="n">es_obj</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_results</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">question_text</span> <span class="o">=</span> <span class="s1">'Who was the first president of the Republic of China?'</span>
+
+<span class="c1"># construct query</span>
+<span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'query'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'match'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'document_text'</span><span class="p">:</span> <span class="n">question_text</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+<span class="c1"># execute query</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-index'</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Question: </span><span class="si">{</span><span class="n">question_text</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Query Duration: </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s2">"took"</span><span class="p">]</span><span class="si">}</span><span class="s1"> milliseconds'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Title, Relevance Score:'</span><span class="p">)</span>
+<span class="p">[(</span><span class="n">hit</span><span class="p">[</span><span class="s1">'_source'</span><span class="p">][</span><span class="s1">'document_title'</span><span class="p">],</span> <span class="n">hit</span><span class="p">[</span><span class="s1">'_score'</span><span class="p">])</span> <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">'hits'</span><span class="p">][</span><span class="s1">'hits'</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Question: Who was the first president of the Republic of China?
+Query Duration: 9 milliseconds
+Title, Relevance Score:
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[('Modern_history_54', 23.007595),
+ ('Nanjing_18', 16.980503),
+ ('Republic_of_the_Congo_10', 16.721775),
+ ('Prime_minister_16', 16.045874),
+ ('Korean_War_29', 15.702344),
+ ('Korean_War_43', 15.4945345),
+ ('Qing_dynasty_52', 15.195876),
+ ('Chinese_characters_55', 14.69559),
+ ('Korean_War_23', 14.64461),
+ ('2008_Sichuan_earthquake_48', 14.349867)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sanity check that all questions are answerable</span>
+
+<span class="n">wiki_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'document_title'</span><span class="p">]:</span><span class="n">rec</span><span class="p">[</span><span class="s1">'document_text'</span><span class="p">]</span> <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">wiki_articles</span><span class="p">}</span>
+<span class="nb">any</span><span class="p">([</span><span class="n">ex</span><span class="p">[</span><span class="s1">'short_answer'</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">wiki_dict</span><span class="p">[</span><span class="n">ex</span><span class="p">[</span><span class="s1">'document_title'</span><span class="p">]]</span> <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="n">qa_records</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Evaluating-Retriever-Performance">
+<a class="anchor" href="#Evaluating-Retriever-Performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluating Retriever Performance<a class="anchor-link" href="#Evaluating-Retriever-Performance"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ok, so we now have a basic understanding of how to use Elasticsearch as an IR tool to return some results for a given question, but how do we know if it's working? How do we evaluate what a good IR tool looks like? Like we pointed out in the introduction of this post, if the Retriever component of our QA system doesn't provide the correct passage to the Reader, we are doomed from the start.</p>
+<p>To evaluate how well our Retriever is working, we'll need two things: some labeled examples (i.e. SQuAD2.0 question/answer pairs) and some performance metrics. In the traditional world of information retrieval, there are <a href="https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval">many metrics</a>) used to quantify the relevance of a set of query results that are largely centered around the concepts of precision and recall. For IR in the context of question answering, we adapt some of these ideas into two metrics: recall and mean average precision (mAP). Additionally, we evaluate the amount of time required to execute a query since the main point of having a two stage QA system is to efficiently narrow the large search space for our machine comprehension Reader.</p>
+<h4 id="Recall">
+<a class="anchor" href="#Recall" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recall<a class="anchor-link" href="#Recall"> </a>
+</h4>
+<p>In a traditional sense of IR, recall indicates the fraction of retrieved documents that are relevant to the query. In the context of end-to-end QA systems sitting on large corpora of documents, we are less concerned with finding <em>all</em> of the passages containing the answer (because it would take significant time to read through all of them anyway) and more concerned with the binary presence of a passage containing the correct answer being returned. In that light, we define a Retriever's recall as the <em>percentage of questions for which the answer segment appears in one of the top N pages returned by the search method.</em></p>
+<h4 id="Mean-Average-Precision">
+<a class="anchor" href="#Mean-Average-Precision" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mean Average Precision<a class="anchor-link" href="#Mean-Average-Precision"> </a>
+</h4>
+<p>While the recall metric focuses on the minimum viable result set to enable the Reader for success, we do still care about the composition of that result set. We want a metric that rewards a Retriever for a.) returning a lot of answer-containing documents in the result set (i.e. traditional meaning of precision) and b.) returning those answer-containing documents higher up in the result set than non-answer-containing documents (i.e. ranking them correctly). This is precisely what mean average precision (mAP) does for us.</p>
+<p>To explain mAP further, let's first break down the concept of average precision. If our Retriever is asked to return N documents and the total number of those N documents that actually contains the answer is m, then average precision (AP) is defined as:</p>
+\begin{equation*}
+AP@N = \frac{1}{m} \sum_{k=1}^N (P(k) \text{ if the }k^{th} \text{ item contains the answer)} = \frac{1}{m} \sum_{k=1}^N P(k)*rel(k)
+\end{equation*}<p>where $rel(k)$ is just a binary indication of whether the $k^{th}$ item contains the correct segment or not. Using a concrete example, consider retrieving $N=3$ documents, of which one actually contains the correct answer segment. Here are three scenarios for how this could happen:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Scenario</th>
+<th style="text-align:center">Binary Indication</th>
+<th style="text-align:center">Precision @k's</th>
+<th style="text-align:center">Average Precision @N</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">A</td>
+<td style="text-align:center">[1, 0, 0]</td>
+<td style="text-align:center">[1/1, 0, 0]</td>
+<td style="text-align:center">(1/1)*[(1/1) + 0 + 0] = 1</td>
+</tr>
+<tr>
+<td style="text-align:center">B</td>
+<td style="text-align:center">[0, 1, 0]</td>
+<td style="text-align:center">[0, 1/2, 0]</td>
+<td style="text-align:center">(1/1)*[0 + (1/2) + 0] = 0.5</td>
+</tr>
+<tr>
+<td style="text-align:center">C</td>
+<td style="text-align:center">[0, 0, 1]</td>
+<td style="text-align:center">[0, 0, 1/3]</td>
+<td style="text-align:center">(1/1)*[0 + 0 + (1/3)] = 0.33</td>
+</tr>
+</tbody>
+</table>
+<p>Despite the fact that in each scenario we only have one document containing the correct answer, Scenario A is rewarded with the highest score because it was able to correctly rank the ground truth document relative to the others returned. Since average precision is calculated on a per query basis, the mean average precision is simply just the average AP across all queries. Now using our Wikipedia article index, let's define a function called <code>evaluate_retriever</code> to loop through all quesion/answer examples from the SQuAD2.0 train set and see how well our Elasticsearch retriever peforms in terms of recall, mAP, and averege query duration.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">def</span> <span class="nf">average_precision</span><span class="p">(</span><span class="n">binary_results</span><span class="p">):</span>
+    
+    <span class="sd">''' Calculates the average precision for a list of binary indicators '''</span>
+    
+    <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">precs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">binary_results</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">precs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">binary_results</span><span class="p">[:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            
+    <span class="n">ap</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">precs</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span> <span class="k">else</span> <span class="mi">0</span>
+            
+    <span class="k">return</span> <span class="n">ap</span>
+
+
+<span class="k">def</span> <span class="nf">evaluate_retriever</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">qa_records</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    This function loops through a set of question/answer examples from SQuAD2.0 and </span>
+<span class="sd">    evaluates Elasticsearch as a information retrieval tool in terms of recall, mAP, and query duration.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        es_obj</span>
+<span class="sd">        index_name (str)</span>
+<span class="sd">        qa_records (list) - list of qa_records from preprocessing steps</span>
+<span class="sd">        n_results (int) - the number of results ElasticSearch should return for a given query</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        test_results_df (pd.DataFrame) - a dataframe recording search results info for every example in qa_records</span>
+<span class="sd">    </span>
+<span class="sd">    '''</span>
+    
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qa</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">qa_records</span><span class="p">)):</span>
+        
+        <span class="n">ex_id</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'example_id'</span><span class="p">]</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'question_text'</span><span class="p">]</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'short_answer'</span><span class="p">]</span>
+        
+        <span class="c1"># construct and execute query</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">'query'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">'match'</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">'document_text'</span><span class="p">:</span> <span class="n">question</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="n">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="n">n_results</span><span class="p">)</span>
+        
+        <span class="c1"># calculate performance metrics from query response info</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">'took'</span><span class="p">]</span>
+        <span class="n">binary_results</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[</span><span class="s1">'_source'</span><span class="p">][</span><span class="s1">'document_text'</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">'hits'</span><span class="p">][</span><span class="s1">'hits'</span><span class="p">]]</span>
+        <span class="n">ans_in_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">binary_results</span><span class="p">))</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="n">average_precision</span><span class="p">(</span><span class="n">binary_results</span><span class="p">)</span>
+
+        <span class="n">rec</span> <span class="o">=</span> <span class="p">(</span><span class="n">ex_id</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">ans_in_res</span><span class="p">,</span> <span class="n">ap</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+    
+    <span class="c1"># format results</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'example_id'</span><span class="p">,</span> <span class="s1">'question'</span><span class="p">,</span> <span class="s1">'answer'</span><span class="p">,</span> <span class="s1">'query_duration'</span><span class="p">,</span> <span class="s1">'answer_present'</span><span class="p">,</span> <span class="s1">'average_precision'</span><span class="p">]</span>
+    
+    <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">results_df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># filter out SQuAD records that do not have a short answer for the given question</span>
+<span class="n">qa_records_answerable</span> <span class="o">=</span> <span class="p">[</span><span class="n">record</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">qa_records</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s1">'short_answer'</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">]</span>
+
+<span class="n">results_df</span> <span class="o">=</span> <span class="n">evaluate_retriever</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">qa_records</span><span class="o">=</span><span class="n">qa_records_answerable</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">results_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>example_id</th>
+      <th>question</th>
+      <th>answer</th>
+      <th>query_duration</th>
+      <th>answer_present</th>
+      <th>average_precision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>56be85543aeaaa14008c9063</td>
+      <td>When did Beyonce start becoming popular?</td>
+      <td>in the late 1990s</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>56be85543aeaaa14008c9065</td>
+      <td>What areas did Beyonce compete in when she was...</td>
+      <td>singing and dancing</td>
+      <td>6</td>
+      <td>0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>56be85543aeaaa14008c9066</td>
+      <td>When did Beyonce leave Destiny's Child and bec...</td>
+      <td>2003</td>
+      <td>4</td>
+      <td>1</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>56bf6b0f3aeaaa14008c9601</td>
+      <td>In what city and state did Beyonce  grow up?</td>
+      <td>Houston, Texas</td>
+      <td>4</td>
+      <td>0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>56bf6b0f3aeaaa14008c9602</td>
+      <td>In which decade did Beyonce become famous?</td>
+      <td>late 1990s</td>
+      <td>4</td>
+      <td>0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Recall / mAP / Average Duration'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">answer_present</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>\
+<span class="n">results_df</span><span class="o">.</span><span class="n">average_precision</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+<span class="n">results_df</span><span class="o">.</span><span class="n">query_duration</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Recall / mAP / Average Duration
+0.8601951140853019 0.7523912705451445 3.207461328480437
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Improving-Search-Results-with-Custom-Analyzers-&amp;-Query-Enrichment">
+<a class="anchor" href="#Improving-Search-Results-with-Custom-Analyzers-&amp;-Query-Enrichment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Improving Search Results with Custom Analyzers &amp; Query Enrichment<a class="anchor-link" href="#Improving-Search-Results-with-Custom-Analyzers-&amp;-Query-Enrichment"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong><em>PLACEHOLDER CONTENT</em></strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are many different approaches to improving the Retreiver component of a QA system: (<a href="http://staffwww.dcs.shef.ac.uk/people/M.Greenwood/nlp/pubs/gaizauskas_sigirforum_2004d.pdf">http://staffwww.dcs.shef.ac.uk/people/M.Greenwood/nlp/pubs/gaizauskas_sigirforum_2004d.pdf</a>)</p>
+<ol>
+<li>preprocessing the question in creating the IR query;</li>
+<li>preprocessing the collection to identify significant information that can be included in the indexation for retrieval;</li>
+<li>adapting the similarity metric used in selecting documents;</li>
+<li>modifying the form of retrieval return, e.g. to deliver passages rather than whole documents.</li>
+<li>Re-ranking passages fed to the retriever (<a href="https://www.aclweb.org/anthology/D18-1053.pdf">https://www.aclweb.org/anthology/D18-1053.pdf</a>) </li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Things to modify for improvement:</p>
+<ul>
+<li>custom analyzer - stopword removal</li>
+<li>mulitmatch query on title and body (maybe weighted)</li>
+<li>NER + phrase match in custom query</li>
+<li>MAYBE: synonyms</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>ElasticSearch comes with several built-in Analyzers that satisfy common use cases. However, custom Analyzers can also be crafted by combining specific character filters, tokenizers, and token filters to best suit any unique dataset. As explained above, Analyzers are applied at index time to pre-process documents before indexing. In addition, Analyzers can also be applied at search time to process text queries according to the same logic the candidate documents were processed with. Search time analysis can be customized and is only applied to certain query types such as <code>match</code> queries. Lets take a closer look at how Analyzers work with ElasticSearch's Analyze API.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Build-new-index">
+<a class="anchor" href="#Build-new-index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build new index<a class="anchor-link" href="#Build-new-index"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"settings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"analysis"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"stop_analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"standard"</span><span class="p">,</span>
+                    <span class="s2">"stopwords"</span><span class="p">:</span> <span class="s2">"_english_"</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">"mappings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"dynamic"</span><span class="p">:</span> <span class="s2">"strict"</span><span class="p">,</span> 
+        <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"document_title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"stop_analyzer"</span><span class="p">},</span>
+            <span class="s2">"document_text"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"stop_analyzer"</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="n">index_name</span> <span class="o">=</span> <span class="s1">'squad-standard-stopwords-index'</span>
+<span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">index_config</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'acknowledged': True,
+ 'shards_acknowledged': True,
+ 'index': 'squad-standard-stopwords-index'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populate_index</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-stopwords-index'</span><span class="p">,</span> <span class="n">evidence_corpus</span><span class="o">=</span><span class="n">wiki_articles</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Succesfully loaded 19035 into squad-standard-stopwords-index
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Query-improvement">
+<a class="anchor" href="#Query-improvement" aria-hidden="true"><span class="octicon octicon-link"></span></a>Query improvement<a class="anchor-link" href="#Query-improvement"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">elasticsearch_dsl</span> <span class="kn">import</span> <span class="n">Q</span><span class="p">,</span> <span class="n">Search</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">import</span> <span class="nn">en_core_web_lg</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">en_core_web_lg</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">search_es2</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">question_text</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Execute an Elasticsearch query on a specified index</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        es_obj - Elasticsearch client object</span>
+<span class="sd">        index_name (str) - Name of index to query</span>
+<span class="sd">        query (dict) - Query DSL</span>
+<span class="sd">        n_results (int) - Number of results to return</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">        res - Elasticsearch response object</span>
+<span class="sd">    </span>
+<span class="sd">    '''</span>
+    
+    <span class="n">sub_queries</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># define question subquery to match on document title and document text</span>
+    <span class="n">qq</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="s1">'multi_match'</span><span class="p">,</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">question_text</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s1">'most_fields'</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'document_title'</span><span class="p">,</span> <span class="s1">'document_text'</span><span class="p">])</span>
+    
+    <span class="n">sub_queries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qq</span><span class="p">)</span>
+    
+    
+    <span class="c1"># extract entities from question using spacy</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+    <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">]</span>
+    
+    <span class="c1"># define entity subqueries to do exact phrase match on any entities in the question</span>
+    <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">entity_list</span><span class="p">:</span>
+        <span class="n">eq</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="s1">'multi_match'</span><span class="p">,</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">ent</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s1">'phrase'</span><span class="p">,</span>
+                <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'document_title'</span><span class="p">,</span><span class="s1">'document_text'</span><span class="p">])</span>
+
+        <span class="n">sub_queries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eq</span><span class="p">)</span>
+    
+    <span class="c1"># combine subqueries into bool query</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="s1">'bool'</span><span class="p">,</span> <span class="n">should</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">sub_queries</span><span class="p">])</span>
+    
+    <span class="c1"># execute query</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">q</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">question</span> <span class="o">=</span> <span class="s1">'When did Kendrick Lamars first album come out?'</span>
+
+<span class="n">res</span><span class="p">,</span> <span class="n">query</span> <span class="o">=</span> <span class="n">search_es2</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-index'</span><span class="p">,</span> <span class="n">question_text</span><span class="o">=</span><span class="n">question</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">query</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'bool': {'should': [{'multi_match': {'query': 'When did Kendrick Lamars first album come out?',
+     'type': 'most_fields',
+     'fields': ['document_title', 'document_text']}},
+   {'multi_match': {'query': 'kendrick lamars',
+     'type': 'phrase',
+     'fields': ['document_title', 'document_text']}},
+   {'multi_match': {'query': 'first',
+     'type': 'phrase',
+     'fields': ['document_title', 'document_text']}}]}}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">hits</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&lt;Result(squad-standard-index/_doc/6097): {'document_title': 'Hard_rock_2', 'document_text': "Hard_roc...}&gt;,
+ &lt;Result(squad-standard-index/_doc/720): {'document_title': 'Kanye_West_26', 'document_text': 'Kanye_...}&gt;,
+ &lt;Result(squad-standard-index/_doc/9146): {'document_title': 'Queen_(band)_37', 'document_text': 'Quee...}&gt;,
+ &lt;Result(squad-standard-index/_doc/6112): {'document_title': 'Hard_rock_17', 'document_text': 'Hard_ro...}&gt;,
+ &lt;Result(squad-standard-index/_doc/999): {'document_title': 'American_Idol_77', 'document_text': 'Ame...}&gt;,
+ &lt;Result(squad-standard-index/_doc/712): {'document_title': 'Kanye_West_18', 'document_text': 'Kanye_...}&gt;,
+ &lt;Result(squad-standard-index/_doc/18051): {'document_title': 'Party_leaders_of_the_United_States_House...}&gt;,
+ &lt;Result(squad-standard-index/_doc/9115): {'document_title': 'Queen_(band)_6', 'document_text': 'Queen...}&gt;,
+ &lt;Result(squad-standard-index/_doc/9116): {'document_title': 'Queen_(band)_7', 'document_text': "Queen...}&gt;,
+ &lt;Result(squad-standard-index/_doc/701): {'document_title': 'Kanye_West_7', 'document_text': 'Kanye_W...}&gt;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">evaluate_retriever3</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">qa_records</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    This function loops through a set of question/answer examples from SQuAD2.0 and </span>
+<span class="sd">    evaluates Elasticsearch as a information retrieval tool in terms of recall, mAP, and query duration.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        es_obj</span>
+<span class="sd">        index_name (str)</span>
+<span class="sd">        qa_records (list) - list of qa_records from preprocessing steps</span>
+<span class="sd">        n_results (int) - the number of results ElasticSearch should return for a given query</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        test_results_df (pd.DataFrame) - a dataframe recording search results info for every example in qa_records</span>
+<span class="sd">    </span>
+<span class="sd">    '''</span>
+    
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qa</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">qa_records</span><span class="p">)):</span>
+        
+        <span class="n">ex_id</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'example_id'</span><span class="p">]</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'question_text'</span><span class="p">]</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'short_answer'</span><span class="p">]</span>
+        
+        <span class="n">res</span><span class="p">,</span> <span class="n">qry</span> <span class="o">=</span> <span class="n">search_es2</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">question_text</span><span class="o">=</span><span class="n">question</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="n">n_results</span><span class="p">)</span>
+        
+        <span class="c1"># calculate performance metrics from query response info</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">took</span>
+        <span class="n">binary_results</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[</span><span class="s1">'document_text'</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">hits</span><span class="p">]</span>
+        <span class="n">ans_in_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">binary_results</span><span class="p">))</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="n">average_precision</span><span class="p">(</span><span class="n">binary_results</span><span class="p">)</span>
+
+        <span class="n">rec</span> <span class="o">=</span> <span class="p">(</span><span class="n">ex_id</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">ans_in_res</span><span class="p">,</span> <span class="n">ap</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+    
+    <span class="c1"># format results</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'example_id'</span><span class="p">,</span> <span class="s1">'question'</span><span class="p">,</span> <span class="s1">'answer'</span><span class="p">,</span> <span class="s1">'query_duration'</span><span class="p">,</span> <span class="s1">'answer_present'</span><span class="p">,</span> <span class="s1">'average_precision'</span><span class="p">]</span>
+    
+    <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">results_df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ner_results</span> <span class="o">=</span> <span class="n">evaluate_retriever3</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-index'</span><span class="p">,</span> <span class="n">qa_records</span><span class="o">=</span><span class="n">qa_records_answerable</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Recall / mAP / Average Duration'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ner_results</span><span class="o">.</span><span class="n">answer_present</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>\
+<span class="n">ner_results</span><span class="o">.</span><span class="n">average_precision</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+<span class="n">ner_results</span><span class="o">.</span><span class="n">query_duration</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Recall / mAP / Average Duration
+0.8938044943043734 0.7315383558286108 4.893228596768063
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">took</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>55</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">hits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'document_text'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>"Hard_rock Bon Jovi's third album, Slippery When Wet (1986), mixed hard rock with a pop sensitivity and spent a total of 8 weeks at the top of the Billboard 200 album chart, selling 12 million copies in the US while becoming the first hard rock album to spawn three top 10 singles — two of which reached number one. The album has been credited with widening the audiences for the genre, particularly by appealing to women as well as the traditional male dominated audience, and opening the door to MTV and commercial success for other bands at the end of the decade. The anthemic The Final Countdown (1986) by Swedish group Europe was an international hit, reaching number eight on the US charts while hitting the top 10 in nine other countries. This era also saw more glam-infused American hard rock bands come to the forefront, with both Poison and Cinderella releasing their multi-platinum début albums in 1986. Van Halen released 5150 (1986), their first album with Sammy Hagar on lead vocals, which was number one in the US for three weeks and sold over 6 million copies. By the second half of the decade, hard rock had become the most reliable form of commercial popular music in the United States."</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stop_results_df</span> <span class="o">=</span> <span class="n">evaluate_retriever</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">qa_records</span><span class="o">=</span><span class="n">qa_records_answerable</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># recall</span>
+<span class="n">results_df</span><span class="o">.</span><span class="n">answer_present</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.9262851153522765</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stop_results_df</span><span class="o">.</span><span class="n">average_precision</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.8226511059152355</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Impact-of-Retriever-in-End-to-End-QA-System">
+<a class="anchor" href="#Impact-of-Retriever-in-End-to-End-QA-System" aria-hidden="true"><span class="octicon octicon-link"></span></a>Impact of Retriever in End-to-End QA System<a class="anchor-link" href="#Impact-of-Retriever-in-End-to-End-QA-System"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If I do chunk into smaller passages, we could just do all evaluation on this same dataset...</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"settings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"analysis"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"standard_analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"standard"</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">"mappings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"dynamic"</span><span class="p">:</span> <span class="s2">"strict"</span><span class="p">,</span> 
+        <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"document_title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"standard_analyzer"</span><span class="p">},</span>
+            <span class="s2">"document_text"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"standard_analyzer"</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="n">index_name</span> <span class="o">=</span> <span class="s1">'squad-standard-paragraph-index'</span>
+<span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">index_config</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'acknowledged': True,
+ 'shards_acknowledged': True,
+ 'index': 'squad-standard-paragraph-index'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populate_index</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">evidence_corpus</span><span class="o">=</span><span class="n">wiki_articles2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Succesfully loaded 19035 into squad-standard-paragraph-index
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">paragraph_results_df</span> <span class="o">=</span> <span class="n">evaluate_retriever</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-paragraph-index'</span><span class="p">,</span> <span class="n">qa_records</span><span class="o">=</span><span class="n">qa_records_answerable</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">paragraph_results_df</span><span class="o">.</span><span class="n">answer_present</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>\
+<span class="n">paragraph_results_df</span><span class="o">.</span><span class="n">average_precision</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+<span class="n">paragraph_results_df</span><span class="o">.</span><span class="n">query_duration</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.8601951140853019 0.7523912705451445 3.080591101231269
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"settings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"analysis"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"stop_analyzer"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"standard"</span><span class="p">,</span>
+                    <span class="s2">"stopwords"</span><span class="p">:</span> <span class="s2">"_english_"</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">"mappings"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"dynamic"</span><span class="p">:</span> <span class="s2">"strict"</span><span class="p">,</span> 
+        <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"document_title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"stop_analyzer"</span><span class="p">},</span>
+            <span class="s2">"document_text"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"analyzer"</span><span class="p">:</span> <span class="s2">"stop_analyzer"</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="n">index_name</span> <span class="o">=</span> <span class="s1">'squad-standardstop-paragraph-index'</span>
+<span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">index_config</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'acknowledged': True,
+ 'shards_acknowledged': True,
+ 'index': 'squad-standardstop-paragraph-index'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">populate_index</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standardstop-paragraph-index'</span><span class="p">,</span> <span class="n">evidence_corpus</span><span class="o">=</span><span class="n">wiki_articles2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Succesfully loaded 19035 into squad-standardstop-paragraph-index
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">paragraph_stop_results_df</span> <span class="o">=</span> <span class="n">evaluate_retriever</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standardstop-paragraph-index'</span><span class="p">,</span> <span class="n">qa_records</span><span class="o">=</span><span class="n">qa_records_answerable</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">paragraph_stop_results_df</span><span class="o">.</span><span class="n">answer_present</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>\
+<span class="n">paragraph_stop_results_df</span><span class="o">.</span><span class="n">average_precision</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+<span class="n">paragraph_stop_results_df</span><span class="o">.</span><span class="n">query_duration</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.857914559841513 0.749556190962504 1.066170626922058
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># common terms</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">paragraph_commonterms_results_df</span> <span class="o">=</span> <span class="n">evaluate_retriever</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-paragraph-index'</span><span class="p">,</span> <span class="n">qa_records</span><span class="o">=</span><span class="n">qa_records_answerable</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">-----------------------------------------------------------------------</span>
+<span class="ansi-red-fg">RequestError</span>                          Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-362-a0b2967faca8&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>paragraph_commonterms_results_df <span class="ansi-blue-fg">=</span> evaluate_retriever<span class="ansi-blue-fg">(</span>es_obj<span class="ansi-blue-fg">=</span>es<span class="ansi-blue-fg">,</span> index_name<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">'squad-standard-paragraph-index'</span><span class="ansi-blue-fg">,</span> qa_records<span class="ansi-blue-fg">=</span>qa_records_answerable<span class="ansi-blue-fg">,</span> n_results<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">5</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">&lt;ipython-input-361-7cbca25798e3&gt;</span> in <span class="ansi-cyan-fg">evaluate_retriever</span><span class="ansi-blue-fg">(es_obj, index_name, qa_records, n_results)</span>
+<span class="ansi-green-intense-fg ansi-bold">     53</span>                 }
+<span class="ansi-green-intense-fg ansi-bold">     54</span> 
+<span class="ansi-green-fg">---&gt; 55</span><span class="ansi-red-fg">         </span>res <span class="ansi-blue-fg">=</span> es_obj<span class="ansi-blue-fg">.</span>search<span class="ansi-blue-fg">(</span>index<span class="ansi-blue-fg">=</span>index_name<span class="ansi-blue-fg">,</span> body<span class="ansi-blue-fg">=</span>query<span class="ansi-blue-fg">,</span> size<span class="ansi-blue-fg">=</span>n_results<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     56</span> 
+<span class="ansi-green-intense-fg ansi-bold">     57</span>         <span class="ansi-red-fg"># calculate performance metrics from query response info</span>
+
+<span class="ansi-green-fg">~/opt/anaconda3/envs/qa-retriever-eval/lib/python3.7/site-packages/elasticsearch/client/utils.py</span> in <span class="ansi-cyan-fg">_wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">     90</span>                 <span class="ansi-green-fg">if</span> p <span class="ansi-green-fg">in</span> kwargs<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">     91</span>                     params<span class="ansi-blue-fg">[</span>p<span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> kwargs<span class="ansi-blue-fg">.</span>pop<span class="ansi-blue-fg">(</span>p<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 92</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">return</span> func<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>args<span class="ansi-blue-fg">,</span> params<span class="ansi-blue-fg">=</span>params<span class="ansi-blue-fg">,</span> headers<span class="ansi-blue-fg">=</span>headers<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     93</span> 
+<span class="ansi-green-intense-fg ansi-bold">     94</span>         <span class="ansi-green-fg">return</span> _wrapped
+
+<span class="ansi-green-fg">~/opt/anaconda3/envs/qa-retriever-eval/lib/python3.7/site-packages/elasticsearch/client/__init__.py</span> in <span class="ansi-cyan-fg">search</span><span class="ansi-blue-fg">(self, body, index, doc_type, params, headers)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1621</span>             params<span class="ansi-blue-fg">=</span>params<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1622</span>             headers<span class="ansi-blue-fg">=</span>headers<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">-&gt; 1623</span><span class="ansi-red-fg">             </span>body<span class="ansi-blue-fg">=</span>body<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1624</span>         )
+<span class="ansi-green-intense-fg ansi-bold">   1625</span> 
+
+<span class="ansi-green-fg">~/opt/anaconda3/envs/qa-retriever-eval/lib/python3.7/site-packages/elasticsearch/transport.py</span> in <span class="ansi-cyan-fg">perform_request</span><span class="ansi-blue-fg">(self, method, url, headers, params, body)</span>
+<span class="ansi-green-intense-fg ansi-bold">    360</span>                     headers<span class="ansi-blue-fg">=</span>headers<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    361</span>                     ignore<span class="ansi-blue-fg">=</span>ignore<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">--&gt; 362</span><span class="ansi-red-fg">                     </span>timeout<span class="ansi-blue-fg">=</span>timeout<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    363</span>                 )
+<span class="ansi-green-intense-fg ansi-bold">    364</span> 
+
+<span class="ansi-green-fg">~/opt/anaconda3/envs/qa-retriever-eval/lib/python3.7/site-packages/elasticsearch/connection/http_urllib3.py</span> in <span class="ansi-cyan-fg">perform_request</span><span class="ansi-blue-fg">(self, method, url, params, body, timeout, ignore, headers)</span>
+<span class="ansi-green-intense-fg ansi-bold">    250</span>                 method<span class="ansi-blue-fg">,</span> full_url<span class="ansi-blue-fg">,</span> url<span class="ansi-blue-fg">,</span> orig_body<span class="ansi-blue-fg">,</span> duration<span class="ansi-blue-fg">,</span> response<span class="ansi-blue-fg">.</span>status<span class="ansi-blue-fg">,</span> raw_data
+<span class="ansi-green-intense-fg ansi-bold">    251</span>             )
+<span class="ansi-green-fg">--&gt; 252</span><span class="ansi-red-fg">             </span>self<span class="ansi-blue-fg">.</span>_raise_error<span class="ansi-blue-fg">(</span>response<span class="ansi-blue-fg">.</span>status<span class="ansi-blue-fg">,</span> raw_data<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    253</span> 
+<span class="ansi-green-intense-fg ansi-bold">    254</span>         self.log_request_success(
+
+<span class="ansi-green-fg">~/opt/anaconda3/envs/qa-retriever-eval/lib/python3.7/site-packages/elasticsearch/connection/base.py</span> in <span class="ansi-cyan-fg">_raise_error</span><span class="ansi-blue-fg">(self, status_code, raw_data)</span>
+<span class="ansi-green-intense-fg ansi-bold">    280</span> 
+<span class="ansi-green-intense-fg ansi-bold">    281</span>         raise HTTP_EXCEPTIONS.get(status_code, TransportError)(
+<span class="ansi-green-fg">--&gt; 282</span><span class="ansi-red-fg">             </span>status_code<span class="ansi-blue-fg">,</span> error_message<span class="ansi-blue-fg">,</span> additional_info
+<span class="ansi-green-intense-fg ansi-bold">    283</span>         )
+<span class="ansi-green-intense-fg ansi-bold">    284</span> 
+
+<span class="ansi-red-fg">RequestError</span>: RequestError(400, 'parsing_exception', "[match] query doesn't support multiple fields, found [document_text] and [cutoff_frequency]")</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'squad-standard-paragraph-index'</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">404</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'acknowledged': True}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">get_alias</span><span class="p">(</span><span class="s1">'*'</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dict_keys(['corpus2', 'nq_wiki_data_test', 'squad_corpus1', 'corpus0', 'nq_wiki_data', 'corpus4', 'squad_corpus2', 'cases', 'squad_corpus3', 'demo_index_fullsys', 'corpus3', 'baseline', 'squad_corpus0', 'squad_corpus4', 'corpus1', 'demo_index'])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="fastforwardlabs/ff14_blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/hidden/" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>CFF builds a state-of-the-art QA application with the latest NLP techniques</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastforwardlabs" title="fastforwardlabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/FastForwardLabs" title="FastForwardLabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
