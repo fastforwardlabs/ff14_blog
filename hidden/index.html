@@ -225,19 +225,36 @@ window.onload = wrap_img;
 <p>"<strong><em>You miss 100% of the questions if the answer doesn't appear in the input context</em></strong>"</p>
 </blockquote>
 <p>As we have discussed throughout this blog series, many modern QA systems take a two-staged approach to answering questions. In the first stage, a document retriever selects $N$ potentially relevant documents from a given corpus. Subsequently, a machine comprehension model processes each of the $N$ documents to determine an answer to the input question. Because of recent advances in NLP and deep learning (i.e. flashy Transformer models), the machine comprehension component of question answering has typically been the main focus of evaluation. Stage one of these systems has recieved limited attention despite its obvious importance...stage two is bounded by performance at stage one. Let's get more specific.</p>
-<p>We <a href="">recently explained methods</a> that enable BERT-like models to produce robust answers given a question and context passage by selectively processing predictions and by refraining from answering certain questions at all. While the ability to properly comprehend a passage and produce a correct answer is a critical feature of any QA tool, the success of the overall system is highly dependent on first providing a correct passage to read through. Without being fed a context passage that actually contains the ground-truth answer, the overall system's performance is limited to how well it can predict no-answer questions. To demonstrate, we'll revisit an example from our <a href="">first blog post</a> where three questions were asked of the Wikipedia search engine based QA system:```<strong>Example 1: Incorrect</strong>
+<p>We <a href="">recently explained methods</a> that enable BERT-like models to produce robust answers given a question and context passage by selectively processing predictions and by refraining from answering certain questions at all. While the ability to properly comprehend a passage and produce a correct answer is a critical feature of any QA tool, the success of the overall system is highly dependent on first providing a correct passage to read through. Without being fed a context passage that actually contains the ground-truth answer, the overall system's performance is limited to how well it can predict no-answer questions. To demonstrate, we'll revisit an example from our <a href="">first blog post</a> where three questions were asked of the Wikipedia search engine based QA system:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>**Example 1: Incorrect**
 Question: When was Barack Obama born?
 Top wiki result: &lt;WikipediaPage 'Barack Obama Sr.'&gt;
-Answer: 18 June 1936 / February 2 , 1961 /</p>
-<p><strong>Example 2: Correct</strong>
+Answer: 18 June 1936 / February 2 , 1961 / 
+
+**Example 2: Correct**
 Question: Why is the sky blue?
 Top wiki result: &lt;WikipediaPage 'Diffuse sky radiation'&gt;
-Answer: Rayleigh scattering /</p>
-<p><strong>Example 3: Correct</strong>
+Answer: Rayleigh scattering / 
+
+**Example 3: Correct**
 Question: How many sides does a pentagon have?
 Top wiki result: &lt;WikipediaPage 'The Pentagon'&gt;
-Answer: five / 
-```</p>
+Answer: five /</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>In Example 1, the Reader had no chance of producing the correct answer because of its outright absence from the context served up by the Retriever. Namely, the Retriever erroneously provided a page about Barack Obama Sr. instead of his son, the former US President. In this case, the only way the Reader could have possibly produced the correct answer was if the correct answer was actually not to answer at all. On the flip side, in Example 3, the Retriever did not identify the globally "correct" document - it returned an article about "The Pentagon" instead of a page about geometry - but nonetheless, it provided enough context for the Reader to succeed.</p>
 <p>These quick examples illustrate why an effective Retriever is crucial for an end-to-end QA system. Now let's take a deeper look at a classic tool used for information retrieval - Elasticsearch.</p>
 
@@ -280,73 +297,40 @@ Answer: five /
 <li>"Elasticsearch is a powerful technique for search!"</li>
 <li>"Manual search is a slow technique."</li>
 </ol>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Term</th>
-<th style="text-align:center">Document 1</th>
-<th style="text-align:center">Document 2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">a</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">elasticsearch</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">for</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">is</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">manual</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">powerful</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">search</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">slow</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">technique</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-</tbody>
-</table>
+<center>
+
+|      Term     | Document 1 | Document 2 |
+|:-------------:|:----------:|:----------:|
+|       a       |      x     |      x     |
+| elasticsearch |      x     |            |
+|      for      |      x     |            |
+|       is      |      x     |      x     |
+|     manual    |            |      x     |
+|    powerful   |      x     |            |
+|     search    |      x     |      x     |
+|      slow     |            |      x     |
+|   technique   |      x     |      x     |
+
+</center>
 <p>Notice that the unique set of terms from both documents are contained in the index, and we can easily lookup which document contains which terms. Searching this inverted index for the phrase "search technique" would return both documents because both terms are present in each document, while searching for the phrase "powerful technique" would return only Document 1. Search itself is quite a bit more complicated than the boolean logic depicted here as it involves relevance scoring (among other query dependent logic), however this oversimplification is intended to demonstrate the quick and powerful nature of the inverted index data structure.
 </p>
 <div class="flash">
     <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
     <strong>Note: </strong>In the example above, all tokens have been lowercased and punctuation removed. This happens as part of an important preprocessing pipeline that we’ll explain in more detail later in the post.
 </div>
-The inverted index representation is considered <em>sparse</em> by construction because for each document, you end up with a vector containing few terms relative to all terms in the index. This indexing process is what allows Elasticsearch to peruse large collections of text documents orders of magnitude faster than traditional SQL databases. While the exact match nature of search in this data structure is powerful and effective, it isn't without flaws. Word matching is limited in its ability to take semantically related concepts into search consideration. For example, consider the following question and context borrowed from the <a href="https://arxiv.org/pdf/2004.04906.pdf">DPR paper</a>:
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The inverted index representation is considered <em>sparse</em> by construction because for each document, you end up with a vector containing few terms relative to all terms in the index. This indexing process is what allows Elasticsearch to peruse large collections of text documents orders of magnitude faster than traditional SQL databases. While the exact match nature of search in this data structure is powerful and effective, it isn't without flaws. Word matching is limited in its ability to take semantically related concepts into search consideration. For example, consider the following question and context borrowed from the <a href="https://arxiv.org/pdf/2004.04906.pdf">DPR paper</a>:</p>
 <blockquote>
 <p><strong>Question:</strong> "Who is the bad guy in lord of the rings?"&gt; <strong>Context:</strong> "Sala Baker is an actor and stuntman from New Zealand. He is best known for portraying the villain Sauron in the Lord of the Rings trilogy..."
-An exact match based system like Elasticsearch would struggle to retrieve this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". Modern document retrieval systems that take advantage of learned, dense representations of text would perform better in this situation.</p>
+ </p>
 </blockquote>
+<p>An exact match based system like Elasticsearch would struggle to retrieve this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". Modern document retrieval systems that take advantage of learned, dense representations of text would perform better in this situation.</p>
 
 </div>
 </div>
@@ -401,30 +385,6 @@ An exact match based system like Elasticsearch would struggle to retrieve this s
 </div>
 
     </details>
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>--2020-06-22 15:10:08--  https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json
-Resolving rajpurkar.github.io (rajpurkar.github.io)... 185.199.111.153, 185.199.108.153, 185.199.110.153, ...
-Connecting to rajpurkar.github.io (rajpurkar.github.io)|185.199.111.153|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 4370528 (4.2M) [application/json]
-Saving to: ‘data/squad/dev-v2.0.json’
-
-dev-v2.0.json       100%[===================&gt;]   4.17M  1.64MB/s    in 2.5s    
-
-2020-06-22 15:10:11 (1.64 MB/s) - ‘data/squad/dev-v2.0.json’ saved [4370528/4370528]
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     
 
@@ -447,11 +407,16 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  1.64MB/s    in 2.5s
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">parse_qa_records</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+
+<span class="k">def</span> <span class="nf">parse_qa_records</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">'''</span>
 <span class="sd">    Loop through SQuAD2.0 dataset and parse out question/answer examples and unique article paragraphs</span>
 <span class="sd">    </span>
@@ -501,6 +466,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  1.64MB/s    in 2.5s
 </div>
 </div>
 
+    </details>
 </div>
     
 
@@ -526,23 +492,6 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  1.64MB/s    in 2.5s
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Data contains 86821 question/answer pairs with a short answer, and 43498 without.
-There are 19035 unique wikipedia article paragraphs.
-Data contains 5928 question/answer pairs with a short answer, and 5945 without.
-There are 1204 unique wikipedia article paragraphs.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     
 
@@ -553,7 +502,7 @@ There are 1204 unique wikipedia article paragraphs.
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Show parsed record example</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Parsed record example</span>
 <span class="n">qa_records</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 
@@ -590,7 +539,7 @@ There are 1204 unique wikipedia article paragraphs.
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Show example of parsed wiki article paragraph</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Parsed wiki paragraph example</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wiki_articles</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>
 </pre></div>
 
@@ -627,7 +576,7 @@ There are 1204 unique wikipedia article paragraphs.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With our data ready to go, let's download, install, and configure Elasticsearch using one of the two following methods (Colab recommended). After executing the setup, we will have an Elasticsearch service running locally.</p>
+<p>With our data ready to go, let's download, install, and configure Elasticsearch. We recommend running this notebook in Colab and executing the following code snippet for automatic setup. However, if you prefer to run locally, follow the instructions <a href="https://www.elastic.co/downloads/elasticsearch">here</a>. After executing the setup, we will have an Elasticsearch service running locally.</p>
 
 </div>
 </div>
@@ -667,29 +616,6 @@ There are 1204 unique wikipedia article paragraphs.
 </div>
     
 
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<details class="description">
-      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
-        <p></p>
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
-
-<span class="c1"># If running locally - download, install, and launch Elasticsearch per https://www.elastic.co/downloads/elasticsearch</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-    </details>
-</div>
-    
-
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -718,7 +644,6 @@ There are 1204 unique wikipedia article paragraphs.
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
-
 <span class="o">!</span>pip install elasticsearch
 <span class="o">!</span>pip install tqdm
 </pre></div>
@@ -893,11 +818,15 @@ There are 1204 unique wikipedia article paragraphs.
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="k">def</span> <span class="nf">populate_index</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">evidence_corpus</span><span class="p">):</span>
     <span class="sd">'''</span>
@@ -928,6 +857,7 @@ There are 1204 unique wikipedia article paragraphs.
 </div>
 </div>
 
+    </details>
 </div>
     
 
@@ -991,11 +921,15 @@ Succesfully loaded 20239 into squad-standard-index
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="k">def</span> <span class="nf">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
     <span class="sd">'''</span>
 <span class="sd">    Execute an Elasticsearch query on a specified index</span>
 <span class="sd">    </span>
@@ -1019,6 +953,7 @@ Succesfully loaded 20239 into squad-standard-index
 </div>
 </div>
 
+    </details>
 </div>
     
 
@@ -1132,36 +1067,15 @@ Title, Relevance Score:
 \begin{equation*}
 AP@N = \frac{1}{m} \sum_{k=1}^N (P(k) \text{ if the }k^{th} \text{ item contains the answer)} = \frac{1}{m} \sum_{k=1}^N P(k)*rel(k)
 \end{equation*}<p>where $rel(k)$ is just a binary indication of whether the $k^{th}$ passage contains the correct answer segment or not. Using a concrete example, consider retrieving $N=3$ documents, of which one actually contains the correct answer segment. Here are three scenarios for how this could happen:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Scenario</th>
-<th style="text-align:center">Binary Indication</th>
-<th style="text-align:center">Precision @k's</th>
-<th style="text-align:center">Average Precision @N</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">A</td>
-<td style="text-align:center">[1, 0, 0]</td>
-<td style="text-align:center">[1/1, 0, 0]</td>
-<td style="text-align:center">(1/1)*[(1/1) + 0 + 0] = 1</td>
-</tr>
-<tr>
-<td style="text-align:center">B</td>
-<td style="text-align:center">[0, 1, 0]</td>
-<td style="text-align:center">[0, 1/2, 0]</td>
-<td style="text-align:center">(1/1)*[0 + (1/2) + 0] = 0.5</td>
-</tr>
-<tr>
-<td style="text-align:center">C</td>
-<td style="text-align:center">[0, 0, 1]</td>
-<td style="text-align:center">[0, 0, 1/3]</td>
-<td style="text-align:center">(1/1)*[0 + 0 + (1/3)] = 0.33</td>
-</tr>
-</tbody>
-</table>
+<center>
+
+| Scenario | Binary Indication | Precision @k's |     Average Precision @N     |
+|:--------:|:-----------------:|:--------------:|:----------------------------:|
+|     A    |     [1, 0, 0]     |   [1/1, 0, 0]  |   (1/1)*[(1/1) + 0 + 0] = 1  |
+|     B    |     [0, 1, 0]     |   [0, 1/2, 0]  |  (1/1)*[0 + (1/2) + 0] = 0.5 |
+|     C    |     [0, 0, 1]     |   [0, 0, 1/3]  | (1/1)*[0 + 0 + (1/3)] = 0.33 |
+
+</center>
 <p>Despite the fact that in each scenario we only have one document containing the correct answer, Scenario A is rewarded with the highest score because it was able to correctly rank the ground truth document relative to the others returned. Since average precision is calculated on a per query basis, the mean average precision is simply just the average AP across all queries.</p>
 <p>Now using our Wikipedia passage index, let's define a function called <code>evaluate_retriever</code> to loop through all quesion/answer examples from the SQuAD2.0 train set and see how well our Elasticsearch retriever peforms in terms of recall, mAP, and averege query duration when retrieving $N=3$ passages.</p>
 
@@ -1171,11 +1085,15 @@ AP@N = \frac{1}{m} \sum_{k=1}^N (P(k) \text{ if the }k^{th} \text{ item contains
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="k">def</span> <span class="nf">average_precision</span><span class="p">(</span><span class="n">binary_results</span><span class="p">):</span>
@@ -1255,6 +1173,7 @@ AP@N = \frac{1}{m} \sum_{k=1}^N (P(k) \text{ if the }k^{th} \text{ item contains
 </div>
 </div>
 
+    </details>
 </div>
     
 
@@ -1350,7 +1269,6 @@ AP@N = \frac{1}{m} \sum_{k=1}^N (P(k) \text{ if the }k^{th} \text{ item contains
 <h3 id="Custom-Analyzers">
 <a class="anchor" href="#Custom-Analyzers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Analyzers<a class="anchor-link" href="#Custom-Analyzers"> </a>
 </h3>
-<p><a href="https://www.elastic.co/guide/en/elasticsearch/guide/2.x/languages.html">https://www.elastic.co/guide/en/elasticsearch/guide/2.x/languages.html</a></p>
 <p>Earlier in the post we described Elasticsearch Analyzers as a way to deal with the nuances of human language. Analyzers provide a flexible and extensible method to tailor search for a given dataset. Here are a few custom Analyzer components Elasticsearch provides that can help cast a wider net.</p>
 <ul>
 <li>
