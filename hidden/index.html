@@ -161,11 +161,7 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h4"><a href="#Mean-Average-Precision">Mean Average Precision </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h1"><a href="#Improving-Search-Results-with-Custom-Analyzers">Improving Search Results with Custom Analyzers </a>
-<ul>
-<li class="toc-entry toc-h3"><a href="#Custom-Analyzers">Custom Analyzers </a></li>
-</ul>
-</li>
+<li class="toc-entry toc-h1"><a href="#Improving-Search-Results-with-a-Custom-Analyzer">Improving Search Results with a Custom Analyzer </a></li>
 <li class="toc-entry toc-h1"><a href="#Impact-of-Retriever-in-End-to-End-QA-System">Impact of Retriever in End-to-End QA System </a></li>
 </ul><!--
 #################################################
@@ -1106,7 +1102,7 @@ Title, Relevance Score:
 <p>While the <em>recall</em> metric focuses on the minimum viable result set to enable the Reader for success, we do still care about the composition of that result set. We want a metric that rewards a Retriever for a.) returning a lot of answer-containing documents in the result set (i.e. traditional meaning of precision) and b.) returning those answer-containing documents higher up in the result set than non-answer-containing documents (i.e. ranking them correctly). This is precisely (🙃) what mean average precision (mAP) does for us.</p>
 <p>To explain mAP further, let's first break down the concept of average precision for information retrieval. If our Retriever is asked to return N documents and the total number of those N documents that actually contains the answer is m, then average precision (AP) is defined as:</p>
 <p><img src="/images/copied_from_nb/my_icons/map_equation.png" alt=""></p>
-<p>where $rel(k)$ is just a binary indication of whether the $k^{th}$ passage contains the correct answer segment or not. Using a concrete example, consider retrieving $N=3$ documents, of which one actually contains the correct answer segment. Here are three scenarios for how this could happen:</p>
+<p>where <em>rel(k)</em> is just a binary indication of whether the <em>kth</em> passage contains the correct answer segment or not. Using a concrete example, consider retrieving <em>N=3</em> documents, of which one actually contains the correct answer segment. Here are three scenarios for how this could happen:</p>
 <table>
 <thead>
 <tr>
@@ -1313,8 +1309,8 @@ Title, Relevance Score:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Improving-Search-Results-with-Custom-Analyzers">
-<a class="anchor" href="#Improving-Search-Results-with-Custom-Analyzers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Improving Search Results with Custom Analyzers<a class="anchor-link" href="#Improving-Search-Results-with-Custom-Analyzers"> </a>
+<h1 id="Improving-Search-Results-with-a-Custom-Analyzer">
+<a class="anchor" href="#Improving-Search-Results-with-a-Custom-Analyzer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Improving Search Results with a Custom Analyzer<a class="anchor-link" href="#Improving-Search-Results-with-a-Custom-Analyzer"> </a>
 </h1>
 </div>
 </div>
@@ -1327,9 +1323,6 @@ Title, Relevance Score:
 <p><img src="/images/copied_from_nb/my_icons/recall_v_corpussize.png" alt="Elasticsearch Index Process"></p>
 <p>While increasing the number of passages retrieved is effective, it also has implications on overall system performance as the already slow Reader now has to reason over more text. Instead, we can lean on best practices in the well explored domain of information retrieval.</p>
 <p>Optimizing full-text search is a battle between precision (returning as few irrelevant documents as possible) and recall (returning as many relevant documents as possible). Matching only exact words in the question query results in high precision, however it misses out on many passages that could possibly be considered relevant. Rather we can cast a wider net by searching for terms that are not exactly the same as in the question query, but are related in some way. Let's explore a few tips and tricks for widening the net.</p>
-<h3 id="Custom-Analyzers">
-<a class="anchor" href="#Custom-Analyzers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Analyzers<a class="anchor-link" href="#Custom-Analyzers"> </a>
-</h3>
 <p>Earlier in the post we described Elasticsearch Analyzers as a way to deal with the nuances of human language. Analyzers provide a flexible and extensible method to tailor search for a given dataset. Here are a few custom Analyzer components Elasticsearch provides that can help cast a wider net.</p>
 <ul>
 <li>
@@ -1444,6 +1437,14 @@ Succesfully loaded 20239 into squad-stop-stem-index
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Awesome - we've increase recall and mAP by ~3 points and reduced our average query duration by nearly 3x through simple pre-processing steps. With that, there is no "one size fits all" recipe for optimizing search relevance and every implementation will be different. In addition to custom analysis, there are many other methods for increasing search recall like query expansion that introduce additional tokens and phrases into the query at search time. We'll save those topics for another post and instead take a look at how the Retreiver's performance affects and end-to-end QA system.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
