@@ -216,7 +216,7 @@ window.onload = wrap_img;
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="/images/copied_from_nb/my_icons/michael_scott_quote.jpg" alt="" title="You miss 100% of the shots you don't take"></p>
-<p>We believe that what Michael Scott really meant to say is:</p>
+<p>We believe what Michael Scott really meant to say is:</p>
 <blockquote>
 <p>"<strong><em>You miss 100% of the questions if the answer doesn't appear in the input context</em></strong>"</p>
 </blockquote>
@@ -293,62 +293,7 @@ Answer: five /</code></pre>
 <li>"Elasticsearch is a powerful technique for search!"</li>
 <li>"Manual search is a slow technique."</li>
 </ol>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Term</th>
-<th style="text-align:center">Document 1</th>
-<th style="text-align:center">Document 2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">a</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">elasticsearch</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">for</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">is</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">manual</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">powerful</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">search</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">slow</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">x</td>
-</tr>
-<tr>
-<td style="text-align:center">technique</td>
-<td style="text-align:center">x</td>
-<td style="text-align:center">x</td>
-</tr>
-</tbody>
-</table>
+<p><img src="/images/copied_from_nb/my_icons/inverted_index.png" alt=""></p>
 <p>Notice that the unique set of terms from both documents are contained in the index, and we can easily lookup which document contains which terms. Searching this inverted index for the phrase "search technique" would return both documents because both terms are present in each document, while searching for the phrase "powerful technique" would return only Document 1. Search itself is quite a bit more complicated than the boolean logic depicted here as it involves relevance scoring (among other query dependent logic), however this oversimplification is intended to demonstrate the quick and powerful nature of the inverted index data structure.
 </p>
 <div class="flash">
@@ -362,10 +307,9 @@ Answer: five /</code></pre>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The inverted index representation is considered <em>sparse</em> by construction because for each document, you end up with a vector containing few terms relative to all terms in the index. This indexing process is what allows Elasticsearch to peruse large collections of text documents orders of magnitude faster than traditional SQL databases. While the exact match nature of search in this data structure is powerful and effective, it isn't without flaws. Word matching is limited in its ability to take semantically related concepts into search consideration. For example, consider the following question and context borrowed from the <a href="https://arxiv.org/pdf/2004.04906.pdf">DPR paper</a>:</p>
+<p>The inverted index representation is considered <em>sparse</em> by construction because for each document, you end up with a vector containing few terms relative to all terms in the index. This indexing process is what allows Elasticsearch to peruse large collections of text documents orders of magnitude faster than traditional SQL databases. While the exact match nature of search in this data structure is powerful and effective, it isn't without flaws. Word matching is limited in its ability to take semantically related concepts into search consideration. For example, consider the following question and context borrowed from the <a href="https://arxiv.org/pdf/2004.04906.pdf">this paper</a>:</p>
 <blockquote>
-<p><strong>Question:</strong> "Who is the bad guy in lord of the rings?"  &gt; <strong>Context:</strong> "Sala Baker is an actor and stuntman from New Zealand. He is best known for portraying the villain Sauron in the Lord of the Rings trilogy..."
- </p>
+<p><strong>Question:</strong> "Who is the bad guy in lord of the rings?"<br>&gt; <strong>Context:</strong> "Sala Baker is an actor and stuntman from New Zealand. He is best known for portraying the villain Sauron in the Lord of the Rings trilogy..."<br></p>
 </blockquote>
 <p>An exact match based system like Elasticsearch would struggle to retrieve this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". Modern document retrieval systems that take advantage of learned, dense representations of text would perform better in this situation.</p>
 
@@ -947,9 +891,9 @@ Succesfully loaded 20239 into squad-standard-index
 <p>Wahoo! We now have some documents loaded into into an index. Elasticsearch provides a rich <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html">query language</a> that supports a diverse range of query types. For this example, we'll use the standard query for performing full-text search called a <code>match</code> query. By default, Elasticsearch sorts and returns a JSON reponse of search results based on a computed a <a href="https://qbox.io/blog/practical-guide-elasticsearch-scoring-relevancy#:~:text=Together%2C%20these%20combine%20into%20a,number%20known%20as%20the%20_score.">relevance score</a> which indicates how well a given document matches the query. Along with the relevance score of each matched document, the search response also includes the amount of time the query took to run.</p>
 <p>Let's look at a simple <code>match</code> query used to search the <code>document_text</code> field in our newly created index.
 </p>
-<div class="flash">
-    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
-    <strong>Note: </strong>As previously mentioned, all documents in the index have gone through an analysis process prior to indexing - this is called <em>index time analysis</em>. To maintain consistency in matching text queries against the post-processed index tokens, the same Analyzer used on a given field at index time is automatically applied to the query text at search time. <em>Search time analysis</em> is applied depending on which query type is used - <code>match</code> queries apply search time analysis by default.
+<div class="flash flash-warn">
+    <svg class="octicon octicon-zap" viewbox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 7H6l3-7-9 9h4l-3 7 9-9z"></path></svg>
+    <strong>Important: </strong>As previously mentioned, all documents in the index have gone through an analysis process prior to indexing - this is called <em>index time analysis</em>. To maintain consistency in matching text queries against the post-processed index tokens, the same Analyzer used on a given field at index time is automatically applied to the query text at search time. <em>Search time analysis</em> is applied depending on which query type is used - <code>match</code> queries apply search time analysis by default.
 </div>
 
 </div>
@@ -1103,36 +1047,7 @@ Title, Relevance Score:
 <p>To explain mAP further, let's first break down the concept of average precision for information retrieval. If our Retriever is asked to return N documents and the total number of those N documents that actually contains the answer is m, then average precision (AP) is defined as:</p>
 <p><img src="/images/copied_from_nb/my_icons/map_equation.png" alt=""></p>
 <p>where <em>rel(k)</em> is just a binary indication of whether the <em>kth</em> passage contains the correct answer segment or not. Using a concrete example, consider retrieving <em>N=3</em> documents, of which one actually contains the correct answer segment. Here are three scenarios for how this could happen:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Scenario</th>
-<th style="text-align:center">Binary Indication</th>
-<th style="text-align:center">Precision @k's</th>
-<th style="text-align:center">Average Precision @N</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">A</td>
-<td style="text-align:center">[1, 0, 0]</td>
-<td style="text-align:center">[1/1, 0, 0]</td>
-<td style="text-align:center">(1/1)*[(1/1) + 0 + 0] = 1</td>
-</tr>
-<tr>
-<td style="text-align:center">B</td>
-<td style="text-align:center">[0, 1, 0]</td>
-<td style="text-align:center">[0, 1/2, 0]</td>
-<td style="text-align:center">(1/1)*[0 + (1/2) + 0] = 0.5</td>
-</tr>
-<tr>
-<td style="text-align:center">C</td>
-<td style="text-align:center">[0, 0, 1]</td>
-<td style="text-align:center">[0, 0, 1/3]</td>
-<td style="text-align:center">(1/1)*[0 + 0 + (1/3)] = 0.33</td>
-</tr>
-</tbody>
-</table>
+<p><img src="/images/copied_from_nb/my_icons/map_example.png" alt=""></p>
 <p>Despite the fact that in each scenario we only have one document containing the correct answer, Scenario A is rewarded with the highest score because it was able to correctly rank the ground truth document relative to the others returned. Since average precision is calculated on a per query basis, the mean average precision is simply just the average AP across all queries.</p>
 <p>Now using our Wikipedia passage index, let's define a function called <code>evaluate_retriever</code> to loop through all quesion/answer examples from the SQuAD2.0 train set and see how well our Elasticsearch retriever peforms in terms of recall, mAP, and averege query duration when retrieving $N=3$ passages.</p>
 
@@ -1440,7 +1355,7 @@ Succesfully loaded 20239 into squad-stop-stem-index
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Awesome - we've increase recall and mAP by ~3 points and reduced our average query duration by nearly 3x through simple pre-processing steps. With that, there is no "one size fits all" recipe for optimizing search relevance and every implementation will be different. In addition to custom analysis, there are many other methods for increasing search recall like query expansion that introduce additional tokens and phrases into the query at search time. We'll save those topics for another post and instead take a look at how the Retreiver's performance affects and end-to-end QA system.</p>
+<p>Awesome - we've increased recall and mAP by ~3 points and reduced our average query duration by nearly 4x through simple pre-processing steps that just scratch the surface of tailored analysis in Elasticsearch. With that, there is no "one size fits all" recipe for optimizing search relevance and every implementation will be different. In addition to custom analysis, there are many other methods for increasing search recall like query expansion - that introduces additional tokens/phrases into a query at search time. We'll save that topics for another post and instead take a look at how the Retreiver's performance affects and end-to-end QA system.</p>
 
 </div>
 </div>
