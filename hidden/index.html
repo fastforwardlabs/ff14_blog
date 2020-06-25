@@ -103,7 +103,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      36 min read
+      33 min read
     
 </span></p>
 
@@ -139,7 +139,6 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h1"><a href="#Retrieving-the-right-document-is-important">Retrieving the right document is important </a></li>
 <li class="toc-entry toc-h1"><a href="#Elasticsearch-as-an-IR-Tool">Elasticsearch as an IR Tool </a>
 <ul>
-<li class="toc-entry toc-h4"><a href="#Inverted-Index">Inverted Index </a></li>
 <li class="toc-entry toc-h2"><a href="#Using-Elasticsearch-with-SQuAD2.0">Using Elasticsearch with SQuAD2.0 </a>
 <ul>
 <li class="toc-entry toc-h3"><a href="#Download-and-Prepare-SQUAD2.0">Download and Prepare SQUAD2.0 </a></li>
@@ -277,48 +276,7 @@ Answer: five /</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="https://github.com/fastforwardlabs/ff14_blog/blob/master/_notebooks/my_icons/elasticsearch-logo.png?raw=1" alt=""></p>
 <p>Modern QA systems employ a variety of techniques for the task of information retrieval ranging from traditional sparse vector word matching (ex. Elasticsearch) to <a href="https://arxiv.org/pdf/2004.04906.pdf">novel approaches</a> using dense representations of encoded passages combined with <a href="https://github.com/facebookresearch/faiss">efficient search capabilities</a>. Despite the flurry of contemporary research efforts in this area, the traditional sparse vector approach performs very well overall and has only recently been overtaken by embedding-based systems for end-to-end QA retrieval tasks. For that reason, we'll explore Elasticsearch as an easy to use framework for document retrieval. So, what exactly is Elasticsearch?</p>
-<p>Elasticsearch is a powerful open-source search and analytics engine built on the <a href="https://lucene.apache.org/">Apache Lucene</a> library that is capable of handling all types of data including textual, numerical, geospatial, structrured, and unstructured. It is built to scale with a robust set of features, rich ecosystem, and diverse list of client libraries making it easy to integrate and use. In the context of information retrieval for automated question answering, we are keenly interested in the features surrounding full-text search. Elasticsearch provides a convenient way to index documents so they can quickly be queried for nearest neighbor search using a TF-IDF based similarity metric. Specifically, it uses <a href="https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/">BM25</a> term weighting to represent question and context passages as high-dimensional, sparse vectors that are efficiently searched in an inverted index. Let's unpack those ideas a bit.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Inverted-Index">
-<a class="anchor" href="#Inverted-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inverted Index<a class="anchor-link" href="#Inverted-Index"> </a>
-</h4>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The purpose of an inverted index is to store text in a data structure that allows for efficient and fast full-text searches. An inverted index is essentially just a mapping between unique terms and documents which contain those terms. For example, consider the following two documents and a depiction of an inverted index built from them:</p>
-<ol>
-<li>"Elasticsearch is a powerful technique for search!"</li>
-<li>"Manual search is a slow technique."</li>
-</ol>
-<p><img src="https://github.com/fastforwardlabs/ff14_blog/blob/master/_notebooks/my_icons/inverted_index.png?raw=1" alt=""></p>
-<p>Notice that the unique set of terms from both documents are contained in the index, and we can easily lookup which document contains which terms. Searching this inverted index for the phrase "search technique" would return both documents because both terms are present in each document, while searching for the phrase "powerful technique" would return only Document 1. Search itself is quite a bit more complicated than the boolean logic depicted here as it involves relevance scoring (among other query dependent logic), however this oversimplification is intended to demonstrate the quick and powerful nature of the inverted index data structure.
-</p>
-<div class="flash">
-    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
-    <strong>Note: </strong>In the example above, all tokens have been lowercased and punctuation removed. This happens as part of an important preprocessing pipeline that we’ll explain in more detail later in the post.
-</div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The inverted index representation is considered <em>sparse</em> by construction because for each document, you end up with a vector containing few terms relative to all terms in the index. This indexing process is what allows Elasticsearch to peruse large collections of text documents orders of magnitude faster than traditional SQL databases. While the exact match nature of search in this data structure is powerful and effective, it isn't without flaws. Word matching is limited in its ability to take semantically related concepts into search consideration. For example, consider the following question and context borrowed from the <a href="https://arxiv.org/pdf/2004.04906.pdf">this paper</a>:</p>
-<blockquote>
-<p><strong>Question:</strong> "Who is the bad guy in lord of the rings?"<br><strong>Context:</strong> "Sala Baker is an actor and stuntman from New Zealand. He is best known for portraying the villain Sauron in the Lord of the Rings trilogy..."
-<br></p>
-</blockquote>
-<p>An exact match based system like Elasticsearch would struggle to retrieve this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". Modern document retrieval systems that take advantage of learned, dense representations of text would perform better in this situation.</p>
+<p>Elasticsearch is a powerful open-source search and analytics engine built on the <a href="https://lucene.apache.org/">Apache Lucene</a> library that is capable of handling all types of data including textual, numerical, geospatial, structrured, and unstructured. It is built to scale with a robust set of features, rich ecosystem, and diverse list of client libraries making it easy to integrate and use. In the context of information retrieval for automated question answering, we are keenly interested in the features surrounding full-text search. Elasticsearch provides a convenient way to index documents so they can quickly be queried for nearest neighbor search using a TF-IDF based similarity metric. Specifically, it uses <a href="https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/">BM25</a> term weighting to represent question and context passages as high-dimensional, sparse vectors that are efficiently searched in an inverted index. For more information on how an inverted index works under the hood, we recommend this quick and concise <a href="https://codingexplained.com/coding/elasticsearch/understanding-the-inverted-index-in-elasticsearch">blog post</a>.</p>
 
 </div>
 </div>
@@ -373,41 +331,6 @@ Answer: five /</code></pre>
 </div>
 
     </details>
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>--2020-06-24 18:27:30--  https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json
-Resolving rajpurkar.github.io (rajpurkar.github.io)... 185.199.111.153, 185.199.110.153, 185.199.109.153, ...
-Connecting to rajpurkar.github.io (rajpurkar.github.io)|185.199.111.153|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 42123633 (40M) [application/json]
-Saving to: ‘data/squad/train-v2.0.json’
-
-train-v2.0.json     100%[===================&gt;]  40.17M  75.0MB/s    in 0.5s    
-
-2020-06-24 18:27:31 (75.0 MB/s) - ‘data/squad/train-v2.0.json’ saved [42123633/42123633]
-
---2020-06-24 18:27:31--  https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json
-Resolving rajpurkar.github.io (rajpurkar.github.io)... 185.199.111.153, 185.199.109.153, 185.199.110.153, ...
-Connecting to rajpurkar.github.io (rajpurkar.github.io)|185.199.111.153|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 4370528 (4.2M) [application/json]
-Saving to: ‘data/squad/dev-v2.0.json’
-
-dev-v2.0.json       100%[===================&gt;]   4.17M  21.6MB/s    in 0.2s    
-
-2020-06-24 18:27:32 (21.6 MB/s) - ‘data/squad/dev-v2.0.json’ saved [4370528/4370528]
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     
 
@@ -694,27 +617,6 @@ There are 1204 unique wikipedia article paragraphs.
 </div>
 
     </details>
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Collecting elasticsearch
-  Downloading https://files.pythonhosted.org/packages/34/4e/8d4190b41c72ee04b03c2404c7ac39e671a95616a6e6a4260d2098f3c7b2/elasticsearch-7.8.0-py2.py3-none-any.whl (188kB)
-     |████████████████████████████████| 194kB 4.9MB/s 
-Requirement already satisfied: urllib3&gt;=1.21.1 in /usr/local/lib/python3.6/dist-packages (from elasticsearch) (1.24.3)
-Requirement already satisfied: certifi in /usr/local/lib/python3.6/dist-packages (from elasticsearch) (2020.4.5.2)
-Installing collected packages: elasticsearch
-Successfully installed elasticsearch-7.8.0
-Requirement already satisfied: tqdm in /usr/local/lib/python3.6/dist-packages (4.41.1)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     
 
@@ -993,7 +895,7 @@ Succesfully loaded 20239 into squad-standard-index
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
-<span class="k">def</span> <span class="nf">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">question_text</span><span class="p">,</span> <span class="n">n_results</span><span class="p">):</span>
     <span class="sd">'''</span>
 <span class="sd">    Execute an Elasticsearch query on a specified index</span>
 <span class="sd">    </span>
@@ -1007,6 +909,15 @@ Succesfully loaded 20239 into squad-standard-index
 <span class="sd">        res - Elasticsearch response object</span>
 <span class="sd">    </span>
 <span class="sd">    '''</span>
+    
+    <span class="c1"># construct query</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'query'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'match'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">'document_text'</span><span class="p">:</span> <span class="n">question_text</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
     
     <span class="n">res</span> <span class="o">=</span> <span class="n">es_obj</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_results</span><span class="p">)</span>
     
@@ -1030,17 +941,8 @@ Succesfully loaded 20239 into squad-standard-index
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">question_text</span> <span class="o">=</span> <span class="s1">'Who was the first president of the Republic of China?'</span>
 
-<span class="c1"># construct query</span>
-<span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">'query'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'match'</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">'document_text'</span><span class="p">:</span> <span class="n">question_text</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
 <span class="c1"># execute query</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-index'</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s1">'squad-standard-index'</span><span class="p">,</span> <span class="n">question_text</span><span class="o">=</span><span class="n">question_text</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1318,7 +1220,7 @@ Title, Relevance Score:
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Identifying a correct passage in the Top 3 results for 82% of the SQuAD questions in ~3 milliseconds per question is not too bad! But that means that we've effectively limited our overall QA system to an 82% upper bound on performance. How can we improve upon this?</p>
 <p>One simple and obvious way to increase recall would be to just retrieve more passages. The following figure shows the effects of varying corpus size and result size on Elasticsearch retriever recall. As expected we see that the number of passages retrieved (i.e. <em>Top N</em>) has a dramatic impact on recall; a ~10-15 point jump from 1 to 3 passages returned, and ~5 point jump for each of the other tiers. We also see a gradual decrease in recall as corpus size increases, which isn't surprising.</p>
-<p><img src="https://github.com/fastforwardlabs/ff14_blog/blob/master/_notebooks/my_icons/recall_v_corpussize.png?raw=1" alt="Elasticsearch Index Process"></p>
+<p><img src="https://github.com/fastforwardlabs/ff14_blog/blob/master/_notebooks/my_icons/recall_v_corpussize.png?raw=1" alt="Recall vs. Corpus Size" title="Experimental results demonstrating the impact of increasing corpus size and number of results retrieved on Elasticsearch recall."></p>
 <p>While increasing the number of passages retrieved is effective, it also has implications on overall system performance as the already slow Reader now has to reason over more text. Instead, we can lean on best practices in the well explored domain of information retrieval.</p>
 <p>Optimizing full-text search is a battle between precision (returning as few irrelevant documents as possible) and recall (returning as many relevant documents as possible). Matching only exact words in the question query results in high precision, however it misses out on many passages that could possibly be considered relevant. Rather we can cast a wider net by searching for terms that are not exactly the same as in the question query, but are related in some way. Let's explore a few tips and tricks for widening the net.</p>
 <p>Earlier in the post we described Elasticsearch Analyzers as a way to deal with the nuances of human language. Analyzers provide a flexible and extensible method to tailor search for a given dataset. Here are a few custom Analyzer components Elasticsearch provides that can help cast a wider net.</p>
