@@ -1229,7 +1229,7 @@ Title, Relevance Score:
 <p><strong>Stopwords</strong>: Stopwords are the most frequently occuring words in the English language (ex. "and", "the", "to", etc.) and add minimal semantic value to a piece of text. Common practice in information retrieval is to identify and remove them from documents to decrease the size of the index and increase relevance of search results.</p>
 </li>
 <li>
-<p><strong>Stemming</strong>: The English language is inflected - words can alter their written form to express different meanings. For example, 'sing', 'sings', 'sang', and 'singing' are written with slight differences, but really mean the same thing. Stemming is a technique that attempts to reduce words to their root form and consequently improve retrievability. Stemming algorithms exploit the fact that search intent is <em>usually</em> word-form agnostic - which is not always the case. For example, the phrases "fly fishing" and "flying fish" both stem to "fli fish" which would provide a very incorrect result depending on the users intent. Despite that, stemming does increase search recall by relaxing query term inflection. We'll implement the <a href="https://snowballstem.org/">Snowball</a> stemming algorithm as a token filter in our custom Analyzer.</p>
+<p><strong>Stemming</strong>: The English language is inflected - words can alter their written form to express different meanings. For example, 'sing', 'sings', 'sang', and 'singing' are written with slight differences, but really mean the same thing. Stemming algorithms exploit the fact that search intent is <em>usually</em> word-form agnostic and attempts to reduce inflected words to their root form - consequently improving retrievability. We'll implement the <a href="https://snowballstem.org/">Snowball</a> stemming algorithm as a token filter in our custom Analyzer.</p>
 </li>
 </ul>
 
@@ -1281,36 +1281,6 @@ Title, Relevance Score:
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-Succesfully loaded 20239 into squad-stop-stem-index
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-13-fc4ce65eaa55&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">     32</span> 
-<span class="ansi-green-intense-fg ansi-bold">     33</span> <span class="ansi-red-fg"># evaluate retriever performance</span>
-<span class="ansi-green-fg">---&gt; 34</span><span class="ansi-red-fg"> </span>stop_stem_results_df<span class="ansi-blue-fg">,</span> stop_stem_metrics <span class="ansi-blue-fg">=</span> evaluate_retriever<span class="ansi-blue-fg">(</span>es_obj<span class="ansi-blue-fg">=</span>es<span class="ansi-blue-fg">,</span> index_name<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">'squad-stop-stem-index'</span><span class="ansi-blue-fg">,</span>                                                             qa_records<span class="ansi-blue-fg">=</span>qa_records_answerable<span class="ansi-blue-fg">,</span> n_results<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">3</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">NameError</span>: name 'evaluate_retriever' is not defined</pre>
-</div>
-</div>
-
 </div>
 </div>
 
