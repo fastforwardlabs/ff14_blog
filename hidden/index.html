@@ -103,7 +103,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      30 min read
+      31 min read
     
 </span></p>
 
@@ -170,9 +170,10 @@ window.onload = wrap_img;
 </ul>
 </li>
 <li class="toc-entry toc-h2"><a href="#Evaluation-methods">Evaluation methods </a></li>
+<li class="toc-entry toc-h2"><a href="#Full-QA-system-comparison">Full QA system comparison </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h1"><a href="#Wrapping-Up">Wrapping Up </a></li>
+<li class="toc-entry toc-h1"><a href="#Final-Thoughts">Final Thoughts </a></li>
 <li class="toc-entry toc-h1"><a href="#Post-Script:-The-Code">Post Script: The Code </a></li>
 </ul><!--
 #################################################
@@ -1348,11 +1349,11 @@ Title, Relevance Score:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We now want to evaluate the full QA system in which the retriever passes relevant documents to the reader. We used the questions from the train set to evaluate the stand-alone retriever in order to provide as large a collection as possible. However, BERT has been trained on those question and would return inflated performance values if we used them for full system evaluation. Instead we'll resort to our trusty SQuAD2.0 dev set. We'll also use the more efficient index that we developed in the last section in order to give our reader the best chance of receiving documents that contain the right answer. 
+<p>It's time to evaluate a full QA system. We used the questions from the train set to evaluate the stand-alone retriever in order to provide as large a collection as possible. However, BERT has been trained on those question and would return inflated performance values if we used them for full system evaluation. Instead we'll resort to our trusty SQuAD2.0 dev set. We'll also use the more efficient index that we developed in the last section to give our reader the best chance of receiving documents with the right answer. 
 </p>
 <div class="flash">
     <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
-    <strong>Note: </strong>In this section we’ll focus on a discussion. The code to reproduce our results can be found at the end of the post. 
+    <strong>Note: </strong>This section focuses on a discussion. The code to reproduce our results can be found at the end. 
 </div>
 
 </div>
@@ -1364,33 +1365,33 @@ Title, Relevance Score:
 <h2 id="Connecting-the-retriever-to-the-reader">
 <a class="anchor" href="#Connecting-the-retriever-to-the-reader" aria-hidden="true"><span class="octicon octicon-link"></span></a>Connecting the retriever to the reader<a class="anchor-link" href="#Connecting-the-retriever-to-the-reader"> </a>
 </h2>
-<p>In our last post we evaluated a BERT-like model on the SQuAD2.0 dev set by providing the model with exactly the right paragraph in which to find an answer. This time, the retriever will serve up some number of documents that it deems most relevant. How should the retriever and the reader interact? And how should the reader determine which document out of all them contains the best answer?</p>
-<p>This turns out to be one of the trickier subtleties in building a full QA system. There are several ways to approach this problem. We'll describe two that we tried:</p>
+<p>In our last post we evaluated a BERT-like model on the SQuAD2.0 dev set by providing the model with a paragraph that perfectly aligned with the qustion.  This time, the retriever will serve up a collection of relevant documents. We created a reader class that leverages the HF question-answering <code>pipeline</code> to do the brunt of the work for us (loading models and tokenizers, converting text to features, chunking, prediction, etc.), but how should it process multiple documents from the retriever? And how should it determine which document contains the best answer?</p>
+<p>This turns out to be one of the thornier subtleties in building a full QA system. There are several ways to approach this problem; here are two that we tried:</p>
 <ol>
-<li>Pass each document to the reader individually then aggregate the resulting scores</li>
-<li>Concatenate all documents into one long passage and pass to the reader simultaneously</li>
+<li>pass each document to the reader individually then aggregate the resulting scores</li>
+<li>concatenate all documents into one long passage and pass to the reader simultaneously</li>
 </ol>
+<p>Both methods have pros and cons. Let's take a look at them.</p>
 <h3 id="Pass-each-document-individually">
 <a class="anchor" href="#Pass-each-document-individually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pass each document individually<a class="anchor-link" href="#Pass-each-document-individually"> </a>
 </h3>
-<p>Both methods have pros and cons. In option 1, the reader returns answers and scores for each document. A series of heuristics must be developed to determine which answer is the best, and when the null answer should be returned. These heuristics can be as simple as: "Only return null if the highest scoring answer for all documents is null, otherwise return the highest scoring non-null answer" but complexity can easily grow from there.</p>
-<p>Compounding this challenge is the fact that the answer scores associated with each document are actually not directly comparable to the answer scores from any other document. This is because the score returned is a softmax probability over the tokens in a given document - the probabilities sum to 1 for <em>that document</em> only. This means that an answer with a score of 0.78 from one document might not actually be inherently "better" than an answer with a score of .70 from another document!</p>
-<p>Finally, this option is slower because each article is passed individually leading to multiple BERT calls.</p>
+<p>In option 1, the reader returns answers and scores for each document. A series of heuristics must be developed to determine which answer is the best, and when the null answer should be returned. For this post we chose a simple but reasonable heuristic: "Only return null if the highest scoring answer in each documents is null, otherwise return the highest scoring non-null answer".</p>
+<p>Unfortunately, a direct comparison of answer scores between documents is not technically possible. The reason lies in the type of score returned by the HF pipeline -- a softmax probability over all the tokens <em>in that document</em>. This means that the only meaningful comparisons are between answers <em>from the same document</em> whose probabilities will sum to 1. Comparing an answer with a score of 0.78 from one document is not guaranteed to be better than an answer with a score of .70 from another document!</p>
+<p>Finally, this option is slower (in our current implementation) because each article is passed individually leading to multiple BERT calls.</p>
 <h3 id="Pass-all-documents-together-as-one-long-context">
 <a class="anchor" href="#Pass-all-documents-together-as-one-long-context" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pass all documents together as one long context<a class="anchor-link" href="#Pass-all-documents-together-as-one-long-context"> </a>
 </h3>
-<p>Option 2 circumvents many of these challenges but leads to other problems. 
-Creating one long context out of the top k articles solves many problems for us:</p>
+<p>Option 2 circumvents many of these challenges but leads to other problems. The pros are:</p>
 <ol>
-<li>all candidate answers are scored on the same scale,</li>
+<li>all candidate answers are scored on the same probability scale</li>
 <li>handling the null answer is more straightforward (we did that last time),</li>
-<li>and we can take advantage of faster compute as HF will chunk long documents for us and pass them through BERT in a batch. </li>
+<li>we can take advantage of faster compute since HF will chunk long documents for us and pass them through BERT in a batch</li>
 </ol>
 <p>On the other hand, when concatenating multiple passages together, there's a good chance that BERT will see a mixed context: the end of one paragraph grafted onto the beginning of another, for example. This could make it more difficult for the model to correctly identify an answer in a potentially confusing context. Another drawback is that it's more difficult to backstrapolate which of the input documents the answer ultimately came from.</p>
-<p>We created a reader class that leverages the HF question-answering <code>pipeline</code> to do the brunt of the work for us (loading models and tokenizers, converting text to features, chunking, prediction, etc.). We then created two methods: <code>predict</code> and <code>predict_combine</code> corresponding to option 1 and option 2, respectively. We tested our two methods over 1000 examples from the SQuAD2.0 dev set for a range of number of retrieved documents.</p>
+<p>Our reader class has two methods: <code>predict</code> and <code>predict_combine</code> corresponding to option 1 and option 2, respectively. We tested each of them over 1000 examples from the SQuAD2.0 dev set while increasing the number of retrieved documents.</p>
 <p><img src="/images/copied_from_nb/my_icons/qa_eval_combined_vs_individual.png" alt=""></p>
-<p>There are two trends to recognize. First, we see that our method of concatenating documents together (blue bars) and passing them to the reader all at once outperforms passing documents invididually and applying heuristics to the outputs. While more sophistical heuristics can be developed, for short documents (paragraphs in this case) we find that the concatenation method is the most straightforward approach.</p>
-<p>The second thing to notice is that, as the number of retrieved documents increases, the overall performance decreases. What's going on? When we evaluated the retriever, we found that increasing the number of retrieved documents increased the likelihood that the correct answer was contained in at least one of them. So why does reader performance degrade?</p>
+<p>There are two takeaways here. First, we see that the concatenation method (blue bars) outperforms passing documents invididually and applying heuristics to the outputs (orange bars). While more sophistical heuristics can be developed, for short documents (paragraphs in this case) we find that the concatenation method is the most straightforward approach.</p>
+<p>The second thing to notice is that, as the number of retrieved documents increases, the overall performance decreases for either method. What's going on? When we evaluated the retriever, we found that increasing the number of retrieved documents increased the likelihood that the correct answer was contained in at least one of them. So why does reader performance degrade?</p>
 
 </div>
 </div>
@@ -1401,22 +1402,28 @@ Creating one long context out of the top k articles solves many problems for us:
 <h2 id="Evaluation-methods">
 <a class="anchor" href="#Evaluation-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluation methods<a class="anchor-link" href="#Evaluation-methods"> </a>
 </h2>
-<p>Standard evaluation on the SQuAD2.0 dev set considers only the best overall answer for each question. This is what we considered in the previous section and found that performance decreased as more documents are fed to the reader. 
-However, we also found it instructive to consider an alternative. Mirroring our retriever recall metric from earlier, we constructed a similar metric for the full system. Specifically, we compute the <em>percent of examples in which the correct answer is found in <strong>at least one</strong> of the top k documents provided by the retriever</em>.</p>
+<p>Standard evaluation on the SQuAD2.0 dev set considers only the best overall answer for each question. But we can create another evaluation metric that mirrors our IR recall metric from earlier. Specifically, we compute the <em>percent of examples in which the correct answer is found in <strong>at least one</strong> of the top k documents provided by the retriever</em>.</p>
 <p><img src="/images/copied_from_nb/my_icons/qa_eval_top1_vs_any_topk.png" alt=""></p>
-<p>The blue bars are the same as the blue bars in the figure above, but this time the orange bars represent our new recall-esque metric - what a difference! This demonstrates that when the model is provided with more documents, the correct answer is present more often! However, trying to predict which one of those answers is the right one is challenging -- a task that is not achieved by a simple heuristic.</p>
+<p>The blue bars are the same as the blue bars in the previous figure, but this time the orange bars represent our new recall-esque metric - what a difference! This demonstrates that when the model is provided with more documents, the correct answer is truly present more often! However, trying to predict which one of those answers is the right one is challenging -- a task that is not achieved by a simple heuristic and that becomes harder with more documents.</p>
+<p>It may seem counterintuitive but this behavior does make sense. If we imagine a simple system that performs random document retrieval and random answer selection, we’d see the same trend: increasing k increases the probability that a collection of k documents contains the answer, and decreases the probability of returning the right answer among a larger collection of possible answers. Obviously neither the retriever nor BERT are random, but since they also aren’t <em>perfect,</em> the trait persists.</p>
 <p>Does this mean we shouldn't use QA systems like this? Of course not! There are several factors to consider:</p>
 <ol>
 <li>
-<p>Use Case: If your QA system seeks to provide enhanced search capabilities then it might not be necessary to predict a single answer with high confidence, instead providing answers from several documents for the user to peruse. On the other hand, if your use case seeks to augment a chatbot, then predicting a high confidence answer might be more important for user experience.</p>
+<p>Use Case: If your QA system seeks to provide enhanced search capabilities then it might not be necessary to predict a single answer with high confidence. It might be sufficient to provide answers from several documents for the user to peruse. On the other hand, if your use case seeks to augment a chatbot, then predicting a high confidence answer might be more important for user experience.</p>
 </li>
 <li>
-<p>Better heuristics:  While our simple heuristic didn't perform as well as concatenating all the input documents into one long context, there is considerable research into developing heurstics that work. In particular, one promising approach is to develop a new score based on the both how highly a document is ranked, as well as the answer's score.</p>
+<p>Better heuristics:  While our simple heuristic didn't perform as well as concatenating all the input documents into one long context, there is research into developing heurstics that work. In particular, <a href="https://arxiv.org/abs/1902.01718">one promising approach</a> develops a combined answer score that considers both the retriever's document ranking, and the reader's answer score.</p>
 </li>
 <li>
-<p>Document length: Our concatenation method works reasonably well compared to other methods, but the documents are short - they're small Wikipedia paragraphs. If the document length becomes significantly longer, this method's performance can degrade significantly.</p>
+<p>Document length: Our concatenation method works reasonably well compared to other methods, but the documents are short. If the document length becomes considerably longer, this method's performance can degrade significantly.</p>
 </li>
 </ol>
+<h2 id="Full-QA-system-comparison">
+<a class="anchor" href="#Full-QA-system-comparison" aria-hidden="true"><span class="octicon octicon-link"></span></a>Full QA system comparison<a class="anchor-link" href="#Full-QA-system-comparison"> </a>
+</h2>
+<p>Considering all that we've learned so far, what is the overall impact of the retriever on a full QA system? Using our concatenation method and returning only the best answer for all questions in the SQuAD2.0 dev set, we can compare results with the previous blog post in which we evaluated only the reader.</p>
+<p><img src="/images/copied_from_nb/my_icons/qa_system_vs_reader_only.png" alt=""></p>
+<p>As expected, adding a retriever to supply documents to the reader reduces the system's ability to identify the correct answer. This motivates approaches for enhancing the retriever in order to supply the reader with the best document possible.</p>
 
 </div>
 </div>
@@ -1424,13 +1431,12 @@ However, we also found it instructive to consider an alternative. Mirroring our 
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Wrapping-Up">
-<a class="anchor" href="#Wrapping-Up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Wrapping Up<a class="anchor-link" href="#Wrapping-Up"> </a>
+<h1 id="Final-Thoughts">
+<a class="anchor" href="#Final-Thoughts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Final Thoughts<a class="anchor-link" href="#Final-Thoughts"> </a>
 </h1>
-<p>We did it! We built a full QA system using off-the-shelf parts with ElasticSearch and HuggingFace Transformers. In addition to the takeaways above, we have one final parting thought.</p>
-<p>In this post we made some design choices including the choice to index over Wikipedia paragraphs rather than full articles. This allowed us to more easily replicate SQuAD evaluation methods but this isn't practical. In the real world, a QA system will need to work on with existing indexes which are typically performed over long documents and not split into paragraphs. This provides the retriever with the best chance of returning a relevant document.</p>
-<p>However, passing multiple long documents to a Transformer model is a recipe of boredom -- it will take forever and it likely won't be highly informative. Transformers work best with smaller passages. Thus, extracting a few highly relevant paragraphs from the most relevant document is a better recipe for a practical implementation.</p>
-<p>This is exactly the approach we'll take next time when we (hopefully) address the biggest question of all:</p>
+<p>We did it! We built a full QA system with off-the-shelf parts using ElasticSearch and HuggingFace Transformers.</p>
+<p>We made a series of design choices in building our full QA system, including the choice to index over Wikipedia paragraphs rather than full articles. This allowed us to more easily replicate SQuAD evaluation methods but this isn't practical. In the real world, a QA system will need to work with existing indexes which are typically performed over full documents, not paragraphs. In addition to architectural constraints, indexing over full documents provides the retriever with the best chance of returning a relevant document.</p>
+<p>However, passing multiple long documents to a Transformer model is a recipe for boredom -- it will take forever and it likely won't be highly informative. Transformers work best with smaller passages. Thus, extracting a few highly relevant paragraphs from the most relevant document is a better recipe for a practical implementation. This is exactly the approach we'll take next time when we (hopefully) address the biggest question of all:</p>
 <blockquote>
 <p>How do I apply a QA system to <strong>my</strong> data?</p>
 </blockquote>
@@ -1446,14 +1452,6 @@ However, we also found it instructive to consider an alternative. Mirroring our 
 <a class="anchor" href="#Post-Script:-The-Code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Post Script: The Code<a class="anchor-link" href="#Post-Script:-The-Code"> </a>
 </h1>
 <p>If you open this notebook in Colab, you'll find several cells below that step through the experiments we ran for the final section.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Running the cell below requires a gpu so execute with caution or Colab. Evaluation over the top 1 retrieved documents takes about 35 minutes to run.</p>
 
 </div>
 </div>
