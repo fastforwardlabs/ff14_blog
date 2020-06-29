@@ -103,7 +103,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      31 min read
+      30 min read
     
 </span></p>
 
@@ -141,8 +141,6 @@ window.onload = wrap_img;
 <ul>
 <li class="toc-entry toc-h2"><a href="#Using-Elasticsearch-with-SQuAD2.0">Using Elasticsearch with SQuAD2.0 </a>
 <ul>
-<li class="toc-entry toc-h3"><a href="#Download-and-Prepare-SQUAD2.0">Download and Prepare SQUAD2.0 </a></li>
-<li class="toc-entry toc-h3"><a href="#Download-Elasticsearch">Download Elasticsearch </a></li>
 <li class="toc-entry toc-h3"><a href="#Getting-Data-into-Elasticsearch">Getting Data into Elasticsearch </a>
 <ul>
 <li class="toc-entry toc-h4"><a href="#Create-an-Index">Create an Index </a></li>
@@ -152,25 +150,23 @@ window.onload = wrap_img;
 </li>
 </ul>
 </li>
+<li class="toc-entry toc-h2"><a href="#Evaluating-Retriever-Performance">Evaluating Retriever Performance </a></li>
+<li class="toc-entry toc-h2"><a href="#Improving-Search-Results-with-a-Custom-Analyzer">Improving Search Results with a Custom Analyzer </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h1"><a href="#Evaluating-Retriever-Performance">Evaluating Retriever Performance </a>
-<ul>
-<li class="toc-entry toc-h4"><a href="#Recall">Recall </a></li>
-<li class="toc-entry toc-h4"><a href="#Mean-Average-Precision">Mean Average Precision </a></li>
-</ul>
-</li>
-<li class="toc-entry toc-h1"><a href="#Improving-Search-Results-with-a-Custom-Analyzer">Improving Search Results with a Custom Analyzer </a></li>
-<li class="toc-entry toc-h1"><a href="#Impact-of-Retriever-in-End-to-End-QA-System">Impact of Retriever in End-to-End QA System </a>
+<li class="toc-entry toc-h1"><a href="#The-full-IR-QA-System">The full IR QA System </a>
 <ul>
 <li class="toc-entry toc-h2"><a href="#Connecting-the-retriever-to-the-reader">Connecting the retriever to the reader </a>
 <ul>
-<li class="toc-entry toc-h3"><a href="#Pass-each-document-individually">Pass each document individually </a></li>
-<li class="toc-entry toc-h3"><a href="#Pass-all-documents-together-as-one-long-context">Pass all documents together as one long context </a></li>
+<li class="toc-entry toc-h4"><a href="#Pass-each-document-individually">Pass each document individually </a></li>
+<li class="toc-entry toc-h4"><a href="#Pass-all-documents-together-as-one-long-context">Pass all documents together as one long context </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h2"><a href="#Evaluation-methods">Evaluation methods </a></li>
-<li class="toc-entry toc-h2"><a href="#Full-QA-system-comparison">Full QA system comparison </a></li>
+<li class="toc-entry toc-h2"><a href="#Evaluation-methods">Evaluation methods </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Full-QA-system-comparison">Full QA system comparison </a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-entry toc-h1"><a href="#Final-Thoughts">Final Thoughts </a></li>
@@ -194,7 +190,7 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In our last post, <a href="https://qa.fastforwardlabs.com/no%20answer/null%20threshold/bert/distilbert/exact%20match/f1/robust%20predictions/2020/06/09/Evaluating_BERT_on_SQuAD.html">Evaluating QA: Metrics, Predictions, and the Null Response</a>, we took a deep dive look at how to asses the quality of a BERT-like Reader for Question Answering (QA) using the Hugging Face framework. In this post, we'll focus on the former component of an end-to-end QA system - the Retriever. Specifically, we'll introduce Elasticsearch as a powerful and efficient Information Retrieval (IR) tool that can be used to scour through large corpora and retrieve relevant documents. Through the post, we'll explain how to implement and evaluate a Retriever in the context of Question Answering and demonstrate the impact it has on an end-to-end QA system.</p>
+<p>In our last post, <a href="https://qa.fastforwardlabs.com/no%20answer/null%20threshold/bert/distilbert/exact%20match/f1/robust%20predictions/2020/06/09/Evaluating_BERT_on_SQuAD.html">Evaluating QA: Metrics, Predictions, and the Null Response</a>, we took a deep dive look at how to asses the quality of a BERT-like Reader for Question Answering (QA) using the Hugging Face framework. In this post, we'll focus on the former component of a modern Information Retrieval-based (IR) QA system - the Retriever. Specifically, we'll introduce Elasticsearch as a powerful and efficient IR tool that can be used to scour through large corpora and retrieve relevant documents. We'll explain how to implement and evaluate a Retriever in the context of Question Answering and demonstrate it's impact on an IR QA system.</p>
 
 </div>
 </div>
@@ -232,8 +228,8 @@ window.onload = wrap_img;
 <blockquote>
 <p>"<strong><em>You miss 100% of the questions if the answer doesn't appear in the input context</em></strong>"</p>
 </blockquote>
-<p>As we have discussed throughout this blog series, many modern QA systems take a two-staged approach to answering questions. In the first stage, a document retriever selects <em>N</em> potentially relevant documents from a given corpus. Subsequently, a machine comprehension model processes each of the <em>N</em> documents to determine an answer to the input question. Because of recent advances in NLP and deep learning (i.e. flashy Transformer models), the machine comprehension component of question answering has typically been the main focus of evaluation. Stage one of these systems has recieved limited attention despite its obvious importance...stage two is bounded by performance at stage one. Let's get more specific.</p>
-<p>We <a href="https://qa.fastforwardlabs.com/no%20answer/null%20threshold/bert/distilbert/exact%20match/f1/robust%20predictions/2020/06/09/Evaluating_BERT_on_SQuAD.html">recently explained methods</a> that enable BERT-like models to produce robust answers given a question and context passage by selectively processing predictions and by refraining from answering certain questions at all. While the ability to properly comprehend a passage and produce a correct answer is a critical feature of any QA tool, the success of the overall system is highly dependent on first providing a correct passage to read through. Without being fed a context passage that actually contains the ground-truth answer, the overall system's performance is limited to how well it can predict no-answer questions. To demonstrate, we'll revisit an example from our <a href="https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html">second blog post</a> where three questions were asked of the Wikipedia search engine based QA system:</p>
+<p>As we've discussed throughout this series, many modern QA systems take a two-staged approach to answering questions. In the first stage, a document retriever selects <em>N</em> potentially relevant documents from a given corpus. Subsequently, a machine comprehension model processes each of the <em>N</em> documents to determine an answer to the input question. Because of recent advances in NLP and deep learning (i.e. flashy Transformers), the machine comprehension component has typically been the main focus of evaluation and performance enhancement.  Retrievers have recieved limited attention in the context of QA despite their obvious importance:stage two of an IR QA system is bounded by the performance of stage one. Let's get more specific.
+We <a href="https://qa.fastforwardlabs.com/no%20answer/null%20threshold/bert/distilbert/exact%20match/f1/robust%20predictions/2020/06/09/Evaluating_BERT_on_SQuAD.html">recently explained methods</a> that enable BERT-like models to produce robust answers given a question and context passage by selectively processing predictions and by refraining from answering certain questions at all. While the ability to properly comprehend a passage and produce a correct answer is a critical feature of any QA tool, the success of the overall system is highly dependent on first providing a correct passage to read through. Without being fed a context passage that actually contains the ground-truth answer, the overall system's performance is limited to how well it can predict no-answer questions. To demonstrate, we'll revisit an example from our <a href="https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html">second blog post</a> where three questions were asked of the Wikipedia search engine based QA system:</p>
 
 </div>
 </div>
@@ -308,9 +304,8 @@ Answer: five /</code></pre>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Download-and-Prepare-SQUAD2.0">
-<a class="anchor" href="#Download-and-Prepare-SQUAD2.0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download and Prepare SQUAD2.0<a class="anchor-link" href="#Download-and-Prepare-SQUAD2.0"> </a>
-</h3>
+<p><strong>Download and Prepare SQUAD2.0</strong></p>
+
 </div>
 </div>
 </div>
@@ -347,11 +342,11 @@ Answer: five /</code></pre>
 <p>A common practice in IR for QA is to segment large articles into smaller passages before indexing for two main reasons:</p>
 <ol>
 <li>
-<strong>Transformer based Readers are very slow</strong> - providing an entire Wikipedia article to BERT for processing takes a considerable amount of time and also defeats the purpose of using an IR tool to narrow the search space for the Reader.</li>
+<strong>Transformer based Readers are slow</strong> - providing an entire Wikipedia article to BERT for processing can take 5 - 30 seconds even with a decent GPU! </li>
 <li>
 <strong>Smaller passages reduce noise</strong> - by identifying a more concise context passage for BERT to read through, we reduce the chance of BERT getting lost.</li>
 </ol>
-<p>Of course the chunking method proposed here doesn't come without a cost. Larger document size means each document contains more information. By reducing passage size, we are potentially trading off system recall for speed - though there are techniques to alleviate this as we will disucss later in the post.</p>
+<p>Of course the chunking method proposed here doesn't come without a cost. Larger documents contain more information to retrieve on. By reducing passage size, we are potentially trading off system recall for speed - though there are techniques to alleviate this as we will disucss later in the post.</p>
 <p>With our chunking approach, each article paragraph will be prepended with the article title and collectively serve as a corpus of documents for which our Elasticsearch Retriever will search over. In practice, open-domain QA systems sit atop massive collections of documents (think all of Wikipedia) to provide a breadth of information to answer general-knowledge questions from. For the purposes of demonstrating Elasticsearch functionality, we will limit our corpus to only the Wikipedia articles supporting SQuAD2.0 questions.</p>
 <p>The following <code>parse_qa_records</code> function will extract question/answer examples, as well as paragraph content from the SQuAD2.0 data set.</p>
 
@@ -538,9 +533,8 @@ There are 1204 unique wikipedia article paragraphs.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Download-Elasticsearch">
-<a class="anchor" href="#Download-Elasticsearch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download Elasticsearch<a class="anchor-link" href="#Download-Elasticsearch"> </a>
-</h3>
+<p><strong>Download Elasticsearch</strong></p>
+
 </div>
 </div>
 </div>
@@ -683,11 +677,11 @@ There are 1204 unique wikipedia article paragraphs.
 <p>The anaysis process is a customizable pipeline carried out by a dedicated <strong><em>Analyzer</em></strong>. Elasticsearch analyzers are composed of three sequential steps that form a processing pipeline: <em>character filters, a tokenizer, and token filters.</em> Each of these components modify the input stream of text according to some configurable settings.</p>
 <ul>
 <li>
-<strong>Character Filters:</strong> First, character filters have the ability to add, remove, or replace specific items in the text field. A common application of this filter is to strip <code>html</code> markup from the raw input. </li>
+<strong>Character Filters:</strong> have the ability to add, remove, or replace specific items in the text field. A common application is to strip <code>html</code> markup from the raw input. </li>
 <li>
-<strong>Tokenizer:</strong> After applying character filters, the transformed text is then passed to a tokenizer which breaks up the input string into individual tokens with a provided strategy. By default, the <code>standard</code> tokenizer splits tokens whenever it encounters a whitespace character, and also splits on most symbols (like commas, periods, semicolons, etc.)</li>
+<strong>Tokenizer:</strong> the character-filtered text is passed to a tokenizer which breaks up the input string into individual tokens with a provided strategy. The default (<code>standard</code>) tokenizer splits tokens on whitespace, and most symbols (like commas, periods, semicolons, etc.)</li>
 <li>
-<strong>Token Filters:</strong> Finally, the token stream is passed to a token filter which acts to add, remove, or modify tokens. Typical token filters include <code>lowercase</code> which converts all tokens to lowercase form, and <code>stop</code> which removes commonly occuring tokens called <em>stopwords</em>. </li>
+<strong>Token Filters:</strong> the token stream is passed to a token filter which adds, removes, or modifies tokens. Typical token filters include converting all text to <code>lowercase</code>, and removing <code>stop</code> words. </li>
 </ul>
 <p>Elasticsearch comes with several built-in Analyzers that satisfy common use cases and defaults to the <code>Standard Analyzer</code>. The Standard Analyzer doesn't contain any character filters, uses a <code>standard</code> tokenizer, and applies a <code>lowercase</code> token filter. Let's take a look at <a href="https://medium.com/elasticsearch/introduction-to-analysis-and-analyzers-in-elasticsearch-4cf24d49ddab">this example</a> sentence as its passed through this pipeline:</p>
 <blockquote>
@@ -880,7 +874,7 @@ Succesfully loaded 20239 into squad-standard-index
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Wahoo! We now have some documents loaded into into an index. Elasticsearch provides a rich <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html">query language</a> that supports a diverse range of query types. For this example, we'll use the standard query for performing full-text search called a <code>match</code> query. By default, Elasticsearch sorts and returns a JSON reponse of search results based on a computed a <a href="https://qbox.io/blog/practical-guide-elasticsearch-scoring-relevancy#:~:text=Together%2C%20these%20combine%20into%20a,number%20known%20as%20the%20_score.">relevance score</a> which indicates how well a given document matches the query. Along with the relevance score of each matched document, the search response also includes the amount of time the query took to run.</p>
+<p>Wahoo! We now have some documents loaded into into an index. Elasticsearch provides a rich <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html">query language</a> that supports a diverse range of query types. For this example, we'll use the standard query for performing full-text search called a <code>match</code> query. By default, Elasticsearch sorts and returns a JSON reponse of search results based on a computed <a href="https://qbox.io/blog/practical-guide-elasticsearch-scoring-relevancy#:~:text=Together%2C%20these%20combine%20into%20a,number%20known%20as%20the%20_score.">relevance score</a> which indicates how well a given document matches the query. In addition, the search response also includes the amount of time the query took to run.</p>
 <p>Let's look at a simple <code>match</code> query used to search the <code>document_text</code> field in our newly created index.
 </p>
 <div class="flash flash-warn">
@@ -1017,9 +1011,9 @@ Title, Relevance Score:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Evaluating-Retriever-Performance">
+<h2 id="Evaluating-Retriever-Performance">
 <a class="anchor" href="#Evaluating-Retriever-Performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluating Retriever Performance<a class="anchor-link" href="#Evaluating-Retriever-Performance"> </a>
-</h1>
+</h2>
 </div>
 </div>
 </div>
@@ -1027,20 +1021,16 @@ Title, Relevance Score:
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Ok, so we now have a basic understanding of how to use Elasticsearch as an IR tool to return some results for a given question, but how do we know if it's working? How do we evaluate what a good IR tool looks like?</p>
-<p>To evaluate how well our Retriever is working, we'll need two things: some labeled examples (i.e. SQuAD2.0 question/answer pairs) and some performance metrics. In the conventional world of information retrieval, there are <a href="https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval">many metrics</a>) used to quantify the relevance of query results - largely centered around the concepts of precision and recall. For IR in the context of question answering, we adapt some of these ideas into two commonly used evaluation metrics: <em>recall</em> and <em>mean average precision (mAP)</em>. Additionally, we evaluate the amount of time required to execute a query since the main point of having a two stage QA system is to efficiently narrow the large search space for our Reader.</p>
-<h4 id="Recall">
-<a class="anchor" href="#Recall" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recall<a class="anchor-link" href="#Recall"> </a>
-</h4>
-<p>Traditionally, recall in IR indicates the fraction of all relevant documents that are retrieved. In the context of end-to-end QA systems sitting on large corpora of documents, we are less concerned with finding <em>all</em> of the passages containing the answer (because it would take significant time to read through all of them anyway) and more concerned with the binary presence of a passage containing the correct answer being returned. In that light, we define a Retriever's recall across a set of questions as <em>the percentage of questions for which the answer segment appears in one of the top N pages returned by the search method.</em></p>
-<h4 id="Mean-Average-Precision">
-<a class="anchor" href="#Mean-Average-Precision" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mean Average Precision<a class="anchor-link" href="#Mean-Average-Precision"> </a>
-</h4>
+<p>We'll need two things to evaluate our Retriever: some labeled examples (i.e. SQuAD2.0 question/answer pairs) and some performance metrics. In the conventional world of information retrieval, there are <a href="https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval">many metrics</a>) used to quantify the relevance of query results - largely centered around the concepts of precision and recall. For IR in the context of QA, these ideas are adapted into two commonly used evaluation metrics: <em>recall</em> and <em>mean average precision (mAP)</em>. Additionally, we consider the amount of time required to execute a query since the main point of having a two stage QA system is to efficiently narrow the large search space for our Reader.</p>
+<p><strong>Recall</strong></p>
+<p>Traditionally, recall in IR indicates the fraction of all relevant documents that are retrieved. In this case, we are less concerned with finding <em>all</em> of the passages containing the answer and more concerned with the binary presence of a passage containing the correct answer being returned. In that light, a Retriever's recall is defined across a set of questions as <em>the percentage of questions for which the answer segment appears in one of the top N pages returned by the search method.</em></p>
+<p><strong>Mean Average Precision</strong></p>
 <p>While the <em>recall</em> metric focuses on the minimum viable result set to enable a Reader for success, we do still care about the composition of that result set. We want a metric that rewards a Retriever for a.) returning a lot of answer-containing documents in the result set (i.e. traditional meaning of precision) and b.) returning those answer-containing documents higher up in the result set than non-answer-containing documents (i.e. ranking them correctly). This is precisely (🙃) what mean average precision (mAP) does for us.</p>
 <p>To explain mAP further, let's first break down the concept of average precision for information retrieval. If our Retriever is asked to return N documents and the total number of those N documents that actually contains the answer is m, then average precision (AP) is defined as:</p>
 <p><img src="https://github.com/fastforwardlabs/ff14_blog/blob/master/_notebooks/my_icons/map_equation.png?raw=1" alt=""></p>
-<p>where <em>rel(k)</em> is just a binary indication of whether the <em>kth</em> passage contains the correct answer segment or not. Using a concrete example, consider retrieving <em>N=3</em> documents, of which one actually contains the correct answer segment. Here are three scenarios for how this could happen:</p>
+<p>where <em>rel(k)</em> is just a binary indication of whether the <em>kth</em> passage contains the correct answer segment or not. Using a concrete example, consider retrieving <em>N=3</em> documents, of which only one contains the correct answer segment. Here are three scenarios for how this could happen:</p>
 <p><img src="https://github.com/fastforwardlabs/ff14_blog/blob/master/_notebooks/my_icons/map_example.png?raw=1" alt=""></p>
-<p>Despite the fact that in each scenario we only have one document containing the correct answer, Scenario A is rewarded with the highest score because it was able to correctly rank the ground truth document relative to the others returned. Since average precision is calculated on a per query basis, the mean average precision is simply just <em>the average AP across all queries</em>.</p>
+<p>Scenario A is rewarded with the highest score because it was able to correctly rank the ground truth document relative to the others returned. Since average precision is calculated on a per query basis, the mean average precision is simply just <em>the average AP across all queries</em>.</p>
 <p>Now using our Wikipedia passage index, let's define a function called <code>evaluate_retriever</code> to loop through all quesion/answer examples from the SQuAD2.0 train set and see how well our Elasticsearch retriever peforms in terms of recall, mAP, and averege query duration when retrieving <em>N=3</em> passages.</p>
 
 </div>
@@ -1216,9 +1206,9 @@ Title, Relevance Score:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Improving-Search-Results-with-a-Custom-Analyzer">
+<h2 id="Improving-Search-Results-with-a-Custom-Analyzer">
 <a class="anchor" href="#Improving-Search-Results-with-a-Custom-Analyzer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Improving Search Results with a Custom Analyzer<a class="anchor-link" href="#Improving-Search-Results-with-a-Custom-Analyzer"> </a>
-</h1>
+</h2>
 </div>
 </div>
 </div>
@@ -1229,11 +1219,10 @@ Title, Relevance Score:
 <p>One simple and obvious way to increase recall would be to just retrieve more passages. The following figure shows the effects of varying corpus size and result size on Elasticsearch retriever recall. As expected we see that the number of passages retrieved (i.e. <em>Top N</em>) has a dramatic impact on recall; a ~10-15 point jump from 1 to 3 passages returned, and ~5 point jump for each of the other tiers. We also see a gradual decrease in recall as corpus size increases, which isn't surprising.</p>
 <p><img src="https://github.com/fastforwardlabs/ff14_blog/blob/master/_notebooks/my_icons/recall_v_corpussize.png?raw=1" alt="Recall vs. Corpus Size" title="Experimental results demonstrating the impact of increasing corpus size and number of results retrieved on Elasticsearch recall."></p>
 <p>While increasing the number of passages retrieved is effective, it also has implications on overall system performance as the already slow Reader now has to reason over more text. Instead, we can lean on best practices in the well explored domain of information retrieval.</p>
-<p>Optimizing full-text search is a battle between precision (returning as few irrelevant documents as possible) and recall (returning as many relevant documents as possible). Matching only exact words in the question query results in high precision, however it misses out on many passages that could possibly be considered relevant. Rather we can cast a wider net by searching for terms that are not exactly the same as in the question query, but are related in some way. Let's explore a few tips and tricks for widening the net.</p>
-<p>Earlier in the post we described Elasticsearch Analyzers as a way to deal with the nuances of human language. Analyzers provide a flexible and extensible method to tailor search for a given dataset. Here are a few custom Analyzer components Elasticsearch provides that can help cast a wider net.</p>
+<p>Optimizing full-text search is a battle between precision (returning as few irrelevant documents as possible) and recall (returning as many relevant documents as possible). Matching only exact words in the question results in high precision, however it misses out on many passages that could be relevant.  We can cast a wider net by searching for terms that are not exactly the same as those in the question, but are related in some way. Turns out Elasticsearch Analyzers can help. Earlier in the post we described how Analyzers provide a flexible and extensible method to tailor search for a given dataset. Here are a few custom Analyzer components Elasticsearch provides that can help cast a wider net.</p>
 <ul>
 <li>
-<p><strong>Stopwords</strong>: Stopwords are the most frequently occuring words in the English language (ex. "and", "the", "to", etc.) and add minimal semantic value to a piece of text. Common practice in information retrieval is to identify and remove them from documents to decrease the size of the index and increase relevance of search results.</p>
+<p><strong>Stopwords</strong>: Stopwords are the most frequently occuring words in the English language (ex. "and", "the", "to", etc.) and add minimal semantic value to a piece of text. Common practice (in both IR and NLP) is to remove them from documents to decrease the size of the index and increase relevance of search results.</p>
 </li>
 <li>
 <p><strong>Stemming</strong>: The English language is inflected - words can alter their written form to express different meanings. For example, 'sing', 'sings', 'sang', and 'singing' are written with slight differences, but really mean the same thing. Stemming algorithms exploit the fact that search intent is <em>usually</em> word-form agnostic and attempts to reduce inflected words to their root form - consequently improving retrievability. We'll implement the <a href="https://snowballstem.org/">Snowball</a> stemming algorithm as a token filter in our custom Analyzer.</p>
@@ -1340,8 +1329,8 @@ Title, Relevance Score:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Impact-of-Retriever-in-End-to-End-QA-System">
-<a class="anchor" href="#Impact-of-Retriever-in-End-to-End-QA-System" aria-hidden="true"><span class="octicon octicon-link"></span></a>Impact of Retriever in End-to-End QA System<a class="anchor-link" href="#Impact-of-Retriever-in-End-to-End-QA-System"> </a>
+<h1 id="The-full-IR-QA-System">
+<a class="anchor" href="#The-full-IR-QA-System" aria-hidden="true"><span class="octicon octicon-link"></span></a>The full IR QA System<a class="anchor-link" href="#The-full-IR-QA-System"> </a>
 </h1>
 </div>
 </div>
@@ -1372,15 +1361,15 @@ Title, Relevance Score:
 <li>concatenate all documents into one long passage and pass to the reader simultaneously</li>
 </ol>
 <p>Both methods have pros and cons. Let's take a look at them.</p>
-<h3 id="Pass-each-document-individually">
+<h4 id="Pass-each-document-individually">
 <a class="anchor" href="#Pass-each-document-individually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pass each document individually<a class="anchor-link" href="#Pass-each-document-individually"> </a>
-</h3>
+</h4>
 <p>In option 1, the reader returns answers and scores for each document. A series of heuristics must be developed to determine which answer is the best, and when the null answer should be returned. For this post we chose a simple but reasonable heuristic: "Only return null if the highest scoring answer in each documents is null, otherwise return the highest scoring non-null answer".</p>
 <p>Unfortunately, a direct comparison of answer scores between documents is not technically possible. The reason lies in the type of score returned by the HF pipeline -- a softmax probability over all the tokens <em>in that document</em>. This means that the only meaningful comparisons are between answers <em>from the same document</em> whose probabilities will sum to 1. Comparing an answer with a score of 0.78 from one document is not guaranteed to be better than an answer with a score of .70 from another document!</p>
 <p>Finally, this option is slower (in our current implementation) because each article is passed individually leading to multiple BERT calls.</p>
-<h3 id="Pass-all-documents-together-as-one-long-context">
+<h4 id="Pass-all-documents-together-as-one-long-context">
 <a class="anchor" href="#Pass-all-documents-together-as-one-long-context" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pass all documents together as one long context<a class="anchor-link" href="#Pass-all-documents-together-as-one-long-context"> </a>
-</h3>
+</h4>
 <p>Option 2 circumvents many of these challenges but leads to other problems. The pros are:</p>
 <ol>
 <li>all candidate answers are scored on the same probability scale</li>
@@ -1418,9 +1407,9 @@ Title, Relevance Score:
 <p>Document length: Our concatenation method works reasonably well compared to other methods, but the documents are short. If the document length becomes considerably longer, this method's performance can degrade significantly.</p>
 </li>
 </ol>
-<h2 id="Full-QA-system-comparison">
+<h4 id="Full-QA-system-comparison">
 <a class="anchor" href="#Full-QA-system-comparison" aria-hidden="true"><span class="octicon octicon-link"></span></a>Full QA system comparison<a class="anchor-link" href="#Full-QA-system-comparison"> </a>
-</h2>
+</h4>
 <p>Considering all that we've learned so far, what is the overall impact of the retriever on a full QA system? Using our concatenation method and returning only the best answer for all questions in the SQuAD2.0 dev set, we can compare results with the previous blog post in which we evaluated only the reader.</p>
 <p><img src="/images/copied_from_nb/my_icons/qa_system_vs_reader_only.png" alt=""></p>
 <p>As expected, adding a retriever to supply documents to the reader reduces the system's ability to identify the correct answer. This motivates approaches for enhancing the retriever in order to supply the reader with the best document possible.</p>
