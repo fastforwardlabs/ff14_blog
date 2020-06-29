@@ -139,34 +139,15 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h1"><a href="#Retrieving-the-right-document-is-important">Retrieving the right document is important </a></li>
 <li class="toc-entry toc-h1"><a href="#Elasticsearch-as-an-IR-Tool">Elasticsearch as an IR Tool </a>
 <ul>
-<li class="toc-entry toc-h2"><a href="#Using-Elasticsearch-with-SQuAD2.0">Using Elasticsearch with SQuAD2.0 </a>
-<ul>
-<li class="toc-entry toc-h3"><a href="#Getting-Data-into-Elasticsearch">Getting Data into Elasticsearch </a>
-<ul>
-<li class="toc-entry toc-h4"><a href="#Create-an-Index">Create an Index </a></li>
-<li class="toc-entry toc-h4"><a href="#Populate-the-Index">Populate the Index </a></li>
-<li class="toc-entry toc-h4"><a href="#Search-the-Index">Search the Index </a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toc-entry toc-h2"><a href="#Using-Elasticsearch-with-SQuAD2.0">Using Elasticsearch with SQuAD2.0 </a></li>
 <li class="toc-entry toc-h2"><a href="#Evaluating-Retriever-Performance">Evaluating Retriever Performance </a></li>
 <li class="toc-entry toc-h2"><a href="#Improving-Search-Results-with-a-Custom-Analyzer">Improving Search Results with a Custom Analyzer </a></li>
 </ul>
 </li>
 <li class="toc-entry toc-h1"><a href="#The-full-IR-QA-System">The full IR QA System </a>
 <ul>
-<li class="toc-entry toc-h2"><a href="#Connecting-the-retriever-to-the-reader">Connecting the retriever to the reader </a>
-<ul>
-<li class="toc-entry toc-h4"><a href="#Pass-each-document-individually">Pass each document individually </a></li>
-<li class="toc-entry toc-h4"><a href="#Pass-all-documents-together-as-one-long-context">Pass all documents together as one long context </a></li>
-</ul>
-</li>
-<li class="toc-entry toc-h2"><a href="#Evaluation-methods">Evaluation methods </a>
-<ul>
-<li class="toc-entry toc-h4"><a href="#Full-QA-system-comparison">Full QA system comparison </a></li>
-</ul>
-</li>
+<li class="toc-entry toc-h2"><a href="#Connecting-the-retriever-to-the-reader">Connecting the retriever to the reader </a></li>
+<li class="toc-entry toc-h2"><a href="#Evaluating-the-system">Evaluating the system </a></li>
 </ul>
 </li>
 <li class="toc-entry toc-h1"><a href="#Final-Thoughts">Final Thoughts </a></li>
@@ -584,9 +565,8 @@ There are 1204 unique wikipedia article paragraphs.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Getting-Data-into-Elasticsearch">
-<a class="anchor" href="#Getting-Data-into-Elasticsearch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Data into Elasticsearch<a class="anchor-link" href="#Getting-Data-into-Elasticsearch"> </a>
-</h3>
+<p><strong>Load Data into Elasticsearch</strong></p>
+
 </div>
 </div>
 </div>
@@ -696,9 +676,8 @@ There are 1204 unique wikipedia article paragraphs.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Create-an-Index">
-<a class="anchor" href="#Create-an-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create an Index<a class="anchor-link" href="#Create-an-Index"> </a>
-</h4>
+<p><strong><em>Create an Index</em></strong></p>
+
 </div>
 </div>
 </div>
@@ -768,9 +747,8 @@ There are 1204 unique wikipedia article paragraphs.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Populate-the-Index">
-<a class="anchor" href="#Populate-the-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Populate the Index<a class="anchor-link" href="#Populate-the-Index"> </a>
-</h4>
+<p><strong><em>Populate the Index</em></strong></p>
+
 </div>
 </div>
 </div>
@@ -865,9 +843,8 @@ Succesfully loaded 20239 into squad-standard-index
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Search-the-Index">
-<a class="anchor" href="#Search-the-Index" aria-hidden="true"><span class="octicon octicon-link"></span></a>Search the Index<a class="anchor-link" href="#Search-the-Index"> </a>
-</h4>
+<p><strong><em>Search the Index</em></strong></p>
+
 </div>
 </div>
 </div>
@@ -1361,15 +1338,11 @@ Title, Relevance Score:
 <li>concatenate all documents into one long passage and pass to the reader simultaneously</li>
 </ol>
 <p>Both methods have pros and cons. Let's take a look at them.</p>
-<h4 id="Pass-each-document-individually">
-<a class="anchor" href="#Pass-each-document-individually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pass each document individually<a class="anchor-link" href="#Pass-each-document-individually"> </a>
-</h4>
+<p><strong>Pass each document individually</strong></p>
 <p>In option 1, the reader returns answers and scores for each document. A series of heuristics must be developed to determine which answer is the best, and when the null answer should be returned. For this post we chose a simple but reasonable heuristic: "Only return null if the highest scoring answer in each documents is null, otherwise return the highest scoring non-null answer".</p>
 <p>Unfortunately, a direct comparison of answer scores between documents is not technically possible. The reason lies in the type of score returned by the HF pipeline -- a softmax probability over all the tokens <em>in that document</em>. This means that the only meaningful comparisons are between answers <em>from the same document</em> whose probabilities will sum to 1. Comparing an answer with a score of 0.78 from one document is not guaranteed to be better than an answer with a score of .70 from another document!</p>
 <p>Finally, this option is slower (in our current implementation) because each article is passed individually leading to multiple BERT calls.</p>
-<h4 id="Pass-all-documents-together-as-one-long-context">
-<a class="anchor" href="#Pass-all-documents-together-as-one-long-context" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pass all documents together as one long context<a class="anchor-link" href="#Pass-all-documents-together-as-one-long-context"> </a>
-</h4>
+<p><strong>Pass all documents together as one long context</strong></p>
 <p>Option 2 circumvents many of these challenges but leads to other problems. The pros are:</p>
 <ol>
 <li>all candidate answers are scored on the same probability scale</li>
@@ -1388,8 +1361,8 @@ Title, Relevance Score:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Evaluation-methods">
-<a class="anchor" href="#Evaluation-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluation methods<a class="anchor-link" href="#Evaluation-methods"> </a>
+<h2 id="Evaluating-the-system">
+<a class="anchor" href="#Evaluating-the-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluating the system<a class="anchor-link" href="#Evaluating-the-system"> </a>
 </h2>
 <p>Standard evaluation on the SQuAD2.0 dev set considers only the best overall answer for each question. But we can create another evaluation metric that mirrors our IR recall metric from earlier. Specifically, we compute the <em>percent of examples in which the correct answer is found in <strong>at least one</strong> of the top k documents provided by the retriever</em>.</p>
 <p><img src="/images/copied_from_nb/my_icons/qa_eval_top1_vs_any_topk.png" alt=""></p>
@@ -1407,10 +1380,10 @@ Title, Relevance Score:
 <p>Document length: Our concatenation method works reasonably well compared to other methods, but the documents are short. If the document length becomes considerably longer, this method's performance can degrade significantly.</p>
 </li>
 </ol>
-<h4 id="Full-QA-system-comparison">
-<a class="anchor" href="#Full-QA-system-comparison" aria-hidden="true"><span class="octicon octicon-link"></span></a>Full QA system comparison<a class="anchor-link" href="#Full-QA-system-comparison"> </a>
-</h4>
-<p>Considering all that we've learned so far, what is the overall impact of the retriever on a full QA system? Using our concatenation method and returning only the best answer for all questions in the SQuAD2.0 dev set, we can compare results with the previous blog post in which we evaluated only the reader.</p>
+<ul>
+<li>Full QA system comparison
+Considering all that we've learned so far, what is the overall impact of the retriever on a full QA system? Using our concatenation method and returning only the best answer for all questions in the SQuAD2.0 dev set, we can compare results with the previous blog post in which we evaluated only the reader.  </li>
+</ul>
 <p><img src="/images/copied_from_nb/my_icons/qa_system_vs_reader_only.png" alt=""></p>
 <p>As expected, adding a retriever to supply documents to the reader reduces the system's ability to identify the correct answer. This motivates approaches for enhancing the retriever in order to supply the reader with the best document possible.</p>
 
