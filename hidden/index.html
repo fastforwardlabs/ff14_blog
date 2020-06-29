@@ -1380,10 +1380,8 @@ Title, Relevance Score:
 <p>Document length: Our concatenation method works reasonably well compared to other methods, but the documents are short. If the document length becomes considerably longer, this method's performance can degrade significantly.</p>
 </li>
 </ol>
-<ul>
-<li>Full QA system comparison
-Considering all that we've learned so far, what is the overall impact of the retriever on a full QA system? Using our concatenation method and returning only the best answer for all questions in the SQuAD2.0 dev set, we can compare results with the previous blog post in which we evaluated only the reader.  </li>
-</ul>
+<p><strong>Impact of a retriever on a QA system</strong></p>
+<p>Considering all that we've learned so far, what is the overall impact of the retriever on a full QA system? Using our concatenation method and returning only the best answer for all questions in the SQuAD2.0 dev set, we can compare results with the previous blog post in which we evaluated only the reader.</p>
 <p><img src="/images/copied_from_nb/my_icons/qa_system_vs_reader_only.png" alt=""></p>
 <p>As expected, adding a retriever to supply documents to the reader reduces the system's ability to identify the correct answer. This motivates approaches for enhancing the retriever in order to supply the reader with the best document possible.</p>
 
