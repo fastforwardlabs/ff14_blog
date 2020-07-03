@@ -160,7 +160,7 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h2"><a href="#Improving-Search-Results-with-a-Custom-Analyzer">Improving Search Results with a Custom Analyzer </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h1"><a href="#The-full-IR-QA-System">The full IR QA System </a>
+<li class="toc-entry toc-h1"><a href="#The-Full-IR-QA-System">The Full IR QA System </a>
 <ul>
 <li class="toc-entry toc-h2"><a href="#Connecting-the-retriever-to-the-reader">Connecting the retriever to the reader </a></li>
 <li class="toc-entry toc-h2"><a href="#Evaluating-the-system">Evaluating the system </a></li>
@@ -675,7 +675,7 @@ There are 1204 unique wikipedia article paragraphs.
 <li>The character-filtered text is passed to a <strong>tokenizer</strong> which breaks up the input string into individual tokens. The default (<code>standard</code>) tokenizer splits tokens on whitespace, and most symbols (like commas, periods, semicolons, etc.)</li>
 <li>The token stream is passed to a <strong>token filter</strong> which adds, removes, or modifies tokens. Typical token filters include converting all text to <code>lowercase</code>, and removing <code>stop</code> words. </li>
 </ul>
-<p>Elasticsearch comes with several built-in Analyzers that satisfy common use cases and defaults to the <code>Standard Analyzer</code>. The Standard Analyzer doesn't contain any character filters, uses a <code>standard</code> tokenizer, and applies a <code>lowercase</code> token filter. Let's take a look at <a href="https://medium.com/elasticsearch/introduction-to-analysis-and-analyzers-in-elasticsearch-4cf24d49ddab">this example</a> sentence as it's passed through this pipeline:</p>
+<p>Elasticsearch comes with several built-in Analyzers that satisfy common use cases and defaults to the <code>Standard Analyzer</code>. The Standard Analyzer doesn't contain any character filters, uses a <code>standard</code> tokenizer, and applies a <code>lowercase</code> token filter. Let's take a look at an example sentence as it's passed through this pipeline:</p>
 <blockquote>
 <p>"I'm in the mood for drinking semi-dry red wine!"</p>
 </blockquote>
@@ -1211,10 +1211,10 @@ Title, Relevance Score:
 <p>Optimizing full text search is a battle between precision (returning as few irrelevant documents as possible) and recall (returning as many relevant documents as possible). Matching only exact words in the question results in high precision; however, it misses out on many passages that could be relevant. We can cast a wider net by searching for terms that are not <em>exactly</em> the same as those in the question, but are related in some way. Here, Elasticsearch Analyzers can help. Earlier in this post, we described how Analyzers provide a flexible and extensible method to tailor search for a given dataset. Two of the custom Analyzers that can help cast a wider net are <em>stop words</em> and <em>stemming.</em></p>
 <ul>
 <li>
-<p>Stop words: Stop words are the most frequently occuring words in the English language (for example: "and," "the," "to,” etc.) and add minimal semantic value to a piece of text. It is common practice to remove them in order to decrease the size of the index and increase the relevance of search results.</p>
+<p><strong>Stop words:</strong> Stop words are the most frequently occuring words in the English language (for example: "and," "the," "to,” etc.) and add minimal semantic value to a piece of text. It is common practice to remove them in order to decrease the size of the index and increase the relevance of search results.</p>
 </li>
 <li>
-<p>Stemming: The English language is inflected; words can alter their written form to express different meanings. For example, “sing,” “sings,” “sang,” and “singing” are written with slight differences, but all really mean the same thing (albeit with varying tenses). Stemming algorithms exploit the fact that search intent is <em>usually</em> word-form agnostic, and attempt to reduce inflected words to their root form: consequently improving retrievability.  We'll implement the <a href="https://snowballstem.org/">Snowball</a> stemming algorithm as a token filter in our custom Analyzer.</p>
+<p><strong>Stemming:</strong> The English language is inflected; words can alter their written form to express different meanings. For example, “sing,” “sings,” “sang,” and “singing” are written with slight differences, but all really mean the same thing (albeit with varying tenses). Stemming algorithms exploit the fact that search intent is <em>usually</em> word-form agnostic, and attempt to reduce inflected words to their root form: consequently improving retrievability.  We'll implement the <a href="https://snowballstem.org/">Snowball</a> stemming algorithm as a token filter in our custom Analyzer.</p>
 </li>
 </ul>
 
@@ -1319,8 +1319,8 @@ Title, Relevance Score:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="The-full-IR-QA-System">
-<a class="anchor" href="#The-full-IR-QA-System" aria-hidden="true"><span class="octicon octicon-link"></span></a>The full IR QA System<a class="anchor-link" href="#The-full-IR-QA-System"> </a>
+<h1 id="The-Full-IR-QA-System">
+<a class="anchor" href="#The-Full-IR-QA-System" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Full IR QA System<a class="anchor-link" href="#The-Full-IR-QA-System"> </a>
 </h1>
 </div>
 </div>
