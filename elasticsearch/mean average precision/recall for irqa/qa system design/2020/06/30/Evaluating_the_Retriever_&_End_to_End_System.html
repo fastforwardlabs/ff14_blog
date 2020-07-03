@@ -535,7 +535,7 @@ There are 1204 unique wikipedia article paragraphs.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With our data ready to go, let's download, install, and configure Elasticsearch. We recommend running this notebook in Colab and executing the following code snippet for automatic setup. However, if you prefer to run locally, follow the instructions <a href="https://www.elastic.co/downloads/elasticsearch">here</a>. After completing the setup, we will have an Elasticsearch service running locally.</p>
+<p>With our data ready to go, let's download, install, and configure Elasticsearch. We recommend opening this post as a Colab notebook and executing the following code snippet to set up Elasticsearch. Alternatively, you can install and launch Elasticsearch on your local machine by following the instructions <a href="https://www.elastic.co/downloads/elasticsearch">here</a>.</p>
 
 </div>
 </div>
@@ -671,7 +671,7 @@ There are 1204 unique wikipedia article paragraphs.
 <p>The analysis process is a customizable pipeline carried out by an <em>Analyzer</em>. Elasticsearch analyzer pipelines are composed of three sequential steps: <em>character filters</em>, a <em>tokenizer</em>, and <em>token filters.</em> Each of these components modifies the input stream of text according to some configurable settings.</p>
 <ul>
 <li>
-<strong>Character Filters</strong> have the ability to add, remove, or replace characters. A common application is to strip <code>html</code> markup from the raw input. </li>
+<strong>Character filters</strong> have the ability to add, remove, or replace characters. A common application is to strip <code>html</code> markup from the raw input. </li>
 <li>The character-filtered text is passed to a <strong>tokenizer</strong> which breaks up the input string into individual tokens. The default (<code>standard</code>) tokenizer splits tokens on whitespace, and most symbols (like commas, periods, semicolons, etc.)</li>
 <li>The token stream is passed to a <strong>token filter</strong> which adds, removes, or modifies tokens. Typical token filters include converting all text to <code>lowercase</code>, and removing <code>stop</code> words. </li>
 </ul>
