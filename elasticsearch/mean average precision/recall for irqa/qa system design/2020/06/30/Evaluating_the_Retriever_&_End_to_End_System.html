@@ -1080,16 +1080,8 @@ Title, Relevance Score:
         <span class="n">question</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'question_text'</span><span class="p">]</span>
         <span class="n">answer</span> <span class="o">=</span> <span class="n">qa</span><span class="p">[</span><span class="s1">'short_answer'</span><span class="p">]</span>
         
-        <span class="c1"># construct and execute query</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s1">'query'</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">'match'</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s1">'document_text'</span><span class="p">:</span> <span class="n">question</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-        
-        <span class="n">res</span> <span class="o">=</span> <span class="n">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="n">n_results</span><span class="p">)</span>
+        <span class="c1"># execute query</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">search_es</span><span class="p">(</span><span class="n">es_obj</span><span class="o">=</span><span class="n">es_obj</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">question_text</span><span class="o">=</span><span class="n">question</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="n">n_results</span><span class="p">)</span>
         
         <span class="c1"># calculate performance metrics from query response info</span>
         <span class="n">duration</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">'took'</span><span class="p">]</span>
