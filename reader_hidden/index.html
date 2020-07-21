@@ -164,7 +164,7 @@ Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_
 
 <p>Aiding this endeavor are new tools that make QA annotation fast and standardized, like deepset’s <a href="https://github.com/deepset-ai/haystack/">Haystack Annotation</a>.  <a href="https://deepset.ai/">deepset</a> is an NLP startup that maintains an open source <a href="https://github.com/deepset-ai/haystack/">library</a> for question answering at scale. Their annotation application allows the user to upload their documents, annotate questions and answers, and export those annotations in the SQuAD format – ready for training or evaluation.</p>
 
-<p><img src="/images/post5/haystack_annotation_tool.png," alt="" title="Screenshot of deepset's Haystack Annotation interface from the haystack repo">
+<p><img src="/images/post5/haystack_annotation_tool.png" alt="" title="Screenshot of deepset's Haystack Annotation interface from the haystack repo">
 Image by <a href="https://github.com/deepset-ai/haystack">deepset-ai</a>.</p>
 
 <p>Once you have a dataset tailored to your use case, you can assess your model and determine whether additional intervention is warranted. In what follows, we’ll use an open-source domain-specific dataset to perform a series of experiments to determine successful strategies and best practices for applying general QA models to specialized domains.</p>
@@ -224,7 +224,7 @@ Image by <a href="https://github.com/deepset-ai/haystack">deepset-ai</a>.</p>
 
 <h2 id="standard-transfer-learning-to-a-specialized-domain">
 <a class="anchor" href="#standard-transfer-learning-to-a-specialized-domain" aria-hidden="true"><span class="octicon octicon-link"></span></a>Standard Transfer Learning to a Specialized Domain</h2>
-<p><img src="/images/post5/ff14-57.png," alt="" title="Stages of Transfer Learning: (top) A Transformer model first learns language modeling through semi-supervised training on massive corpora of unstructured text such as Wikipedia and the web. (middle) That same model learns a specific task, such as question answering, by supervised training (fine-tuning) on the SQuAD dataset. (bottom) Additional fine-tuning on a set of specialized QA examples allows the same model to perform better question answering in a specific domain. At each stage, transfer learning ensures that fewer examples are necessary to improve on the next task since the model can bootstrap from previously learned statistical relationships."></p>
+<p><img src="/images/post5/ff14-57.png" alt="" title="Stages of Transfer Learning: (top) A Transformer model first learns language modeling through semi-supervised training on massive corpora of unstructured text such as Wikipedia and the web. (middle) That same model learns a specific task, such as question answering, by supervised training (fine-tuning) on the SQuAD dataset. (bottom) Additional fine-tuning on a set of specialized QA examples allows the same model to perform better question answering in a specific domain. At each stage, transfer learning ensures that fewer examples are necessary to improve on the next task since the model can bootstrap from previously learned statistical relationships."></p>
 
 <p>If fine-tuning a pre-trained language model on the SQuAD dataset allowed the model to learn the task of question answering, then applying transfer learning a second time (fine-tuning on a specialized dataset) should provide the model some knowledge of the specialized domain. While this standard application of transfer learning is not the only viable method for teaching a general model specialized QA, it’s arguably the most intuitive and simplest to execute.</p>
 
@@ -274,10 +274,6 @@ Image by <a href="https://github.com/deepset-ai/haystack">deepset-ai</a>.</p>
       <td>cross val folds</td>
       <td>5</td>
     </tr>
-    <tr>
-      <td>hardware</td>
-      <td>4x V100</td>
-    </tr>
   </tbody>
 </table>
 
@@ -306,7 +302,7 @@ Image by <a href="https://github.com/deepset-ai/haystack">deepset-ai</a>.</p>
 
 <p>How robust are these results? As a final check, we performed a 5-fold cross-validation training wherein we kept all hyperparameters fixed but allowed the random seed and training order to vary. Below we see that the results are fairly robust with a spread of about 3-4 points in either F1 or Exact Match, which is far smaller than the 10 point increase we saw going from our General Model to the Specialized Model. This indicates that the performance gain is a real signal. (This figure inspired by a similar one in <a href="https://openreview.net/pdf?id=JENSKEEzsoU">this paper</a>].)</p>
 
-<p><img src="/images/post5/cross_validation_test.png," alt="" title="F1 and Exact Match scores for each fold of a 5-fold CV"></p>
+<p><img src="/images/post5/cross_validation_test.png" alt="" title="F1 and Exact Match scores for each fold of a 5-fold CV"></p>
 
 <p>With that said, we again stress that the performance we’ve demonstrated here is not guaranteed in every QA application to a specialized domain. However, our experiments echo the findings of other studies in the literature, which is heartening. (To learn more check out <a href="https://arxiv.org/pdf/1911.02655">this paper</a> or <a href="https://dl.acm.org/doi/pdf/10.1145/3309706">this paper</a> or <a href="https://arxiv.org/abs/1910.09753">this paper</a>.) Let’s summarize what we believe are a solid set of guidelines for practical QA applications in specialized domains.</p>
 
