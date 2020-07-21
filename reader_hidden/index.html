@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>How to Apply a QA Model to Your Data | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="How to Apply a QA Model to Your Data" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A look at how transfer learning can boost performance in specialized domains." />
+<meta property="og:description" content="A look at how transfer learning can boost performance in specialized domains." />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/reader_hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/reader_hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"A look at how transfer learning can boost performance in specialized domains.","@type":"BlogPosting","headline":"How to Apply a QA Model to Your Data","dateModified":"2020-07-20T00:00:00-05:00","datePublished":"2020-07-20T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/reader_hidden/"},"url":"https://qa.fastforwardlabs.com/reader_hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>How to Apply a QA Model to Your Data | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="How to Apply a QA Model to Your Data" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A look at how transfer learning can boost performance in specialized domains." />
+<meta property="og:description" content="A look at how transfer learning can boost performance in specialized domains." />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/reader_hidden/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/reader_hidden/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"A look at how transfer learning can boost performance in specialized domains.","@type":"BlogPosting","headline":"How to Apply a QA Model to Your Data","dateModified":"2020-07-20T00:00:00-05:00","datePublished":"2020-07-20T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/reader_hidden/"},"url":"https://qa.fastforwardlabs.com/reader_hidden/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">NLP for Question Answering</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Us</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">How to Apply a QA Model to _Your_ Data</h1><p class="page-description">A look at how transfer learning can boost performance in specialized domains.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-20T00:00:00-05:00" itemprop="datePublished">
+        Jul 20, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      14 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#domain adaptation">domain adaptation</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#transfer learning">transfer learning</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#specialized datasets">specialized datasets</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#QA">QA</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#specialized-domains">Specialized Domains</a></li>
+<li class="toc-entry toc-h1"><a href="#assessing-a-general-qa-model-on-your-domain">Assessing a General QA model on Your Domain</a></li>
+<li class="toc-entry toc-h1"><a href="#experimenting-with-qa-domain-adaptation">Experimenting with QA Domain Adaptation</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#domain-specific-qa-datasets">Domain-Specific QA Datasets</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#dataset-characteristics">Dataset Characteristics</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#standard-transfer-learning-to-a-specialized-domain">Standard Transfer Learning to a Specialized Domain</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#practical-guidelines-for-domain-specific-qa">Practical Guidelines for Domain-Specific QA</a></li>
+<li class="toc-entry toc-h1"><a href="#final-thoughts">Final Thoughts</a></li>
+</ul><p>If you’ve been following along in our question answering journey, you now understand the basic building blocks that form the pipeline of modern Information Retrieval-based Question Answering (IRQA) systems, and how such systems are trained and evaluated against the SQuAD2.0 dataset. However, implementing an IRQA system in the real-world is a bit more nuanced. One of our biggest questions was how well would a Reader trained on SQuAD2.0 perform on a real-world corpus? And what if that corpus were highly specialized, perhaps a collection of legal contracts, financial reports, or technical manuals? In this post we perform experiments designed to highlight how to adapt Transformer models to specialized domains and provide guidelines for practical applications.</p>
+
+<p><img src="/images/post5/morning-brew-D-3g8pkHqCc-unsplash.jpg" alt=""><br>
+Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Morning Brew</a> on <a href="unsplash.com">Unsplash</a></p>
+
+<h1 id="specialized-domains">
+<a class="anchor" href="#specialized-domains" aria-hidden="true"><span class="octicon octicon-link"></span></a>Specialized Domains</h1>
+<p>Training a Transformer language model on the SQuAD dataset provides the model with the ability to provide short answers to general-knowledge, factoid-style questions. When considering diverse applications, these models will perform well on similar question/answer types over text that is comparable in vocabulary, grammar and style as Wikipedia or general text media such as that found on the web. This encompasses a great many applications.</p>
+
+<p>For example, a QA system over your company’s general employee policies will likely be successful as the text is typically not highly specialized or overly technical, and questions would mostly likely be fact-seeking in nature, such as “When are the black out dates for company stock sales?” or “What building is Human Resources located in?” In fact, this type of QA system could be viewed as a more sophisticated internal FAQ.</p>
+
+<p>Change either of these specs – question/answer type or text domain – and the performance of a standard QA Transformer becomes less assured. And it’s important to note that these characteristics are not independent. Question type is intricately linked to answer type, and both can be heavily influenced by the style of text from which answers are to be extracted. For example, a corpus of recipes and cookbooks would likely be heavy on questions such as “How do I boil an egg?” or “When should I add flour?” – questions that typically require longer answers to explain a process.</p>
+
+<h1 id="assessing-a-general-qa-model-on-your-domain">
+<a class="anchor" href="#assessing-a-general-qa-model-on-your-domain" aria-hidden="true"><span class="octicon octicon-link"></span></a>Assessing a General QA model on Your Domain</h1>
+<p>Whether you know you have a specialized QA task or not, one sure-fire way to determine if your SQuAD-trained model is performing adequately is to validate it, of course. In this blog series we’ve demonstrated quantitative performance evaluation by measuring Exact Match and F1 scores on annotated QA examples. We recommend at least a few dozen to a couple hundred examples to sufficiently cover the gamut of question and answer types for a given corpus. Your model’s performance on this set can serve as a guide as to whether your model is performing well enough as-is or perhaps requires additional training (Note: performance level should be set keeping in mind both the business need and the relative quality on the SQuAD dev set. For example, if your SQuAD-trained model is achieving an F1 score of 85 on the SQuAD dev set, it’s unrealistic to expect it to perform at 90+ on your specific QA task.)</p>
+
+<p>Developing QA annotations can be a time consuming endeavor.  It turns out, though, that this investment can yield more than just a path to model validation. As we’ll see in the remainder of this article, we can significantly improve underperforming models by further fine-tuning them on a set of specialized QA examples.</p>
+
+<p>Aiding this endeavor are new tools that make QA annotation fast and standardized, like deepset’s <a href="https://annotate.deepset.ai/login">Haystack Annotation</a>.   This app allows you to upload your documents, annotate questions and answers, and export the annotations in the SQuAD format – ready for training or evaluation.</p>
+
+<p><img src="/images/post5/haystack_annotation_tool.png" alt="">
+Image by <a href="https://github.com/deepset-ai/haystack">deepset-ai</a>.</p>
+
+<p>Once you have a dataset tailored to your use case, you can assess your model and determine whether additional intervention is warranted. In what follows, we’ll use an open-source domain-specific dataset to perform a series of experiments to determine successful strategies and best practices for applying general QA models to specialized domains.</p>
+
+<h1 id="experimenting-with-qa-domain-adaptation">
+<a class="anchor" href="#experimenting-with-qa-domain-adaptation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Experimenting with QA Domain Adaptation</h1>
+<p>You’ve trained your model on SQuAD and it can handle general factoid-style question answering tasks, but how well will it perform on a more specialized task that might be rife with jargon, technical content, or require long-form answers? Those are the questions we sought to answer through a series of experiments. We note that, since these experiments are performed on only one highly specialized dataset, the results we demonstrate are not guaranteed in your use case. Instead, we seek to provide general guidelines for improving your model’s performance.</p>
+
+<h2 id="domain-specific-qa-datasets">
+<a class="anchor" href="#domain-specific-qa-datasets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Domain-Specific QA Datasets</h2>
+<p>Research on general question answering has received much attention in the past few years, spurring the creation of several large, open-domain datasets such as SQuAD, NewsQA, Natural Questions, and more. QA for specialized domains has received far less attention (though see <a href="cite%20some%20links">these papers</a> for more) and thus specialized datasets remain scarce, with the most notable open-source examples residing in the medical domain. These datasets typically contain a couple thousand examples. For our experiments we combined two such datasets, which we briefly describe below.</p>
+
+<p><strong>BioASQ</strong></p>
+
+<p><a href="LINK">BioASQ</a> is a large-scale biomedical semantic indexing and question answering challenge. The dataset contains question and answer pairs that are created by domain experts which are then manually linked to related science (PubMed) articles. We used 1504 QA examples that were converted into a SQuAD-like format by <a href="https://arxiv.org/abs/1910.09753">these authors</a>. Their modified BioASQ dataset can be found <a href="https://github.com/mrqa/MRQA-Shared-Task-2019">here</a>.  Registration is required to use BioASQ data.</p>
+
+<p><strong>COVID-QA</strong></p>
+
+<p>This Question Answering dataset, led by researchers at <a href="https://deepset.ai/">deepset.ai</a>, an NLP and question-answering software startup, is based on the <a href="https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge">COVID-19 Open Research Dataset</a>.  It contains 2,019 question/answer pairs annotated by volunteer biomedical experts. You can find the dataset <a href="https://github.com/deepset-ai/COVID-QA">here</a> and learn more about it in <a href="https://openreview.net/pdf?id=JENSKEEzsoU">their paper</a>.</p>
+
+<h3 id="dataset-characteristics">
+<a class="anchor" href="#dataset-characteristics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dataset Characteristics</h3>
+<p>How is this dataset different from SQuAD?  In this section we highlight some of the key characteristics of this hybrid medical dataset.</p>
+
+<p><strong>Question Type</strong></p>
+
+<p>Here’s a sample of questions from the medical dataset:</p>
+
+<ul>
+  <li>Which gene is responsible for the development of Sotos syndrome?</li>
+  <li>How many disulfide bridges has the protein hepcidin got?</li>
+  <li>Which is the cellular localization of the protein Opa1?</li>
+  <li>Which drug should be used as an antidote in benzodiazepine overdose?</li>
+  <li>What is the main cause of HIV-1 infection in children?</li>
+  <li>What is DC-GENR and where is it expressed?</li>
+  <li>What is another name for IFITM5?</li>
+  <li>What is the size of bovine coronavirus?</li>
+</ul>
+
+<p>We see there are a lot of technical medical terms (“hepcidin,” “IFITM5”) as well as some more recognizable words that likely have different implications or interpretations in a medical context (e.g., “localization,” “expressed”). However, overall the questions are generally factoids, similar to the SQuAD dataset. Below are the most common question types in the combined dataset:</p>
+
+<p>** most common question types figure **</p>
+
+<p><strong>Context Length</strong></p>
+
+<p>While both datasets rely on scientific medical research articles for context, their structure varies  between the two datasets. The BioASQ contexts are subsections or paragraphs of research articles, while the COVID-QA contexts are the full research article. When combined, this yields a dataset with some very disparate context lengths.</p>
+
+<p><img src="/images/post5/bioasq_covidqa_tokens_per_context.png" alt=""></p>
+
+<p>The BioASQ contexts are composed of about 200 tokens while the COVID-QA contexts contain 200x that – an average of nearly 4000 tokens per context! This disparate set of short and long contexts might be more indicative of a real-world dataset since there is no reason to suspect uniform document length in any given corpus.</p>
+
+<p><strong>Answer Length</strong></p>
+
+<p>While the question types are similar to SQuAD, there are some stark differences in answer lengths. 97.6% of the answers in the BioASQ set consist of 5 or fewer tokens; this is very similar to SQuAD answer lengths. However,  the average answer in the COVID-QA has 14 tokens and only 35% of answers have fewer than 5 tokens. There are also a significant portion of answers with even longer 15 tokens with the longest answer in the dataset  144 tokens! This is very unlike SQuAD.</p>
+
+<p>We combined these two datasets for a total of 3523 QA examples. We pulled out 215 as a holdout set leaving us 3308 for training.</p>
+
+<h2 id="standard-transfer-learning-to-a-specialized-domain">
+<a class="anchor" href="#standard-transfer-learning-to-a-specialized-domain" aria-hidden="true"><span class="octicon octicon-link"></span></a>Standard Transfer Learning to a Specialized Domain</h2>
+<p>If fine-tuning a pre-trained language model on the SQuAD dataset allowed the model to learn the task of question answering, then applying transfer learning a second time (fine-tuning further on a specialized dataset) should provide the model some knowledge of the specialized domain. While this standard application of transfer learning is not the only viable method for teaching a general model specialized QA, it’s arguably the most intuitive and simplest to execute.</p>
+
+<p>However, care must be taken during execution. We only have ~3300 examples for training which is a far cry from the ~100k in the SQuAD dataset. How should we proceed?</p>
+
+<p>In a thorough analysis, we would perform a hyperparameter search over epochs, batch size, learning rate, etc. to determine the best set of hyperparameter values for our task while being mindful of overfitting (easy to do with small training sets). However, even with a chosen, fixed set of hyperparameter values, research has shown that training results can vary substantially due to different random seeds [CITE PAPER]. Evaluating a model through cross validation allows one to assess the size of this effect. Unfortunately, both cross-validation and hyperparameter search (another cross-validation) are costly and compute-intensive endeavors.</p>
+
+<p>In the practical world, most ML and NLP practitioners use hyperparameters that have (hopefully) been vetted by academics. For example, most people (including us) fine-tune on the SQuAD dataset using the hyperparameters published by the original BERT authors. For this example we’ll use the hyperparameters published by the deepset authors for the COVID-QA dataset. While we combine their dataset with BioASQ, we feel these hyperparameters are nonetheless a good place to start.</p>
+
+<p>** table of hyperparameters **</p>
+
+<blockquote>
+  <p>Note: In what follows we’ll use DistilBERT as we’ve done in our past blog posts, because it’s lightweight, fast to train, and allows us to easily compare to our previous experiments.  However, it’s also known that DistilBERT doesn’t perform as well as BERT or RoBERTa for QA. Fortunately, in this case, we care more about relative performance gains than absolute performance.</p>
+</blockquote>
+
+<p>We’ll start by exploring three things:</p>
+<ul>
+  <li>whether fine-tuning on a small specialized dataset improves performance on specialized question answering</li>
+  <li>If so, what strategy provides the best performance gain</li>
+  <li>And what relative improvement should we expect</li>
+</ul>
+
+<p>We’ll use DistilBERT trained on SQuAD as our General Model. We evaluate this model on our medical hold out set to get a performance baseline (blue bar). Next we train a Specialized Model by fine-tuning the General Model on the medical train set using the hyperparameters above. The performance of the Specialized Model on the medical hold out set is shown by the orange bars. Transfer learning through additional fine-tuning on the medical dataset results in nearly 10 point increases in both EM and F1 scores - a considerable improvement!</p>
+
+<p><img src="/images/post5/fine_tuning_distilbert.png" alt=""></p>
+
+<p>Is it really necessary to start with a General Model that has already been fine-tuned on SQuAD? Perhaps we can simply start with a pre-trained language model – a model that has not yet been trained at any explicit task – and fine-tune directly on the medical dataset. Essentially teaching the model both the task of question answering and the specifics of the specialized dataset at the same time. The green bars show the results of this Med-Only Model. As expected, it performs worse than either the General Model or our Specialized Model, but not by much! The blue and green bars are only a couple points different which is surprising since the General Model is trained on 100k general examples and the Med-Only Model is trained on only 3300 specialized examples. This demonstrates that it’s not only a numbers game – it’s just as important to have data that reflects your specific domain.</p>
+
+<p>But how many specialized examples is enough? Training the General Model on an additional 3300 specialized question/answer pairs achieved about a 10 point increase in F1. Because generating QA annotations is costly, could we have done it with fewer examples? We explore this by training the General Model model on increasing subsets of the medical train set, from 500 to 3000 examples.  With only 500 examples we see a 4-point relative F1 increase. F1 increases rapidly with increasing training examples until we hit a training size of about 2000 examples, after which we see diminishing returns on further performance gains.</p>
+
+<p><img src="/images/post5/fine_tuning_vs_train_size.png" alt=""></p>
+
+<p>This highlights a common tradeoff between model improvement and development cost. Of course with infinite resources we can train better models. However, resources are almost always limited and it’s encouraging to see that even a small investment in QA annotation can lead to substantial model improvements.</p>
+
+<p>We again stress that the performance we’ve demonstrated here is not guaranteed in every QA application to a specialized domain. However, our experiments echo the findings of other studies in the literature, which is heartening. [CITE LITERATURE] Using the literature and our experiments as a guide, let’s summarize what we believe are a solid set of guidelines for practical QA applications in specialized domains.</p>
+
+<h1 id="practical-guidelines-for-domain-specific-qa">
+<a class="anchor" href="#practical-guidelines-for-domain-specific-qa" aria-hidden="true"><span class="octicon octicon-link"></span></a>Practical Guidelines for Domain-Specific QA</h1>
+<ol>
+  <li>General QA Models will provide solid performance in most cases; especially for QA tasks answering factoid questions over text that is qualitatively similar to Wikipedia or the general text content on the web.</li>
+  <li>Applying a General QA Model in a specialized domain may benefit substantially from transfer learning to that domain.</li>
+  <li>Utilizing standard transfer learning techniques allows practitioners to leverage currently existing QA infrastructure and libraries (such as Hugging Face Transformers or deepset’s Haystack).</li>
+  <li>Generating QA annotations for specialized QA tasks can thus be a worthwhile investment made easier with emerging annotation applications.</li>
+  <li>A substantial performance increase can be seen with only a few hundred specialized QA examples, and greater gains achieved with a couple thousand.</li>
+  <li>Absolute performance will depend on several factors including the chosen model, the new domain, the type of question, etc.</li>
+</ol>
+
+<h1 id="final-thoughts">
+<a class="anchor" href="#final-thoughts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Final Thoughts</h1>
+<p>Question answering is an NLP capability that is still emerging. It currently works best on general-knowledge, factoid-style, SQuAD-like questions requiring short answers. This type of QA lends itself well to use cases such as “enhanced search” – allowing users to more easily and intuitively identify not just documents or websites of interest, but explicit passages and sentences using natural language. There are a growing number of libraries that provide QA modeling support including Transformers, simple_transformers, allenai nlp whatever, etc. There are even libraries that focus specifically on productionizing QA models, such as deepset’s Haystack. There is no question that this style of QA is closest to maturity.</p>
+
+<p>However, research continues to accelerate with new models and datasets emerging that push the boundaries of SQuAD-like QA. Here are two areas that we’re watching closely:</p>
+<ul>
+  <li>QA models that combine search over large corpora with answer extraction, because as we saw in this blog series, your Reader is limited by the success of your Retriever (more on that in our sister blog post)</li>
+  <li>QA models that can infer an answer based on several pieces of supporting evidence from multiple documents, a task that, in essence, marries QA with Summarization</li>
+</ul>
+
+<p>In the meantime, there is still much to be done with standard QA and we’d love to hear about your use case! This will be the final (set of) blog posts for this particular series and we hope you’ve enjoyed the ride. We learned a lot and have been thrilled to share our exploration.</p>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="fastforwardlabs/ff14_blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/reader_hidden/" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>CFF builds a state-of-the-art QA application with the latest NLP techniques</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastforwardlabs" title="fastforwardlabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/FastForwardLabs" title="FastForwardLabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
