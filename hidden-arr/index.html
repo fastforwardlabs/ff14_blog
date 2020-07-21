@@ -157,12 +157,12 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h3"><a href="#Contextual-Query-Expansion">Contextual Query Expansion </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h2"><a href="#Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?">Does Query Expansion help the Retriever on Natural Questions? </a></li>
+<li class="toc-entry toc-h2"><a href="#Does-Query-Expansion-Improve-Retrieval-on-Natural-Questions?">Does Query Expansion Improve Retrieval on Natural Questions? </a></li>
 </ul>
 </li>
 <li class="toc-entry toc-h1"><a href="#Passage-Ranking">Passage Ranking </a>
 <ul>
-<li class="toc-entry toc-h2"><a href="#Does-Passage-Ranking-help-on-NQ?">Does Passage Ranking help on NQ? </a></li>
+<li class="toc-entry toc-h2"><a href="#Does-Passage-Ranking-Improve-Retrieval-on-Natural-Questions?">Does Passage Ranking Improve Retrieval on Natural Questions? </a></li>
 </ul>
 </li>
 </ul><!--
@@ -218,8 +218,7 @@ window.onload = wrap_img;
 <p>While SQuAD has been a popular benchmark for the task of machine comprehension, there are several perceived flaws in how the dataset was constructed that renders it an unfair comparison to how humans naturally seek answers to questions. Specifically, SQuAD was created through artificial crowdsourcing where annotators were presented with a Wikipedia paragraph and asked to write questions that can be answered from it. This is a fundamentally different scenario than human curiosity blindly seeking answers to an unknown domain. By first reading a body of text and then generating questions, the annotators had already leaked novel pieces of information into the questions they crafted. The methodology applied here is less than ideal because a.) many questions lack context in absence of the provided paragraph and b.) there is a high lexical overlap between passages and questions - artificially inflating the efficacy of exact match search tools (like Elasticsearch). Consider the following example:</p>
 <blockquote>
 <p><strong><em>Question:</em></strong> Other than the Automobile Club of Southern California, what other AAA Auto Club chose to simplify the divide?<br>
-<strong><em>Answer:</em></strong> California State Automobile Association
-What “divide” is the question talking about? It is clear that the derived question lacks meaning without the context. We can also see how the question’s overly specific, un-natural vocabulary will inflate performance of exact match search.</p>
+<strong><em>Answer:</em></strong> California State Automobile Association</p>
 </blockquote>
 
 </div>
@@ -281,14 +280,14 @@ What “divide” is the question talking about? It is clear that the derived qu
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In this example, we as humans can intuit that the combination of words “The Hunger Games” has a very specific meaning in contrast to the three tokens independently. We want to enable Elasticsearch to identify content specific to the "Hunger Games” trilogy, and not become entangled with general content about hunger and games. To accomplish this, we can apply named entity recognition (NER) - an information extraction technique that automatically identifies named entities (e.g. people, places, organizations, locations, etc.) in free text.</p>
-<p>Implementing entity enrichment requires extended use of Elasticsearch’s rich query language and a pre-trained NER model (we chose one that is easily accessible through the <a href="https://spacy.io/">spaCy</a> NLP library). The process is as follows:</p>
+<p>Implementing entity enrichment requires extended use of Elasticsearch’s <a href="https://elasticsearch-dsl.readthedocs.io/en/latest/">rich query language</a> and a pre-trained NER model (we chose one readily available through the <a href="https://spacy.io/">spaCy</a> NLP library). The process is as follows:</p>
 <ol>
 <li>Apply NER to process a question and extract out any named entities</li>
-<li>Create a phrase sub-query for each entity. A phrase query in Elasticsearch preserves the order of tokens on match criteria</li>
+<li>Create a phrase sub-query for each entity to preserve the order of tokens for that phrase in match criteria</li>
 <li>Create a standard match sub-query for the original question itself</li>
 <li>Combine all sub-queries into a boolean compound query that scores candidate documents according to overlap criteria from both question and phrase queries</li>
 </ol>
-<p>To simplify query expansion testing, we built a QueryExpander class (hidden below) that automates various query expansion methods. Let's take a look how our query is transformed through entity enrichment:</p>
+<p>To simplify query expansion testing, we built a QueryExpander class (hidden below) that automates several query expansion methods. Let's take a look how our query is transformed through entity enrichment:</p>
 
 </div>
 </div>
@@ -606,7 +605,7 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From the example above, we see that our NER model successfully identified "The Hunger Games" as an entity and the final boolean query served for execution in Elasticsearch is comprised of two parts - one multi-match query for the raw question text, and one phrase-match query for the extracted entity.</p>
+<p>From the example above, we see that our NER model successfully identified "The Hunger Games" as a named entity. The final boolean query served to Elasticsearch is comprised of two parts - one multi-match query for the raw question text, and one phrase-match query for the extracted entity.</p>
 
 </div>
 </div>
@@ -626,7 +625,7 @@ Elasticsearch Query:
 <p>The exact match nature of Elasticsearch is powerful and effective, but isn't perfect. Word matching is limited in its ability to take semantically related concepts into consideration, and for the vague nature of NQ questions, will degrade the performance of our Retriever. For example, let's further consider the question from above and a supporting context passage:</p>
 <blockquote>
 <p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?"<br>
-<strong><em>Context:</em></strong> "President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy and though seemingly laid-back his demeanor hides a sadistic mind."</p>
+<strong><em>Context:</em></strong> "President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy, and though seemingly laid-back, his demeanor hides a sadistic mind."</p>
 </blockquote>
 
 </div>
@@ -635,8 +634,8 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>An exact-match based Retriever like Elasticsearch would struggle to fetch this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". More <a href="https://arxiv.org/pdf/2004.04906.pdf">sophisticated document retrieval systems</a> that take advantage of learned, dense representations of text would perform better in this situation, however these systems are non-trivial to implement and impractical to maintain. Rather, we can try to help generalize the query through synonym expansion at search time - that is, identifying ambiguous terms in the input question and augmenting the query with additional synonyms for those terms. But how do we determine what a synonym is? And how do you know which terms in the question should be expanded?</p>
-<p>We experimented with two methods that follow the same process, but differ slightly in how synonyms are designated. The process is as follows:</p>
+<p>An exact-match based Retriever like Elasticsearch would struggle to fetch this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". More <a href="https://arxiv.org/pdf/2004.04906.pdf">sophisticated document retrieval systems</a> that take advantage of learned, dense representations of text would perform better in this situation, however these systems are non-trivial to implement and impractical to maintain. Rather, we can try to help generalize the query through synonym expansion at search time - that is, identify ambiguous terms in the input question and augment the query with additional synonyms for those terms. But how do we determine what a synonym is? And how do we know which terms in the question should be expanded?</p>
+<p>We experimented with two methods that follow the same process, but differ slightly in how synonyms are designated:</p>
 <ol>
 <li>
 <strong>Identify a set of candidate tokens.</strong>  Ideally, we want to expand tokens such that additional terms serve to increase recall while adding minimal noise or altering the semantics of the original query. To minimize the chance of introducing spurious terms that are unrelated to the original query, we apply a conservative filter when deciding which terms should be expanded. We look at every term in the question and choose to only expand nouns, verbs, adjectives, and adverbs that are not part of a named entity.</li>
@@ -720,7 +719,7 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here we notice that "popular" and "tv" were the only tokens from the question deemed as candidates for expansion because all others are either stopwords or proper nouns composing a named entity. The expansion terms generated from our embedding similarity technique appear to be synonomous to the candidate terms, and by expanding the question with these related terms, we help generalize the query to capture a wider range of potentially relevant content. However, while this example demonstrates a (mostly) successful use of embedding similarity as a proxy for synonomous words, this is not always the case...</p>
+<p>Here we notice that "popular" and "tv" were the only tokens from the question deemed as candidates for expansion because all others are either stopwords or proper nouns composing a named entity. The expansion terms generated from our embedding similarity technique appear to be synonyms to the candidate terms, and by expanding the question with these related terms, we help generalize the query to capture a wider range of potentially relevant content. However, while this example demonstrates a (mostly) successful use of embedding similarity as a proxy for synonomous words, this is not always the case...</p>
 
 </div>
 </div>
@@ -782,8 +781,8 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>After drawing your attention to the suggested expansions for the term "rose", it is obvious that our approach lacks the ability to disambiguate between different senses of the same word. As humans, we naturally infer that the term "rose" implies a flower rather than the past-tense action of ascending from a lower position to a higher one. This illustrates a main limitation of word embeddings - words with multiple meanings are conflated into a single, static representation. In other words, polysemy and homonymy are not handled effectively.</p>
-<p>Not only have we altered the semantics of the original query by introducing the new terms for the wrong word-sense, but our approach has also failed to accurately capture synonomous terms for that mistaken word-sense. We see that, "rose" expanded to "fell" and "climbed"...the first of which is actually an antonym. What is going on here? As mentioned earlier, word embeddings are trained at the task of modeling co-occurance probabilities. So while terms that occur in similar contexts <em>may</em> sometimes be synonomous, that certainly is not always the case.</p>
+<p>After drawing your attention to the suggested expansions for the term "rose", it is obvious that our approach lacks the ability to disambiguate between different senses of the same word. As humans, we naturally infer that the term "rose" implies a flower rather than the past-tense action of ascending from a lower position to a higher one. This illustrates a main limitation of word embeddings - words with multiple meanings are conflated into a single, static representation. In linguistic terms, polysemy and homonymy are not handled effectively.</p>
+<p>Not only have we altered the semantics of the original query by introducing the new terms for the wrong word-sense, but our approach has also failed to accurately capture synonomous terms for that mistaken word-sense. We see that, "rose" expanded to "fell" and "climbed"...the first of which is actually an antonym. What is going on here? As mentioned earlier, word embeddings are trained at the task of modeling co-occurance probabilities. So while terms that occur in similar contexts <em>may sometimes</em> be synonomous, that certainly is not always the case.</p>
 
 </div>
 </div>
@@ -881,8 +880,8 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?">
-<a class="anchor" href="#Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does Query Expansion help the Retriever on Natural Questions?<a class="anchor-link" href="#Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?"> </a>
+<h2 id="Does-Query-Expansion-Improve-Retrieval-on-Natural-Questions?">
+<a class="anchor" href="#Does-Query-Expansion-Improve-Retrieval-on-Natural-Questions?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does Query Expansion Improve Retrieval on Natural Questions?<a class="anchor-link" href="#Does-Query-Expansion-Improve-Retrieval-on-Natural-Questions?"> </a>
 </h2>
 </div>
 </div>
@@ -976,11 +975,28 @@ Augmenting queries with Named Entities outperforms the original query alone</p>
 </div>
 </div>
 </div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Include hidden code of Passage Ranker here? It won't be functional withough elastic search setup...</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Does-Passage-Ranking-help-on-NQ?">
-<a class="anchor" href="#Does-Passage-Ranking-help-on-NQ?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does Passage Ranking help on NQ?<a class="anchor-link" href="#Does-Passage-Ranking-help-on-NQ?"> </a>
+<h2 id="Does-Passage-Ranking-Improve-Retrieval-on-Natural-Questions?">
+<a class="anchor" href="#Does-Passage-Ranking-Improve-Retrieval-on-Natural-Questions?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does Passage Ranking Improve Retrieval on Natural Questions?<a class="anchor-link" href="#Does-Passage-Ranking-Improve-Retrieval-on-Natural-Questions?"> </a>
 </h2>
 </div>
 </div>
@@ -1013,7 +1029,7 @@ Augmenting queries with Named Entities outperforms the original query alone</p>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The experimental results support the notion that introducing an intermediate passage ranking step into the QA pipeline allows us to improve system recall by almost 10 percentage points for a fixed amount of context. We notice that system recall increases to 53.3% as the number of candidate documents that content is pooled from increases, up until ~7 documents and then slowly decreases. This demonstrates that after 7 documents worth of content, our sparse vector similarity algorithm loses signal as additional unrelated noise is introduced to the ranking process.</p>
+<p>The experimental results support the notion that introducing an intermediate passage ranking step into the QA pipeline allows us to improve system recall by almost 10 percentage points for a fixed amount of context. We notice that system recall increases to 53.3% as the number of candidate documents that content is pooled from increases, up until ~7 documents and then slowly decreases. This demonstrates that after 7 documents worth of content, our sparse vector ranking algorithm loses signal as additional unrelated noise is introduced to the ranking process.</p>
 <p>We also evaluate the time complexity of the passage ranking process and notice that the peak recall (@7 documents of content) comes at a cost of 6x processing time (compared to retrieving 1 document from Elasticsearch). While this appears considerable at first, it's important to frame this cost in the setting of the full QA pipeline. Passage ranking allows our extremely slow Reader to process 1/7th the amount of content while providing 20% more answers in the context window for the price of 0.1 seconds.</p>
 
 </div>
