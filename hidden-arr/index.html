@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Improving the Retriever on the Natural Questions Dataset | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Improving the Retriever on the Natural Questions Dataset" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Practical considerations of Information Retrieval in an IR QA system" />
+<meta property="og:description" content="Practical considerations of Information Retrieval in an IR QA system" />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden-arr/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden-arr/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"Practical considerations of Information Retrieval in an IR QA system","@type":"BlogPosting","headline":"Improving the Retriever on the Natural Questions Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Improving the Retriever on the Natural Questions Dataset | NLP for Question Answering</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Improving the Retriever on the Natural Questions Dataset" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Practical considerations of Information Retrieval in an IR QA system" />
+<meta property="og:description" content="Practical considerations of Information Retrieval in an IR QA system" />
+<link rel="canonical" href="https://qa.fastforwardlabs.com/hidden-arr/" />
+<meta property="og:url" content="https://qa.fastforwardlabs.com/hidden-arr/" />
+<meta property="og:site_name" content="NLP for Question Answering" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"Practical considerations of Information Retrieval in an IR QA system","@type":"BlogPosting","headline":"Improving the Retriever on the Natural Questions Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">NLP for Question Answering</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Us</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Improving the Retriever on the Natural Questions Dataset</h1><p class="page-description">Practical considerations of Information Retrieval in an IR QA system</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-22T00:00:00-05:00" itemprop="datePublished">
+        Jul 22, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      24 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#elasticsearch">elasticsearch</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#QA system design">QA system design</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/fastforwardlabs/ff14_blog/tree/master/_notebooks/2020-07-22-Improving_the_Retriever_on_Natural_Questions.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/fastforwardlabs/ff14_blog/master?filepath=_notebooks%2F2020-07-22-Improving_the_Retriever_on_Natural_Questions.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/fastforwardlabs/ff14_blog/blob/master/_notebooks/2020-07-22-Improving_the_Retriever_on_Natural_Questions.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h3"><a href="#Prerequisites">Prerequisites </a></li>
+<li class="toc-entry toc-h1"><a href="#Shortcomings-of-SQuAD2.0">Shortcomings of SQuAD2.0 </a></li>
+<li class="toc-entry toc-h1"><a href="#A-More-Realistic-Alternative:-Natural-Questions">A More Realistic Alternative: Natural Questions </a></li>
+<li class="toc-entry toc-h1"><a href="#Query-Expansion-Techniques">Query Expansion Techniques </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#Entity-Enrichment">Entity Enrichment </a></li>
+<li class="toc-entry toc-h2"><a href="#Synonym-Expansion">Synonym Expansion </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Static-Embedding-Similarity">Static Embedding Similarity </a></li>
+<li class="toc-entry toc-h3"><a href="#Contextual-Query-Expansion">Contextual Query Expansion </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?">Does Query Expansion help the Retriever on Natural Questions? </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Passage-Ranking">Passage Ranking </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#Does-Passage-Ranking-help-on-NQ?">Does Passage Ranking help on NQ? </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-22-Improving_the_Retriever_on_Natural_Questions.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you’ve been following along for our question answering journey thus far, you now understand the basic building blocks that form the pipeline of a modern Information Retrieval-based (IR) Question Answering system, and how that system can be evaluated on the SQuAD2.0 dataset. But as it turns out, implementing question answering for real-world use cases is a bit more nuanced than evaluating system performance against a toy dataset. In this post, we’ll explore several challenges faced by the Retriever when applying IR-QA to a more realistic, alternative dataset, as well as a few practical approaches for overcoming them.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Prerequisites">
+<a class="anchor" href="#Prerequisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites<a class="anchor-link" href="#Prerequisites"> </a>
+</h3>
+<ul>
+<li>a basic understanding of IR based QA systems (see our <a href="https://qa.fastforwardlabs.com/">previous posts</a>)</li>
+<li>a basic understanding NLP</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Shortcomings-of-SQuAD2.0">
+<a class="anchor" href="#Shortcomings-of-SQuAD2.0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shortcomings of SQuAD2.0<a class="anchor-link" href="#Shortcomings-of-SQuAD2.0"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>While SQuAD has been a popular benchmark for the task of machine comprehension, there are several perceived flaws in how the dataset was constructed that renders it an unfair comparison to how humans naturally seek answers to questions. Specifically, SQuAD was created through artificial crowdsourcing where annotators were presented with a Wikipedia paragraph and asked to write questions that can be answered from it. This is a fundamentally different scenario than human curiosity blindly seeking answers to an unknown domain. By first reading a body of text and then generating questions, the annotators have already leaked novel pieces of information into the questions they craft. The methodology used here is less than ideal because a.) many questions lack context in absence of the provided paragraph and b.) there is a high lexical overlap between passages and questions - artificially inflating the efficacy of exact match search tools (like Elasticsearch). Consider the following example:</p>
+<blockquote>
+<p><strong><em>Question:</em></strong> Other than the Automobile Club of Southern California, what other AAA Auto Club chose to simplify the divide? &gt; <strong><em>Answer:</em></strong> California State Automobile Association\
+<strong><em>Context:</em></strong> The state is most commonly divided and promoted by its regional tourism groups as consisting of northern, central, and southern California regions. The two AAA Auto Clubs of the state, the California State Automobile Association and the Automobile Club of Southern California, choose to simplify matters by dividing the state along the lines where their jurisdictions for membership apply, as either northern or southern California, in contrast to the three-region point of view. Another influence is the geographical phrase South of the Tehachapis, which would split the southern region off at the crest of that transverse range, but in that definition, the desert portions of north Los Angeles County and eastern Kern and San Bernardino Counties would be included in the southern California region due to their remoteness from the central valley and interior desert landscape.
+What “divide” is the question talking about? It is clear that the derived question lacks meaning without the context. We can also see how the question’s overly specific, un-natural vocabulary will inflate performance of exact match search.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="A-More-Realistic-Alternative:-Natural-Questions">
+<a class="anchor" href="#A-More-Realistic-Alternative:-Natural-Questions" aria-hidden="true"><span class="octicon octicon-link"></span></a>A More Realistic Alternative: Natural Questions<a class="anchor-link" href="#A-More-Realistic-Alternative:-Natural-Questions"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In response to the criticism of SQuAD’s shortcomings and to spur the progress of open-domain QA systems, Google released the <a href="https://ai.google.com/research/NaturalQuestions">Natural Questions (NQ) dataset</a> in 2019. NQ consists of real, anonymized questions issued to the Google search engine and provides an entire Wikipedia article as context that may or may not contain the answer to a given question. The inclusion of open-ended, human-written questions and the need to reason over full pages of content make NQ a much more realistic and challenging task than datasets before it. Here are a few example questions from NQ:</p>
+<ul>
+<li>where does the energy in a nuclear explosion come from?</li>
+<li>how many episodes in season 2 breaking bad?</li>
+<li>meaning of cats in the cradle song?</li>
+</ul>
+<p>Notice how some NQ questions are underspecified, raw, and syntactically erroneous? Do these seem oddly familiar to how you interact with search engines everyday? Let’s explore a couple of techniques that might help overcome the challenges presented by this dataset and improve the Elasticsearch Retriever we built in the previous blog post.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Query-Expansion-Techniques">
+<a class="anchor" href="#Query-Expansion-Techniques" aria-hidden="true"><span class="octicon octicon-link"></span></a>Query Expansion Techniques<a class="anchor-link" href="#Query-Expansion-Techniques"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Entity-Enrichment">
+<a class="anchor" href="#Entity-Enrichment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Entity Enrichment<a class="anchor-link" href="#Entity-Enrichment"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we learned from the last blog post, the inverted index data structure underlying Elasticsearch doesn’t preserve word order in a query by default. Consider the following question:</p>
+<blockquote>
+<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?"
+In this example, we as humans can intuit that the combination of words “The Hunger Games” has a very specific meaning in contrast to the three tokens independently. We want to enable Elasticsearch to identify content specific to the "Hunger Games” trilogy, and not become entangled with general content about hunger and games. To accomplish this, we can apply named entity recognition (NER) - an information extraction technique that automatically identifies named entities (e.g. people, places, organizations, locations, etc.) in free text.</p>
+</blockquote>
+<p>Implementing entity enrichment requires extended use of Elasticsearch’s rich query language and a pre-trained NER model (we chose one that is easily accessible through the spaCy NLP library). The process is as follows:</p>
+<ol>
+<li>Apply NER to process a question and extract out any named entities</li>
+<li>Create a phrase sub-query for each entity. A phrase query in Elasticsearch preserves the order of tokens on match criteria</li>
+<li>Create a standard match sub-query for the original question itself</li>
+<li>Combine all sub-queries into a boolean compound query that scores candidate documents according to overlap criteria from both question and phrase queries</li>
+</ol>
+<p>To simplify query expansion testing, we built a QueryExpander class (hidden below) that automates various query expansion methods. Let's take a look how our query is transformed through entity enrichment:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+
+<span class="c1"># install dependencies</span>
+<span class="c1"># !pip install elasticsearch_dsl</span>
+<span class="c1"># !pip install transformers==2.11.0</span>
+
+<span class="c1"># import packages</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">from</span> <span class="nn">elasticsearch_dsl</span> <span class="kn">import</span> <span class="n">Q</span><span class="p">,</span> <span class="n">Search</span>
+<span class="kn">import</span> <span class="nn">gensim.downloader</span> <span class="k">as</span> <span class="nn">api</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+
+<span class="c1"># initialize models</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"en_core_web_sm"</span><span class="p">)</span>
+<span class="n">word_vectors</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"glove-wiki-gigaword-50"</span><span class="p">)</span>
+<span class="n">unmasker</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s1">'fill-mask'</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"bert-base-uncased"</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="s2">"bert-base-uncased"</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"bert-base-uncased"</span><span class="p">,</span> <span class="n">use_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">QueryExpander</span><span class="p">:</span>
+    <span class="sd">'''</span>
+<span class="sd">    Query expansion utility class that augments an ElasticSearch query with optional techniques</span>
+<span class="sd">    including Named Entity Recognition and Synonym Expansion</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        question_text</span>
+<span class="sd">        entity_args (dict) - Ex. {'spacy_model': nlp}</span>
+<span class="sd">        synonym_args (dict) - Ex. {'gensim_model': word_vectors, 'n_syns': 3} OR</span>
+<span class="sd">                                  {'MLM': unmasker, 'tokenizer': base_tokenizer, 'n_syns': 3, 'threshold':0.3}</span>
+<span class="sd">    </span>
+<span class="sd">    '''</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question_text</span><span class="p">,</span> <span class="n">entity_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">synonym_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">question_text</span> <span class="o">=</span> <span class="n">question_text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_args</span> <span class="o">=</span> <span class="n">entity_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span> <span class="o">=</span> <span class="n">synonym_args</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_args</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'Cannot do synonym expansion without NER! Expanding synonyms</span><span class="se">\</span>
+<span class="s1">                            on named entities reduces recall.'</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_args</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_args</span><span class="p">[</span><span class="s1">'spacy_model'</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">question_text</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_query</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">build_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># build entity sub-query</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_args</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extract_entities</span><span class="p">()</span>
+        
+        <span class="c1"># identify terms to expand</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">identify_terms_to_expand</span><span class="p">()</span>
+        
+        <span class="c1"># build question sub-query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">construct_question_query</span><span class="p">()</span>
+        
+        <span class="c1"># combine sub-queries</span>
+        <span class="n">sub_queries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sub_queries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">question_sub_query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'entity_sub_queries'</span><span class="p">):</span>
+            <span class="n">sub_queries</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_sub_queries</span><span class="p">)</span>
+            
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="s1">'bool'</span><span class="p">,</span> <span class="n">should</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">sub_queries</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
+        
+    
+    <span class="k">def</span> <span class="nf">extract_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Extracts named entities using spaCy and constructs phrase match sub-queries</span>
+<span class="sd">        for each entity. Saves both entities and sub-queries as attributes.</span>
+<span class="sd">        </span>
+<span class="sd">        '''</span>
+        
+        <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">]</span>
+        <span class="c1"># print('Entities:', entity_list)</span>
+        
+        <span class="n">entity_sub_queries</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">entity_list</span><span class="p">:</span>
+            <span class="n">eq</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="s1">'multi_match'</span><span class="p">,</span>
+                   <span class="n">query</span><span class="o">=</span><span class="n">ent</span><span class="p">,</span>
+                   <span class="nb">type</span><span class="o">=</span><span class="s1">'phrase'</span><span class="p">,</span>
+                   <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'title'</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">])</span>
+            
+            <span class="n">entity_sub_queries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eq</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">entity_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_sub_queries</span> <span class="o">=</span> <span class="n">entity_sub_queries</span>
+        
+        
+    <span class="k">def</span> <span class="nf">identify_terms_to_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        </span>
+<span class="sd">        '''</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'entities'</span><span class="p">):</span>
+            <span class="c1"># get unique list of entity tokens</span>
+            <span class="n">entity_terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">ent</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">' '</span><span class="p">)</span> <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">]</span>
+            <span class="n">entity_terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">ent</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">entity_terms</span> <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entity_terms</span> <span class="o">=</span> <span class="p">[]</span>
+    
+        <span class="c1"># terms to expand are that not part of entity or a stopword</span>
+        <span class="n">entity_pos</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"NOUN"</span><span class="p">,</span><span class="s2">"VERB"</span><span class="p">,</span><span class="s2">"ADJ"</span><span class="p">,</span><span class="s2">"ADV"</span><span class="p">]</span>
+        <span class="n">terms_to_expand</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx_term</span> <span class="k">for</span> <span class="n">idx_term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span> <span class="k">if</span> \
+                           <span class="p">(</span><span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">entity_terms</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_stop</span><span class="p">)</span>\
+                            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_digit</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_punct</span><span class="p">)</span> <span class="ow">and</span> 
+                            <span class="p">(</span><span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower_</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_alpha</span><span class="p">)</span> <span class="ow">and</span>
+                            <span class="p">(</span><span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pos_</span> <span class="ow">in</span> <span class="n">entity_pos</span><span class="p">)]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">terms_to_expand</span> <span class="o">=</span> <span class="n">terms_to_expand</span>
+
+        
+    <span class="k">def</span> <span class="nf">construct_question_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Builds a multi-match query from the raw question text extended with synonyms </span>
+<span class="sd">        for eligible any terms (i.e. terms that are not part of an entity or stopword)</span>
+
+<span class="sd">        '''</span>
+        
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'terms_to_expand'</span><span class="p">):</span>
+            <span class="c1"># print(self.question_text)</span>
+            
+            <span class="n">syns</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms_to_expand</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="s1">'gensim_model'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">syns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gather_synonyms_static</span><span class="p">(</span><span class="n">term</span><span class="p">))</span>
+                    <span class="c1"># print('Static:', term, '--&gt;', self.gather_synonyms_static(term))</span>
+
+                <span class="k">elif</span> <span class="s1">'MLM'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">syns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gather_synonyms_contextual</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">term</span><span class="p">))</span>
+                    <span class="c1"># print('Contextual:', term, '--&gt;', self.gather_synonyms_contextual(i,term))</span>
+
+            <span class="n">syns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">syns</span><span class="p">))</span>
+            <span class="n">syns</span> <span class="o">=</span> <span class="p">[</span><span class="n">syn</span> <span class="k">for</span> <span class="n">syn</span> <span class="ow">in</span> <span class="n">syns</span> <span class="k">if</span> <span class="p">(</span><span class="n">syn</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="n">syn</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pos_</span> <span class="o">!=</span> <span class="s1">'PROPN'</span><span class="p">)]</span>
+            <span class="c1"># print('\n', 'Final Terms:', syns)</span>
+            
+            <span class="n">question</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_text</span> <span class="o">+</span> <span class="s1">' '</span> <span class="o">+</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">syns</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expanded_question</span> <span class="o">=</span> <span class="n">question</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_syns</span> <span class="o">=</span> <span class="n">syns</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">question</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_text</span>
+        
+        <span class="n">qq</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="s1">'multi_match'</span><span class="p">,</span>
+               <span class="n">query</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+               <span class="nb">type</span><span class="o">=</span><span class="s1">'most_fields'</span><span class="p">,</span>
+               <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'title'</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">question_sub_query</span> <span class="o">=</span> <span class="n">qq</span>
+
+
+    <span class="k">def</span> <span class="nf">gather_synonyms_contextual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_index</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Takes in a token, and returns specified number of synonyms as defined by</span>
+<span class="sd">        predictions from a Masked Language Model.</span>
+<span class="sd">        </span>
+<span class="sd">        '''</span>
+        
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="p">]</span>
+        <span class="n">tokens</span><span class="p">[</span><span class="n">token_index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">[</span><span class="s1">'tokenizer'</span><span class="p">]</span><span class="o">.</span><span class="n">mask_token</span>
+        
+        <span class="n">terms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_mask</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">),</span> 
+                                    <span class="n">unmasker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">[</span><span class="s1">'MLM'</span><span class="p">],</span>
+                                    <span class="n">tokenizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">[</span><span class="s1">'tokenizer'</span><span class="p">],</span>
+                                    <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">[</span><span class="s1">'threshold'</span><span class="p">],</span>
+                                    <span class="n">top_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">[</span><span class="s1">'n_syns'</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">terms</span>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">predict_mask</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">unmasker</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Given a sentence with a [MASK] token in it, this function will return the most </span>
+<span class="sd">        contextually similar terms to fill in the [MASK]</span>
+<span class="sd">        </span>
+<span class="sd">        '''</span>
+
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">unmasker</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="s1">'token'</span><span class="p">])</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">preds</span> <span class="k">if</span> <span class="n">pred</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">tokens</span><span class="p">[:</span><span class="n">top_n</span><span class="p">]</span>
+        
+
+    <span class="k">def</span> <span class="nf">gather_synonyms_static</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Takes in a token and returns a specified number of synonyms defined by</span>
+<span class="sd">        cosine similarity of word vectors. Uses stemming to ensure none of the</span>
+<span class="sd">        returned synonymns share the same stem (ex. photo and photos cant happen)</span>
+<span class="sd">        </span>
+<span class="sd">        '''</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">syns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">[</span><span class="s1">'gensim_model'</span><span class="p">]</span><span class="o">.</span><span class="n">similar_by_word</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lower_</span><span class="p">)</span>
+
+            <span class="n">lemmas</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">final_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">syns</span><span class="p">:</span>
+                <span class="n">term</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">lemma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="n">term</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lemma_</span>
+
+                <span class="k">if</span> <span class="n">lemma</span> <span class="ow">in</span> <span class="n">lemmas</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lemmas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lemma</span><span class="p">)</span>
+                    <span class="n">final_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_terms</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="p">[</span><span class="s1">'n_syns'</span><span class="p">]:</span>
+                        <span class="k">break</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">final_terms</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="n">final_terms</span>
+
+    <span class="k">def</span> <span class="nf">explain_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Question:'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_text</span><span class="p">,</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">entities</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'Found Entities:'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">,</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'terms_to_expand'</span><span class="p">):</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'Synonym Expansions:'</span><span class="p">)</span>
+        
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms_to_expand</span><span class="p">:</span>
+                
+                <span class="k">if</span> <span class="s1">'gensim_model'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="s1">'--&gt;'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gather_synonyms_static</span><span class="p">(</span><span class="n">term</span><span class="p">))</span>
+                
+                <span class="k">elif</span> <span class="s1">'MLM'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="s1">'--&gt;'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gather_synonyms_contextual</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">term</span><span class="p">))</span>
+            
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">'Question text has no terms to expand.'</span><span class="p">)</span>
+                    
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'Expanded Question:'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expanded_question</span><span class="p">,</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Elasticsearch Query:</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">question</span> <span class="o">=</span> <span class="s2">"Who is the bad guy in The Hunger Games?"</span>
+
+<span class="n">entity_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'spacy_model'</span><span class="p">:</span> <span class="n">nlp</span><span class="p">}</span>
+
+<span class="n">qe_ner</span> <span class="o">=</span> <span class="n">QueryExpander</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">entity_args</span><span class="p">)</span>
+<span class="n">qe_ner</span><span class="o">.</span><span class="n">explain_expansion</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Question: Who is the bad guy in The Hunger Games? 
+
+Found Entities: ['the hunger games'] 
+
+Elasticsearch Query:
+ Bool(should=[MultiMatch(fields=['title', 'text'], query='Who is the bad guy in The Hunger Games?', type='most_fields'), MultiMatch(fields=['title', 'text'], query='the hunger games', type='phrase')])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the example above, we see that our NER model successfully identified "The Hunger Games" as an entity and the final boolean query to be executed in Elasticsearch is comprised of two parts - one multi-match query for the raw question text, and one phrase-match query for the extracted entity.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Synonym-Expansion">
+<a class="anchor" href="#Synonym-Expansion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Synonym Expansion<a class="anchor-link" href="#Synonym-Expansion"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The exact match nature of Elasticsearch is powerful and effective, but isn't perfect. Word matching is limited in its ability to take semantically related concepts into consideration, and for the vague nature of NQ questions, will degrade the performance of our Retriever. For example, let's further consider the question from above and a supporting context passage:</p>
+<blockquote>
+<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?"&gt; <strong><em>Context:</em></strong> "President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy and though seemingly laid-back his demeanor hides a sadistic mind."
+An exact-match based Retriever like Elasticsearch would struggle to fetch this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". More <a href="https://arxiv.org/pdf/2004.04906.pdf">sophisticated document retrieval systems</a> that take advantage of learned, dense representations of text would perform better in this situation, however these systems are non-trivial to implement and impractical to maintain. Rather, we can try to help generalize the query through synonym expansion at search time - that is, identifying ambiguous terms in the input question and augmenting the query with additional synonyms for those terms. But how do we determine what a synonym is? And how do you know which terms in the question should be expanded?</p>
+</blockquote>
+<p>We experimented with two methods that follow the same process, but differ slightly in how synonyms are designated. The process is as follows:</p>
+<ol>
+<li>
+<strong>Identify a set of candidate tokens.</strong>  Ideally, we want to expand tokens such that additional terms serve to increase recall while adding minimal noise or altering the semantics of the original query. To minimize the chance of introducing spurious terms that are unrelated to the original query, we apply a conservative filter when deciding which terms should be expanded. We look at every term in the question and choose to only expand nouns, verbs, adjectives, and adverbs that are not part of a named entity.</li>
+<li>
+<strong>Expand each candidate token.</strong> Related terms can be derived in numerous ways from traditional lexicon lookups (e.g. WordNet) to similarity measures between learned vector space representations (e.g. Word2Vec). We’ve tested out the use of static word embedding similarity and masked language model predictions as proxies for generating synonymous terms (more on these methods in a bit).</li>
+<li>
+<strong>Post-process synonyms and craft a new query.</strong> Filtering the expanded vocabulary removes any duplicative, non-alphanumeric, or proper noun tokens. We then use the final set of expanded terms to create a new Elasticsearch query by appending the novel words to the original question text.</li>
+</ol>
+<p>Let’s dive deeper into the two expansion methods.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># import sys</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sys.path.append('/Users/areed/opt/anaconda3/envs/qa-blog/lib/python3.6/site-packages')</span>
+<span class="c1"># sys.path.append('/Users/areed/opt/anaconda3/envs/qa-blog/lib/python3.7/site-packages')</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Static-Embedding-Similarity">
+<a class="anchor" href="#Static-Embedding-Similarity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Static Embedding Similarity<a class="anchor-link" href="#Static-Embedding-Similarity"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Word embeddings are real-valued, vector representations of text that capture general contextual similarities between words in a given vocabulary. They are built on the idea that similar words tend to occur together frequently and thus are learned in an unsupervised manner from vast amounts of unstructured text data. The dense, numerical form of embeddings allow for mathemematical operations - with a common application being vector similarity. Since the vectors have been trained to represent the co-occuring nature of words, we can extrapolate that terms corresponding to vectors with high cosine similarity are contextually synonomous. These word relationships are learned with regard to the data they are trained on, so it is critical that the training corpus for a set of embeddings is indicative of the downstream task the embedding vectors will be applied to. For that reason, we make use of 100 length <a href="https://nlp.stanford.edu/pubs/glove.pdf">GloVe</a> word vectors trained on Wikipedia and made available through the <a href="https://radimrehurek.com/gensim/">Gensim library</a>.</p>
+<p>Let's take a look at an example question and how it is expanded:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">question</span> <span class="o">=</span> <span class="s2">"what is Thomas Middleditch's popular tv show?"</span>
+
+<span class="n">entity_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'spacy_model'</span><span class="p">:</span> <span class="n">nlp</span><span class="p">}</span>
+<span class="n">synonym_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'gensim_model'</span><span class="p">:</span> <span class="n">word_vectors</span><span class="p">,</span>
+                <span class="s1">'n_syns'</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+
+<span class="n">qe_static</span> <span class="o">=</span> <span class="n">QueryExpander</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">entity_args</span><span class="p">,</span> <span class="n">synonym_args</span><span class="p">)</span>
+<span class="n">qe_static</span><span class="o">.</span><span class="n">explain_expansion</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Question: what is Thomas Middleditch's popular tv show? 
+
+Found Entities: ["thomas middleditch's"] 
+
+Synonym Expansions:
+popular --&gt; ['famous', 'most']
+tv --&gt; ['television', 'broadcast']
+
+Expanded Question: what is Thomas Middleditch's popular tv show? broadcast famous television most 
+
+Elasticsearch Query:
+ Bool(should=[MultiMatch(fields=['title', 'text'], query="what is Thomas Middleditch's popular tv show? broadcast famous television most", type='most_fields'), MultiMatch(fields=['title', 'text'], query="thomas middleditch's", type='phrase')])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we notice that "popular" and "tv" were the only tokens from the question deemed as candidates for expansion because all others are either stopwords or proper nouns composing a named entity. The expansion terms generated from our embedding similarity technique appear to be synonomous to the candidate terms, and by expanding the question with these related terms, we help generalize the query to capture a wider range of potentially relevant content. However, while this example demonstrates a (mostly) successful use of embedding similarity as a proxy for synonomous words, this is not always the case...</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Despite the valuable semantic meaning baked into word embeddings, there are several limitations to their use as a proxy for synonomous meaning. Let's look at another example:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">question</span> <span class="o">=</span> <span class="s2">"how many rose species are found in the Montreal Botanical Garden?"</span>
+
+<span class="n">qe_static</span> <span class="o">=</span> <span class="n">QueryExpander</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">entity_args</span><span class="p">,</span> <span class="n">synonym_args</span><span class="p">)</span>
+<span class="n">qe_static</span><span class="o">.</span><span class="n">explain_expansion</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Question: how many rose species are found in the Montreal Botanical Garden? 
+
+Found Entities: ['montreal botanical garden'] 
+
+Synonym Expansions:
+rose --&gt; ['fell', 'climbed']
+species --&gt; ['genus', 'subspecies']
+found --&gt; ['discovered', 'identified']
+
+Expanded Question: how many rose species are found in the Montreal Botanical Garden? subspecies identified climbed discovered fell genus 
+
+Elasticsearch Query:
+ Bool(should=[MultiMatch(fields=['title', 'text'], query='how many rose species are found in the Montreal Botanical Garden? subspecies identified climbed discovered fell genus', type='most_fields'), MultiMatch(fields=['title', 'text'], query='montreal botanical garden', type='phrase')])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After drawing your attention to the suggested expansions for the term "rose", it is obvious that our approach lacks the ability to disambiguate between different senses of the same word. As humans, we naturally infer that the term "rose" implies a flower rather than the past-tense action of ascending from a lower position to a higher one. This illustrates a main limitation of word embeddings in that words with multiple meanings are conflated into a single, static representation. In other words, polysemy and homonymy are not handled effectively.</p>
+<p>Not only have we altered the semantics of the original query by introducing the new terms for the wrong word-sense, but our approach has also failed to accurately capture synonomous terms for that mistaken word-sense. We see that, "rose" expanded to "fell" and "climbed", the first of which is actually an antonym. So what is going on here? As mentioned earlier, word embeddings are trained at the task of modeling co-occurance probabilities. So while terms that occur in similar contexts may sometimes be synonomous, that is surely not always the case.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Contextual-Query-Expansion">
+<a class="anchor" href="#Contextual-Query-Expansion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contextual Query Expansion<a class="anchor-link" href="#Contextual-Query-Expansion"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So what was missing from the prior approach that allows us as humans to disambiguate the meaning of the word "rose"? The answer is <em>context</em>. The ability to dynamically recognize alternate meaning by paying attention to the context surrounding a term allows us to de-conflate homonymns. For a computer to do the same, we can make use of a masked language model (MLM) to leverage the bi-directional context surrounding a given word and imply its morphological form.
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>For more info how a MLM works, we recommend the original <a href="https://arxiv.org/pdf/1810.04805.pdf">BERT paper</a> and this <a href="https://demo.allennlp.org/masked-lm">interactive tool from AllenNLP</a>
+</div>
+In practice, this involves constructing intermediate versions of the original question where each identified candidate token is masked, and a MLM predicts the top N tokens that are contextually most likely to complete the sentence. As with static embeddings, contextual query expansion relies on the assumption that the MLM has been trained (or fine-tuned) on the target document corpus so it holds relevant, implicit information that can be exploited to identify suitable expansion terms.
+<p>In our case, we make use of a <em>BERT-base-uncased</em> model that has also been pre-trained on Wikipedia and made conveniently available through <a href="https://huggingface.co/">HuggingFace's</a> "fill-mask" pipeline API. Let's see how this approach performs on our ambiguous example from above:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">question</span> <span class="o">=</span> <span class="s2">"how many rose species are found in the Montreal Botanical Garden?"</span>
+<span class="n">entity_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'spacy_model'</span><span class="p">:</span> <span class="n">nlp</span><span class="p">}</span>
+<span class="n">synonym_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'MLM'</span><span class="p">:</span> <span class="n">unmasker</span><span class="p">,</span> 
+                <span class="s1">'tokenizer'</span><span class="p">:</span> <span class="n">tokenizer</span><span class="p">,</span> 
+                <span class="s1">'n_syns'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s1">'threshold'</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+
+<span class="n">qe_contextual</span> <span class="o">=</span> <span class="n">QueryExpander</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">entity_args</span><span class="p">,</span> <span class="n">synonym_args</span><span class="p">)</span>
+<span class="n">qe_contextual</span><span class="o">.</span><span class="n">explain_expansion</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Question: how many rose species are found in the Montreal Botanical Garden? 
+
+Found Entities: ['montreal botanical garden'] 
+
+Synonym Expansions:
+rose --&gt; ['plant', 'new']
+species --&gt; ['varieties', 'gardens']
+found --&gt; ['grown', 'found']
+
+Expanded Question: how many rose species are found in the Montreal Botanical Garden? varieties grown found new gardens plant 
+
+Elasticsearch Query:
+ Bool(should=[MultiMatch(fields=['title', 'text'], query='how many rose species are found in the Montreal Botanical Garden? varieties grown found new gardens plant', type='most_fields'), MultiMatch(fields=['title', 'text'], query='montreal botanical garden', type='phrase')])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nice! Because we are now using supervised model to consider the full sentence and predict the missing candidate terms, we are able to capture the correct meaning of the term "rose" and also produce more reliable "synonyms" for each of the three expanded terms.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?">
+<a class="anchor" href="#Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does Query Expansion help the Retriever on Natural Questions?<a class="anchor-link" href="#Does-Query-Expansion-help-the-Retriever-on-Natural-Questions?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Due to the topical breadth of Natural Questions, a vast knowledge base is needed for the Retriever to search over in order to fairly evaluate an end-to-end QA system. For that reason, a full Wikipedia dump was <a href="https://github.com/attardi/wikiextractor">cleaned</a> and loaded into an Elasticsearch index for testing. To represent a practical application of QA, full articles were indexed rather than pre-parsed paragraphs (as we saw in the previous post). The <a href="https://ai.google.com/research/NaturalQuestions/download">NQ development set</a> was processed to drop all long and yes/no answer questions, yielding 7651 short and null answer examples. Additionally, answers with more than 5 tokens were discarded as answers with many tokens often resemble extractive snippets rather than canonical answers.</p>
+<p>With our knowledge corpus and evaluation data ready to go, we evaluated Retriever performance (with the same methodology used in the last post) over an increasing number of documents while toggling entity and synonym expansion methods at search time.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/images/copied_from_nb/../images/post_arr/expansion_results.png" alt=""></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First thing to notice is scores are much lower than squad...</p>
+<p>Intuitively, we see that returning more articles increases Retriever recall because there exists more relevant content that may contain a question’s answer. However, that performance gain begins to plateau as additional content becomes less relevant to the query. We also observe that entity expansion results in a slight improvement to recall as it increases specificity of the query definition to help target multi-word phrases in articles.</p>
+<p>Finally, we observe a loss in performance when expanding candidate question terms with with either proposed method. What is going on here? While our approach for synonym expansion makes sense in theory, it turns out that there are several reasons why it has proven counterproductive in practice:</p>
+<ol>
+<li>Knowing </li>
+</ol>
+<p>When NER fails, our query fails. As part of our synonym expansion strategy, we rely on a pre-trained NER model to help us refrain from expanding named entities. If the NER model fails to correctly identify a present entity, we end up introducing misleading terms into our query. For example, consider the question “When was the first hunger games book published?” If our NER model fails to identify “Hunger Games” as an entity, we end up expanding each of those terms, which consequently introduces the terms “starvation” and “poverty” into our query - completely detracting from the focus of the question at hand.</p>
+<ol>
+<li>Accurately identifying synonyms is difficult. Static word embeddings lack the contextual awareness needed to disambiguate the form of a given term, and also contain bias from the datasets which they were trained on. Further, semantic similarity does not equate to interchangeable word meaning. For example, in the question “Which is the nearest country north of egypt?”, the terms closest to the term “north” in vector space are “south” and “west”. These drawbacks lead to over-generalization of queries when blindly expanding terms.
+Accurately knowing when to expand a term is difficult...</li>
+</ol>
+<p>Though more sophisticated techniques can be used to capture and disambiguate the contextual meaning of candidate terms, it is generally not recommended to apply blanket synonym expansion for the purposes of information retrieval. Rather, using search-time expansion of similar terms in a curated ontology or set of acronyms for a specific domain can be beneficial.</p>
+<p>Discussion of thresholding and how that doesnt even work... no blanket approach...</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I ran a few more experiments on NQ dev set to see the impact of Contextual Query Expansion using @vdibia’s MLM approach. I first experimented to calibrate  number of synonyms and prediction probability threshold by varying 1, 2, 3 synonyms expanded for each candidate term, and 0.2, 0.4, 0.6, 0.8 probability thresholds. Turns out that expanding only 1 synonym for each candidate term and a threshold of 0.8 works best. Overall, the results support our qualitative analysis and understanding:
+Contextual query expansion performs better than static embedding expansion, but still introduces to some spurious terms that are unrelated to the query - thus performing worse than just the original query itself.
+Expanding only 1 synonym per candidate term is better for both static and contextual expansion
+Augmenting queries with Named Entities outperforms the original query alone</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Passage-Ranking">
+<a class="anchor" href="#Passage-Ranking" aria-hidden="true"><span class="octicon octicon-link"></span></a>Passage Ranking<a class="anchor-link" href="#Passage-Ranking"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We know from our last post that in an IR QA system, the Reader is bounded by the performance of the Retriever, and fetching more documents increases system recall. However, simply increasing the number of documents passed to the Reader also increases the amount of irrelevant information that is processed and degrades the overall QA system performance - both speed and accuracy. But what if we could have the best of both worlds?</p>
+<p>Passage ranking is a technique that involves selecting a subset of re-ranked paragraphs from a collection of retrieved documents to retain the answer recall from those documents, while filtering out noisy content. By implementing a quick and efficient passage ranking technique, our QA pipeline considers more documents worth of information, but distills down only the relevant pieces for the Reader to process.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/images/copied_from_nb/../images/post_arr/passage_ranking_flow.png" alt=""></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The concept of passage ranking is inspired by a field of information retrieval called Learning to Rank which frames relevance ranking as a supervised machine learning problem. While many <a href="https://www.aclweb.org/anthology/D18-1053.pdf">supervised ranking approaches</a> prove successful, they require learning custom similarity metrics and introduce additional complexity into a QA system making them impractical for many use cases. In contrast, the passage ranking implementation that we consider here is a simple, unsupervised approach that demonstrates a viable way to improve IR for general question answering applications. Our passage ranking process consists of the following steps at search time:</p>
+<ol>
+<li>The query question and a set of N candidate documents from Elasticsearch are fed as input</li>
+<li>All documents are split into paragraphs</li>
+<li>The list of paragraphs and the input question are converted into a sparse document-term matrix (DTM) using TF-IDF vectorization. We preserve n-grams during vectorization, so the final DTM includes single terms, bi-grams, and tri-grams.</li>
+<li>Cosine similarity is calculated between the question vector and each paragraph vector</li>
+<li>Paragraphs are sorted based on similarity score and the top M passages are passed on to the Reader for answer extraction</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Does-Passage-Ranking-help-on-NQ?">
+<a class="anchor" href="#Does-Passage-Ranking-help-on-NQ?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does Passage Ranking help on NQ?<a class="anchor-link" href="#Does-Passage-Ranking-help-on-NQ?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To demonstrate the effect of passage ranking, we evaluated system recall across the NQ development set while retrieving one article’s worth of content (with entity expansion) as determined from two different methods:</p>
+<ul>
+<li>The top 1 article scored and returned directly from Elasticsearch</li>
+<li>The top 20 ranked passages pooled from N candidate documents
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>A fair comparison between retrieval techniques requires consideration of an equal amount of retrieved content. We found Wikipedia articles corresponding to our NQ development set contain 20 paragraphs on average, so that number was used as the passage ranking equivalent
+</div>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/images/copied_from_nb/../images/post_arr/passage_ranking_results.png" alt=""></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The experimental results support the notion that introducing an intermediate passage ranking step into the QA pipeline allows us to improve system recall by almost 10 percentage points for a fixed amount of context. We notice that system recall increases to 53.3% as the number of candidate documents that content is pooled from increases, up until ~7 documents and then slowly decreases. This demonstrates that after 7 documents worth of content, our sparse vector similarity algorithm loses signal as additional unrelated noise is introduced to the ranking process.</p>
+<p>We also evaluate the time complexity of the passage ranking process and notice that the peak recall (@7 documents of content) comes at a cost of 6x processing time (compared to retrieving 1 document from Elasticsearch). While this appears considerable at first, it's important to frame this cost in the setting of the full QA pipeline. Passage ranking allows our extremely slow Reader to process 1/7th the amount of content while providing 20% more answers in the context window for the price of 0.1 seconds.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"0f9413092ffe496d8f31c374732e870d": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "139cd5c5c43f436495dfddbdfc7d35c3": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "15f44b8cf87d459bb6a40b5e6b9db470": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "26b9259fecf4445b8fdcb753ed6d09ef": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": "initial"}}, "26ef4a7e1f76465ead7e51c1d9866c6f": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "28a305d13e584615b9ba3cd9a37bdd56": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "100%", "description_tooltip": null, "layout": "IPY_MODEL_a8cebe4ccf004d84bdc37ce44d1192e8", "max": 20239, "min": 0, "orientation": "horizontal", "style": "IPY_MODEL_a44c2693aee14b89a4c6512c85142f51", "value": 20239}}, "3c0ffe3eeca741899ddbe1306e60ce39": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_26ef4a7e1f76465ead7e51c1d9866c6f", "placeholder": "\u200b", "style": "IPY_MODEL_7a1bbfb20bd84d4b8995584a37dabae1", "value": " 11873/11873 [6:21:18&lt;00:00,  1.93s/it]"}}, "3d3ce5e897b84a218237582372bca2bb": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "40b3ea36c5ca407597e8ce6c738c9786": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": "initial"}}, "62fb51c849b04bc78c629dd42f811deb": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_0f9413092ffe496d8f31c374732e870d", "placeholder": "\u200b", "style": "IPY_MODEL_3d3ce5e897b84a218237582372bca2bb", "value": " 11873/11873 [7:01:01&lt;00:00,  2.13s/it]"}}, "66e0efa9685248629e009c1e255bff6e": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_f6c75626f2d54bfbaa7bad761af5b9c2", "IPY_MODEL_62fb51c849b04bc78c629dd42f811deb"], "layout": "IPY_MODEL_f0858954bbfd447eb95a04a3caabf8a4"}}, "705fa1214c044cbcae6f5d109b22802d": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "100%", "description_tooltip": null, "layout": "IPY_MODEL_f04b80c35efb44b5bec078f4d7a57f3b", "max": 11873, "min": 0, "orientation": "horizontal", "style": "IPY_MODEL_e30ff795eb1c4016be3967f190764399", "value": 11873}}, "7a1bbfb20bd84d4b8995584a37dabae1": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "9061d4497e4443029cbb21b77281cf31": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "95923a713e324d18bc9fc82a466703c4": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_ef2c1a3506c549b7878e3ea4a5cc565f", "placeholder": "\u200b", "style": "IPY_MODEL_139cd5c5c43f436495dfddbdfc7d35c3", "value": " 20239/20239 [02:38&lt;00:00, 127.56it/s]"}}, "a299f8fa902348b7807b4d97ebc6027d": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_dca5b0a8c1014a66bc8c5ba988878a85", "placeholder": "\u200b", "style": "IPY_MODEL_b04d963baf9a40789305d1372ffe1aab", "value": " 20239/20239 [04:14&lt;00:00, 79.57it/s]"}}, "a44c2693aee14b89a4c6512c85142f51": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": "initial"}}, "a493a4c07a2743899571330cf6476b74": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_28a305d13e584615b9ba3cd9a37bdd56", "IPY_MODEL_a299f8fa902348b7807b4d97ebc6027d"], "layout": "IPY_MODEL_e94a6f98578743c096c9b045d9dfdf81"}}, "a8cebe4ccf004d84bdc37ce44d1192e8": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b04d963baf9a40789305d1372ffe1aab": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "be3cf3e6c6ba40d087f8dd27dd4f5e64": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_705fa1214c044cbcae6f5d109b22802d", "IPY_MODEL_3c0ffe3eeca741899ddbe1306e60ce39"], "layout": "IPY_MODEL_d193d10e1ad94119a849d123c093f3cc"}}, "d193d10e1ad94119a849d123c093f3cc": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "dca5b0a8c1014a66bc8c5ba988878a85": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e30ff795eb1c4016be3967f190764399": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": "initial"}}, "e91c7ba9a6314f0d905d08d0f822cbc1": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e94a6f98578743c096c9b045d9dfdf81": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ef2c1a3506c549b7878e3ea4a5cc565f": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "f04b80c35efb44b5bec078f4d7a57f3b": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "f0858954bbfd447eb95a04a3caabf8a4": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "f4d90214c67749168472a2ba3cb0d72a": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "100%", "description_tooltip": null, "layout": "IPY_MODEL_9061d4497e4443029cbb21b77281cf31", "max": 20239, "min": 0, "orientation": "horizontal", "style": "IPY_MODEL_40b3ea36c5ca407597e8ce6c738c9786", "value": 20239}}, "f6c75626f2d54bfbaa7bad761af5b9c2": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "100%", "description_tooltip": null, "layout": "IPY_MODEL_e91c7ba9a6314f0d905d08d0f822cbc1", "max": 11873, "min": 0, "orientation": "horizontal", "style": "IPY_MODEL_26b9259fecf4445b8fdcb753ed6d09ef", "value": 11873}}, "f8d18feb30b24de5bbbb869cc9a31ae8": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_f4d90214c67749168472a2ba3cb0d72a", "IPY_MODEL_95923a713e324d18bc9fc82a466703c4"], "layout": "IPY_MODEL_15f44b8cf87d459bb6a40b5e6b9db470"}}}
+</script>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="fastforwardlabs/ff14_blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/hidden-arr/" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>CFF builds a state-of-the-art QA application with the latest NLP techniques</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastforwardlabs" title="fastforwardlabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/FastForwardLabs" title="FastForwardLabs"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
