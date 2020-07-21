@@ -7,15 +7,15 @@
 <meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Improving the Retriever on a More Natural Dataset" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
-<meta property="og:description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
+<meta name="description" content="Practical considerations for improving information retrieval in an IR QA system" />
+<meta property="og:description" content="Practical considerations for improving information retrieval in an IR QA system" />
 <link rel="canonical" href="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"Practical considerations of implementing and improving Information Retrieval for a QA system","@type":"BlogPosting","headline":"Improving the Retriever on a More Natural Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
+{"description":"Practical considerations for improving information retrieval in an IR QA system","@type":"BlogPosting","headline":"Improving the Retriever on a More Natural Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
 
@@ -28,15 +28,15 @@
 <meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Improving the Retriever on a More Natural Dataset" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
-<meta property="og:description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
+<meta name="description" content="Practical considerations for improving information retrieval in an IR QA system" />
+<meta property="og:description" content="Practical considerations for improving information retrieval in an IR QA system" />
 <link rel="canonical" href="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"Practical considerations of implementing and improving Information Retrieval for a QA system","@type":"BlogPosting","headline":"Improving the Retriever on a More Natural Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
+{"description":"Practical considerations for improving information retrieval in an IR QA system","@type":"BlogPosting","headline":"Improving the Retriever on a More Natural Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
@@ -97,13 +97,13 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Improving the Retriever on a More Natural Dataset</h1><p class="page-description">Practical considerations of implementing and improving Information Retrieval for a QA system</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-22T00:00:00-05:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">Improving the Retriever on a More Natural Dataset</h1><p class="page-description">Practical considerations for improving information retrieval in an IR QA system</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-22T00:00:00-05:00" itemprop="datePublished">
         Jul 22, 2020
       </time>
        • <span class="read-time" title="Estimated read time">
     
     
-      24 min read
+      23 min read
     
 </span></p>
 
@@ -217,7 +217,8 @@ window.onload = wrap_img;
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>While SQuAD has been a popular benchmark for the task of machine comprehension, there are several perceived flaws in how the dataset was constructed that renders it an unfair comparison to how humans naturally seek answers to questions. Specifically, SQuAD was created through artificial crowdsourcing where annotators were presented with a Wikipedia paragraph and asked to write questions that can be answered from it. This is a fundamentally different scenario than human curiosity blindly seeking answers to an unknown domain. By first reading a body of text and then generating questions, the annotators had already leaked novel pieces of information into the questions they crafted. The methodology applied here is less than ideal because a.) many questions lack context in absence of the provided paragraph and b.) there is a high lexical overlap between passages and questions - artificially inflating the efficacy of exact match search tools (like Elasticsearch). Consider the following example:</p>
 <blockquote>
-<p><strong><em>Question:</em></strong> Other than the Automobile Club of Southern California, what other AAA Auto Club chose to simplify the divide? \n&gt; <strong><em>Answer:</em></strong> California State Automobile Association \n&gt; <strong><em>Context:</em></strong> The state is most commonly divided and promoted by its regional tourism groups as consisting of northern, central, and southern California regions. The two AAA Auto Clubs of the state, the California State Automobile Association and the Automobile Club of Southern California, choose to simplify matters by dividing the state along the lines where their jurisdictions for membership apply, as either northern or southern California, in contrast to the three-region point of view. Another influence is the geographical phrase South of the Tehachapis, which would split the southern region off at the crest of that transverse range, but in that definition, the desert portions of north Los Angeles County and eastern Kern and San Bernardino Counties would be included in the southern California region due to their remoteness from the central valley and interior desert landscape.
+<p><strong><em>Question:</em></strong> Other than the Automobile Club of Southern California, what other AAA Auto Club chose to simplify the divide?<br>
+<strong><em>Answer:</em></strong> California State Automobile Association
 What “divide” is the question talking about? It is clear that the derived question lacks meaning without the context. We can also see how the question’s overly specific, un-natural vocabulary will inflate performance of exact match search.</p>
 </blockquote>
 
@@ -624,7 +625,8 @@ Elasticsearch Query:
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The exact match nature of Elasticsearch is powerful and effective, but isn't perfect. Word matching is limited in its ability to take semantically related concepts into consideration, and for the vague nature of NQ questions, will degrade the performance of our Retriever. For example, let's further consider the question from above and a supporting context passage:</p>
 <blockquote>
-<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?" \n&gt; <strong><em>Context:</em></strong> "President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy and though seemingly laid-back his demeanor hides a sadistic mind."</p>
+<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?"<br>
+<strong><em>Context:</em></strong> "President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy and though seemingly laid-back his demeanor hides a sadistic mind."</p>
 </blockquote>
 
 </div>
