@@ -3,19 +3,19 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Improving the Retriever on the Natural Questions Dataset | NLP for Question Answering</title>
+<title>Improving the Retriever on a More Natural Dataset | NLP for Question Answering</title>
 <meta name="generator" content="Jekyll v4.0.0" />
-<meta property="og:title" content="Improving the Retriever on the Natural Questions Dataset" />
+<meta property="og:title" content="Improving the Retriever on a More Natural Dataset" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Practical considerations of Information Retrieval in an IR QA system" />
-<meta property="og:description" content="Practical considerations of Information Retrieval in an IR QA system" />
+<meta name="description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
+<meta property="og:description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
 <link rel="canonical" href="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"Practical considerations of Information Retrieval in an IR QA system","@type":"BlogPosting","headline":"Improving the Retriever on the Natural Questions Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
+{"description":"Practical considerations of implementing and improving Information Retrieval for a QA system","@type":"BlogPosting","headline":"Improving the Retriever on a More Natural Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
 
@@ -24,19 +24,19 @@
 <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-157475426-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
 
 <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Improving the Retriever on the Natural Questions Dataset | NLP for Question Answering</title>
+<title>Improving the Retriever on a More Natural Dataset | NLP for Question Answering</title>
 <meta name="generator" content="Jekyll v4.0.0" />
-<meta property="og:title" content="Improving the Retriever on the Natural Questions Dataset" />
+<meta property="og:title" content="Improving the Retriever on a More Natural Dataset" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Practical considerations of Information Retrieval in an IR QA system" />
-<meta property="og:description" content="Practical considerations of Information Retrieval in an IR QA system" />
+<meta name="description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
+<meta property="og:description" content="Practical considerations of implementing and improving Information Retrieval for a QA system" />
 <link rel="canonical" href="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:url" content="https://qa.fastforwardlabs.com/hidden-arr/" />
 <meta property="og:site_name" content="NLP for Question Answering" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"Practical considerations of Information Retrieval in an IR QA system","@type":"BlogPosting","headline":"Improving the Retriever on the Natural Questions Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
+{"description":"Practical considerations of implementing and improving Information Retrieval for a QA system","@type":"BlogPosting","headline":"Improving the Retriever on a More Natural Dataset","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/hidden-arr/"},"url":"https://qa.fastforwardlabs.com/hidden-arr/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
@@ -97,7 +97,7 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Improving the Retriever on the Natural Questions Dataset</h1><p class="page-description">Practical considerations of Information Retrieval in an IR QA system</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-22T00:00:00-05:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">Improving the Retriever on a More Natural Dataset</h1><p class="page-description">Practical considerations of implementing and improving Information Retrieval for a QA system</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-22T00:00:00-05:00" itemprop="datePublished">
         Jul 22, 2020
       </time>
        • <span class="read-time" title="Estimated read time">
@@ -184,7 +184,7 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you’ve been following along for our question answering journey thus far, you now understand the basic building blocks that form the pipeline of a modern Information Retrieval-based (IR) Question Answering system, and how that system can be evaluated on the SQuAD2.0 dataset. But as it turns out, implementing question answering for real-world use cases is a bit more nuanced than evaluating system performance against a toy dataset. In this post, we’ll explore several challenges faced by the Retriever when applying IR-QA to a more realistic, alternative dataset, as well as a few practical approaches for overcoming them.</p>
+<p>If you’ve been following along for our question answering journey thus far, you now understand the basic building blocks that form the pipeline of a modern Information Retrieval-based (IR) Question Answering system, and how that system can be evaluated on the SQuAD2.0 dataset. But as it turns out, implementing question answering for real-world use cases is a bit more nuanced than evaluating system performance against a toy dataset. In this post, we’ll explore several challenges faced by the Retriever when applying IR-QA to a more realistic dataset, as well as a few practical approaches for overcoming them.</p>
 
 </div>
 </div>
@@ -197,7 +197,7 @@ window.onload = wrap_img;
 </h3>
 <ul>
 <li>a basic understanding of IR based QA systems (see our <a href="https://qa.fastforwardlabs.com/">previous posts</a>)</li>
-<li>a basic understanding NLP</li>
+<li>a basic understanding modern NLP techniques</li>
 </ul>
 
 </div>
@@ -215,10 +215,9 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>While SQuAD has been a popular benchmark for the task of machine comprehension, there are several perceived flaws in how the dataset was constructed that renders it an unfair comparison to how humans naturally seek answers to questions. Specifically, SQuAD was created through artificial crowdsourcing where annotators were presented with a Wikipedia paragraph and asked to write questions that can be answered from it. This is a fundamentally different scenario than human curiosity blindly seeking answers to an unknown domain. By first reading a body of text and then generating questions, the annotators have already leaked novel pieces of information into the questions they craft. The methodology used here is less than ideal because a.) many questions lack context in absence of the provided paragraph and b.) there is a high lexical overlap between passages and questions - artificially inflating the efficacy of exact match search tools (like Elasticsearch). Consider the following example:</p>
+<p>While SQuAD has been a popular benchmark for the task of machine comprehension, there are several perceived flaws in how the dataset was constructed that renders it an unfair comparison to how humans naturally seek answers to questions. Specifically, SQuAD was created through artificial crowdsourcing where annotators were presented with a Wikipedia paragraph and asked to write questions that can be answered from it. This is a fundamentally different scenario than human curiosity blindly seeking answers to an unknown domain. By first reading a body of text and then generating questions, the annotators had already leaked novel pieces of information into the questions they crafted. The methodology applied here is less than ideal because a.) many questions lack context in absence of the provided paragraph and b.) there is a high lexical overlap between passages and questions - artificially inflating the efficacy of exact match search tools (like Elasticsearch). Consider the following example:</p>
 <blockquote>
-<p><strong><em>Question:</em></strong> Other than the Automobile Club of Southern California, what other AAA Auto Club chose to simplify the divide? &gt; <strong><em>Answer:</em></strong> California State Automobile Association\
-<strong><em>Context:</em></strong> The state is most commonly divided and promoted by its regional tourism groups as consisting of northern, central, and southern California regions. The two AAA Auto Clubs of the state, the California State Automobile Association and the Automobile Club of Southern California, choose to simplify matters by dividing the state along the lines where their jurisdictions for membership apply, as either northern or southern California, in contrast to the three-region point of view. Another influence is the geographical phrase South of the Tehachapis, which would split the southern region off at the crest of that transverse range, but in that definition, the desert portions of north Los Angeles County and eastern Kern and San Bernardino Counties would be included in the southern California region due to their remoteness from the central valley and interior desert landscape.
+<p><strong><em>Question:</em></strong> Other than the Automobile Club of Southern California, what other AAA Auto Club chose to simplify the divide? \n&gt; <strong><em>Answer:</em></strong> California State Automobile Association \n&gt; <strong><em>Context:</em></strong> The state is most commonly divided and promoted by its regional tourism groups as consisting of northern, central, and southern California regions. The two AAA Auto Clubs of the state, the California State Automobile Association and the Automobile Club of Southern California, choose to simplify matters by dividing the state along the lines where their jurisdictions for membership apply, as either northern or southern California, in contrast to the three-region point of view. Another influence is the geographical phrase South of the Tehachapis, which would split the southern region off at the crest of that transverse range, but in that definition, the desert portions of north Los Angeles County and eastern Kern and San Bernardino Counties would be included in the southern California region due to their remoteness from the central valley and interior desert landscape.
 What “divide” is the question talking about? It is clear that the derived question lacks meaning without the context. We can also see how the question’s overly specific, un-natural vocabulary will inflate performance of exact match search.</p>
 </blockquote>
 
@@ -271,10 +270,17 @@ What “divide” is the question talking about? It is clear that the derived qu
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>As we learned from the last blog post, the inverted index data structure underlying Elasticsearch doesn’t preserve word order in a query by default. Consider the following question:</p>
 <blockquote>
-<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?"
-In this example, we as humans can intuit that the combination of words “The Hunger Games” has a very specific meaning in contrast to the three tokens independently. We want to enable Elasticsearch to identify content specific to the "Hunger Games” trilogy, and not become entangled with general content about hunger and games. To accomplish this, we can apply named entity recognition (NER) - an information extraction technique that automatically identifies named entities (e.g. people, places, organizations, locations, etc.) in free text.</p>
+<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?"</p>
 </blockquote>
-<p>Implementing entity enrichment requires extended use of Elasticsearch’s rich query language and a pre-trained NER model (we chose one that is easily accessible through the spaCy NLP library). The process is as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this example, we as humans can intuit that the combination of words “The Hunger Games” has a very specific meaning in contrast to the three tokens independently. We want to enable Elasticsearch to identify content specific to the "Hunger Games” trilogy, and not become entangled with general content about hunger and games. To accomplish this, we can apply named entity recognition (NER) - an information extraction technique that automatically identifies named entities (e.g. people, places, organizations, locations, etc.) in free text.</p>
+<p>Implementing entity enrichment requires extended use of Elasticsearch’s rich query language and a pre-trained NER model (we chose one that is easily accessible through the <a href="https://spacy.io/">spaCy</a> NLP library). The process is as follows:</p>
 <ol>
 <li>Apply NER to process a question and extract out any named entities</li>
 <li>Create a phrase sub-query for each entity. A phrase query in Elasticsearch preserves the order of tokens on match criteria</li>
@@ -299,8 +305,8 @@ In this example, we as humans can intuit that the combination of words “The Hu
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
 
 <span class="c1"># install dependencies</span>
-<span class="c1"># !pip install elasticsearch_dsl</span>
-<span class="c1"># !pip install transformers==2.11.0</span>
+<span class="o">!</span>pip install elasticsearch_dsl
+<span class="o">!</span>pip install <span class="nv">transformers</span><span class="o">==</span><span class="m">2</span>.11.0
 
 <span class="c1"># import packages</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -319,24 +325,8 @@ In this example, we as humans can intuit that the combination of words “The Hu
 <span class="n">word_vectors</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"glove-wiki-gigaword-50"</span><span class="p">)</span>
 <span class="n">unmasker</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s1">'fill-mask'</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"bert-base-uncased"</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="s2">"bert-base-uncased"</span><span class="p">)</span>
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"bert-base-uncased"</span><span class="p">,</span> <span class="n">use_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
-
-    </details>
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">QueryExpander</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">QueryExpander</span><span class="p">:</span>
     <span class="sd">'''</span>
 <span class="sd">    Query expansion utility class that augments an ElasticSearch query with optional techniques</span>
 <span class="sd">    including Named Entity Recognition and Synonym Expansion</span>
@@ -567,6 +557,7 @@ In this example, we as humans can intuit that the combination of words “The Hu
 </div>
 </div>
 
+    </details>
 </div>
     
 
@@ -614,7 +605,7 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From the example above, we see that our NER model successfully identified "The Hunger Games" as an entity and the final boolean query to be executed in Elasticsearch is comprised of two parts - one multi-match query for the raw question text, and one phrase-match query for the extracted entity.</p>
+<p>From the example above, we see that our NER model successfully identified "The Hunger Games" as an entity and the final boolean query served for execution in Elasticsearch is comprised of two parts - one multi-match query for the raw question text, and one phrase-match query for the extracted entity.</p>
 
 </div>
 </div>
@@ -633,9 +624,16 @@ Elasticsearch Query:
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The exact match nature of Elasticsearch is powerful and effective, but isn't perfect. Word matching is limited in its ability to take semantically related concepts into consideration, and for the vague nature of NQ questions, will degrade the performance of our Retriever. For example, let's further consider the question from above and a supporting context passage:</p>
 <blockquote>
-<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?"&gt; <strong><em>Context:</em></strong> "President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy and though seemingly laid-back his demeanor hides a sadistic mind."
-An exact-match based Retriever like Elasticsearch would struggle to fetch this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". More <a href="https://arxiv.org/pdf/2004.04906.pdf">sophisticated document retrieval systems</a> that take advantage of learned, dense representations of text would perform better in this situation, however these systems are non-trivial to implement and impractical to maintain. Rather, we can try to help generalize the query through synonym expansion at search time - that is, identifying ambiguous terms in the input question and augmenting the query with additional synonyms for those terms. But how do we determine what a synonym is? And how do you know which terms in the question should be expanded?</p>
+<p><strong><em>Question:</em></strong> "Who is the bad guy in The Hunger Games?" \n&gt; <strong><em>Context:</em></strong> "President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy and though seemingly laid-back his demeanor hides a sadistic mind."</p>
 </blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An exact-match based Retriever like Elasticsearch would struggle to fetch this supporting context passage because it lacks the ability to relate the concepts of "bad guy" and "villain". More <a href="https://arxiv.org/pdf/2004.04906.pdf">sophisticated document retrieval systems</a> that take advantage of learned, dense representations of text would perform better in this situation, however these systems are non-trivial to implement and impractical to maintain. Rather, we can try to help generalize the query through synonym expansion at search time - that is, identifying ambiguous terms in the input question and augmenting the query with additional synonyms for those terms. But how do we determine what a synonym is? And how do you know which terms in the question should be expanded?</p>
 <p>We experimented with two methods that follow the same process, but differ slightly in how synonyms are designated. The process is as follows:</p>
 <ol>
 <li>
@@ -650,41 +648,6 @@ An exact-match based Retriever like Elasticsearch would struggle to fetch this s
 </div>
 </div>
 </div>
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># import sys</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sys.path.append('/Users/areed/opt/anaconda3/envs/qa-blog/lib/python3.6/site-packages')</span>
-<span class="c1"># sys.path.append('/Users/areed/opt/anaconda3/envs/qa-blog/lib/python3.7/site-packages')</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    
-
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -697,8 +660,8 @@ An exact-match based Retriever like Elasticsearch would struggle to fetch this s
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Word embeddings are real-valued, vector representations of text that capture general contextual similarities between words in a given vocabulary. They are built on the idea that similar words tend to occur together frequently and thus are learned in an unsupervised manner from vast amounts of unstructured text data. The dense, numerical form of embeddings allow for mathemematical operations - with a common application being vector similarity. Since the vectors have been trained to represent the co-occuring nature of words, we can extrapolate that terms corresponding to vectors with high cosine similarity are contextually synonomous. These word relationships are learned with regard to the data they are trained on, so it is critical that the training corpus for a set of embeddings is indicative of the downstream task the embedding vectors will be applied to. For that reason, we make use of 100 length <a href="https://nlp.stanford.edu/pubs/glove.pdf">GloVe</a> word vectors trained on Wikipedia and made available through the <a href="https://radimrehurek.com/gensim/">Gensim library</a>.</p>
-<p>Let's take a look at an example question and how it is expanded:</p>
+<p>Word embeddings are real-valued, vector representations of text that capture general contextual similarities between words in a given vocabulary. They are built on the idea that similar words tend to occur together frequently and thus are learned in an unsupervised manner from vast amounts of unstructured text data. The dense, numerical form of embeddings allow for mathemematical operations - a common application being vector similarity. Since the vectors have been trained to represent the natural co-occurance of words, we extrapolate that terms corresponding to vectors with high cosine similarity are contextually synonomous. These word relationships are learned with regard to the data they are trained on, so it is critical that the training corpus for a set of embeddings is indicative of the downstream task the embedding vectors will be applied to. For that reason, we make use of 100 length <a href="https://nlp.stanford.edu/pubs/glove.pdf">GloVe</a> word vectors trained on Wikipedia and made available through the <a href="https://radimrehurek.com/gensim/">Gensim library</a>.</p>
+<p>Let's take a look at an example question and how it is expanded using static embeddings:</p>
 
 </div>
 </div>
@@ -817,8 +780,8 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>After drawing your attention to the suggested expansions for the term "rose", it is obvious that our approach lacks the ability to disambiguate between different senses of the same word. As humans, we naturally infer that the term "rose" implies a flower rather than the past-tense action of ascending from a lower position to a higher one. This illustrates a main limitation of word embeddings in that words with multiple meanings are conflated into a single, static representation. In other words, polysemy and homonymy are not handled effectively.</p>
-<p>Not only have we altered the semantics of the original query by introducing the new terms for the wrong word-sense, but our approach has also failed to accurately capture synonomous terms for that mistaken word-sense. We see that, "rose" expanded to "fell" and "climbed", the first of which is actually an antonym. So what is going on here? As mentioned earlier, word embeddings are trained at the task of modeling co-occurance probabilities. So while terms that occur in similar contexts may sometimes be synonomous, that is surely not always the case.</p>
+<p>After drawing your attention to the suggested expansions for the term "rose", it is obvious that our approach lacks the ability to disambiguate between different senses of the same word. As humans, we naturally infer that the term "rose" implies a flower rather than the past-tense action of ascending from a lower position to a higher one. This illustrates a main limitation of word embeddings - words with multiple meanings are conflated into a single, static representation. In other words, polysemy and homonymy are not handled effectively.</p>
+<p>Not only have we altered the semantics of the original query by introducing the new terms for the wrong word-sense, but our approach has also failed to accurately capture synonomous terms for that mistaken word-sense. We see that, "rose" expanded to "fell" and "climbed"...the first of which is actually an antonym. What is going on here? As mentioned earlier, word embeddings are trained at the task of modeling co-occurance probabilities. So while terms that occur in similar contexts <em>may</em> sometimes be synonomous, that certainly is not always the case.</p>
 
 </div>
 </div>
@@ -835,13 +798,20 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>So what was missing from the prior approach that allows us as humans to disambiguate the meaning of the word "rose"? The answer is <em>context</em>. The ability to dynamically recognize alternate meaning by paying attention to the context surrounding a term allows us to de-conflate homonymns. For a computer to do the same, we can make use of a masked language model (MLM) to leverage the bi-directional context surrounding a given word and imply its morphological form.
+<p>What was missing from the prior approach that allows us as humans to disambiguate the meaning of the word "rose"? The answer is <em>context</em>. The ability to dynamically recognize alternate meaning by paying attention to the context surrounding a term allows us to de-conflate homonymns. For a computer to do the same, we can make use of a masked language model (MLM) to leverage the bi-directional context surrounding a given word and imply its morphological form.
 </p>
 <div class="flash">
     <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
-    <strong>Note: </strong>For more info how a MLM works, we recommend the original <a href="https://arxiv.org/pdf/1810.04805.pdf">BERT paper</a> and this <a href="https://demo.allennlp.org/masked-lm">interactive tool from AllenNLP</a>
+    <strong>Note: </strong>For more info how a masked language model works, we recommend the original <a href="https://arxiv.org/pdf/1810.04805.pdf">BERT paper</a> and this <a href="https://demo.allennlp.org/masked-lm">interactive tool from AllenNLP</a>
 </div>
-In practice, this involves constructing intermediate versions of the original question where each identified candidate token is masked, and a MLM predicts the top N tokens that are contextually most likely to complete the sentence. As with static embeddings, contextual query expansion relies on the assumption that the MLM has been trained (or fine-tuned) on the target document corpus so it holds relevant, implicit information that can be exploited to identify suitable expansion terms.
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In practice, this involves constructing intermediate versions of the original question where each identified candidate token is masked, and a MLM predicts the top N tokens that are contextually most likely to complete the sentence. As with static embeddings, contextual query expansion relies on the assumption that the MLM has been trained (or fine-tuned) on the target document corpus so it holds relevant, implicit information that can be exploited to identify suitable expansion terms.</p>
 <p>In our case, we make use of a <em>BERT-base-uncased</em> model that has also been pre-trained on Wikipedia and made conveniently available through <a href="https://huggingface.co/">HuggingFace's</a> "fill-mask" pipeline API. Let's see how this approach performs on our ambiguous example from above:</p>
 
 </div>
@@ -901,7 +871,7 @@ Elasticsearch Query:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Nice! Because we are now using supervised model to consider the full sentence and predict the missing candidate terms, we are able to capture the correct meaning of the term "rose" and also produce more reliable "synonyms" for each of the three expanded terms.</p>
+<p>Great! Because we are now using supervised model to consider the full sentence and predict the missing candidate terms, we are able to capture the correct meaning of the term "rose" and also produce more reliable "synonyms" for each of the three expanded terms.</p>
 
 </div>
 </div>
@@ -992,7 +962,7 @@ Augmenting queries with Named Entities outperforms the original query alone</p>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The concept of passage ranking is inspired by a field of information retrieval called Learning to Rank which frames relevance ranking as a supervised machine learning problem. While many <a href="https://www.aclweb.org/anthology/D18-1053.pdf">supervised ranking approaches</a> prove successful, they require learning custom similarity metrics and introduce additional complexity into a QA system making them impractical for many use cases. In contrast, the passage ranking implementation that we consider here is a simple, unsupervised approach that demonstrates a viable way to improve IR for general question answering applications. Our passage ranking process consists of the following steps at search time:</p>
+<p>The concept of passage ranking is inspired by a field of information retrieval called <em>Learning to Rank</em> which frames relevance ranking as a supervised machine learning problem. While many <a href="https://www.aclweb.org/anthology/D18-1053.pdf">supervised ranking approaches</a> prove successful, they require learning custom similarity metrics and introduce additional complexity into a QA system making them impractical for many use cases. In contrast, the passage ranking implementation that we consider here is a simple, unsupervised approach that demonstrates a viable way to improve IR for general question answering applications. Our passage ranking process consists of the following steps at search time:</p>
 <ol>
 <li>The query question and a set of N candidate documents from Elasticsearch are fed as input</li>
 <li>All documents are split into paragraphs</li>
@@ -1047,6 +1017,23 @@ Augmenting queries with Named Entities outperforms the original query alone</p>
 </div>
 </div>
 </div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sys.path.append('/Users/areed/opt/anaconda3/envs/qa-blog/lib/python3.7/site-packages')</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
 </div>
 
 <script type="application/vnd.jupyter.widget-state+json">
