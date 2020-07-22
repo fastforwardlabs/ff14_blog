@@ -338,7 +338,7 @@ window.onload = wrap_img;
 
 <span class="k">class</span> <span class="nc">QueryExpander</span><span class="p">:</span>
     <span class="sd">'''</span>
-<span class="sd">    Query expansion utility class that augments an ElasticSearch query with optional techniques</span>
+<span class="sd">    Query expansion utility that augments an ElasticSearch queries with optional techniques</span>
 <span class="sd">    including Named Entity Recognition and Synonym Expansion</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
@@ -396,8 +396,6 @@ window.onload = wrap_img;
 <span class="sd">        '''</span>
         
         <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">]</span>
-        <span class="c1"># print('Entities:', entity_list)</span>
-        
         <span class="n">entity_sub_queries</span> <span class="o">=</span> <span class="p">[]</span>
         
         <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">entity_list</span><span class="p">:</span>
@@ -414,6 +412,8 @@ window.onload = wrap_img;
         
     <span class="k">def</span> <span class="nf">identify_terms_to_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">'''</span>
+<span class="sd">        Identify terms in the question that are eligible for expansion</span>
+<span class="sd">        per a set of defined rules</span>
 <span class="sd">        </span>
 <span class="sd">        '''</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'entities'</span><span class="p">):</span>
@@ -423,7 +423,7 @@ window.onload = wrap_img;
         <span class="k">else</span><span class="p">:</span>
             <span class="n">entity_terms</span> <span class="o">=</span> <span class="p">[]</span>
     
-        <span class="c1"># terms to expand are that not part of entity or a stopword</span>
+        <span class="c1"># terms to expand are not part of entity, a stopword, numeric, etc</span>
         <span class="n">entity_pos</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"NOUN"</span><span class="p">,</span><span class="s2">"VERB"</span><span class="p">,</span><span class="s2">"ADJ"</span><span class="p">,</span><span class="s2">"ADV"</span><span class="p">]</span>
         <span class="n">terms_to_expand</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx_term</span> <span class="k">for</span> <span class="n">idx_term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span> <span class="k">if</span> \
                            <span class="p">(</span><span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">entity_terms</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">idx_term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_stop</span><span class="p">)</span>\
@@ -437,27 +437,23 @@ window.onload = wrap_img;
     <span class="k">def</span> <span class="nf">construct_question_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">'''</span>
 <span class="sd">        Builds a multi-match query from the raw question text extended with synonyms </span>
-<span class="sd">        for eligible any terms (i.e. terms that are not part of an entity or stopword)</span>
+<span class="sd">        for eligible any terms</span>
 
 <span class="sd">        '''</span>
         
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'terms_to_expand'</span><span class="p">):</span>
-            <span class="c1"># print(self.question_text)</span>
             
             <span class="n">syns</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms_to_expand</span><span class="p">:</span>
 
                 <span class="k">if</span> <span class="s1">'gensim_model'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">syns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gather_synonyms_static</span><span class="p">(</span><span class="n">term</span><span class="p">))</span>
-                    <span class="c1"># print('Static:', term, '--&gt;', self.gather_synonyms_static(term))</span>
 
                 <span class="k">elif</span> <span class="s1">'MLM'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">synonym_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">syns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gather_synonyms_contextual</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">term</span><span class="p">))</span>
-                    <span class="c1"># print('Contextual:', term, '--&gt;', self.gather_synonyms_contextual(i,term))</span>
 
             <span class="n">syns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">syns</span><span class="p">))</span>
             <span class="n">syns</span> <span class="o">=</span> <span class="p">[</span><span class="n">syn</span> <span class="k">for</span> <span class="n">syn</span> <span class="ow">in</span> <span class="n">syns</span> <span class="k">if</span> <span class="p">(</span><span class="n">syn</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">(</span><span class="n">syn</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pos_</span> <span class="o">!=</span> <span class="s1">'PROPN'</span><span class="p">)]</span>
-            <span class="c1"># print('\n', 'Final Terms:', syns)</span>
             
             <span class="n">question</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_text</span> <span class="o">+</span> <span class="s1">' '</span> <span class="o">+</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">syns</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expanded_question</span> <span class="o">=</span> <span class="n">question</span>
@@ -477,7 +473,7 @@ window.onload = wrap_img;
     <span class="k">def</span> <span class="nf">gather_synonyms_contextual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_index</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
         <span class="sd">'''</span>
 <span class="sd">        Takes in a token, and returns specified number of synonyms as defined by</span>
-<span class="sd">        predictions from a Masked Language Model.</span>
+<span class="sd">        predictions from a masked language model</span>
 <span class="sd">        </span>
 <span class="sd">        '''</span>
         
@@ -536,6 +532,10 @@ window.onload = wrap_img;
         <span class="k">return</span> <span class="n">final_terms</span>
 
     <span class="k">def</span> <span class="nf">explain_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Print out an explanation for the query expansion methodology</span>
+<span class="sd">        </span>
+<span class="sd">        '''</span>
         
         <span class="nb">print</span><span class="p">(</span><span class="s1">'Question:'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_text</span><span class="p">,</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         
