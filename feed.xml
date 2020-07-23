@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-07-22T23:57:32-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>CFF builds a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">Beyond SQuAD: How to Apply a Transformer QA Model to Your Data</title><link href="https://qa.fastforwardlabs.com/domain%20adaptation/transfer%20learning/specialized%20datasets/qa/medical%20qa/2020/07/22/QA-for-Specialized-Data.html" rel="alternate" type="text/html" title="Beyond SQuAD: How to Apply a Transformer QA Model to Your Data" /><published>2020-07-22T00:00:00-05:00</published><updated>2020-07-22T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/domain%20adaptation/transfer%20learning/specialized%20datasets/qa/medical%20qa/2020/07/22/QA-for-Specialized-Data</id><content type="html" xml:base="https://qa.fastforwardlabs.com/domain%20adaptation/transfer%20learning/specialized%20datasets/qa/medical%20qa/2020/07/22/QA-for-Specialized-Data.html">&lt;p&gt;Implementing an IR QA system in the real-world is a nuanced affair. As we’ve been &lt;a href=&quot;http://qa.fastforwardlabs.com&quot;&gt;writing about our QA journey&lt;/a&gt;, we began to wonder: how well would a Reader trained on SQuAD2.0 perform on a real-world corpus? And what if that corpus were highly specialized - perhaps a collection of legal contracts, financial reports, or technical manuals? In this post, we describe our experiments designed to highlight how to adapt Transformer models to specialized domains, and provide guidelines for practical applications.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://qa.fastforwardlabs.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://qa.fastforwardlabs.com/" rel="alternate" type="text/html" /><updated>2020-07-23T07:26:10-05:00</updated><id>https://qa.fastforwardlabs.com/feed.xml</id><title type="html">NLP for Question Answering</title><subtitle>CFF builds a state-of-the-art QA application with the latest NLP techniques</subtitle><entry><title type="html">Beyond SQuAD: How to Apply a Transformer QA Model to Your Data</title><link href="https://qa.fastforwardlabs.com/domain%20adaptation/transfer%20learning/specialized%20datasets/qa/medical%20qa/2020/07/22/QA-for-Specialized-Data.html" rel="alternate" type="text/html" title="Beyond SQuAD: How to Apply a Transformer QA Model to Your Data" /><published>2020-07-22T00:00:00-05:00</published><updated>2020-07-22T00:00:00-05:00</updated><id>https://qa.fastforwardlabs.com/domain%20adaptation/transfer%20learning/specialized%20datasets/qa/medical%20qa/2020/07/22/QA-for-Specialized-Data</id><content type="html" xml:base="https://qa.fastforwardlabs.com/domain%20adaptation/transfer%20learning/specialized%20datasets/qa/medical%20qa/2020/07/22/QA-for-Specialized-Data.html">&lt;p&gt;Implementing an IR QA system in the real-world is a nuanced affair. As we’ve been &lt;a href=&quot;http://qa.fastforwardlabs.com&quot;&gt;writing about our QA journey&lt;/a&gt;, we began to wonder: how well would a Reader trained on SQuAD2.0 perform on a real-world corpus? And what if that corpus were highly specialized - perhaps a collection of legal contracts, financial reports, or technical manuals? In this post, we describe our experiments designed to highlight how to adapt Transformer models to specialized domains, and provide guidelines for practical applications.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/post5/morning-brew-D-3g8pkHqCc-unsplash.jpg&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&amp;amp;utm_medium=referral&amp;amp;utm_content=creditCopyText&quot;&gt;Morning Brew&lt;/a&gt; on &lt;a href=&quot;unsplash.com&quot;&gt;Unsplash&lt;/a&gt;&lt;/p&gt;
@@ -195,7 +195,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
 
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;If you’ve been following along for our question answering journey thus far, you now understand the basic building blocks that form the pipeline of a modern Information Retrieval-based (IR) Question Answering system, and how that system can be evaluated on the SQuAD2.0 dataset. But as it turns out, implementing question answering for real-world use cases is a bit more nuanced than evaluating system performance against a toy dataset. In this post, we’ll explore several challenges faced by the Retriever when applying IR-QA to a more realistic dataset, as well as a few practical approaches for overcoming them.&lt;/p&gt;
+&lt;p&gt;If you’ve been following along on our question answering journey thus far, you now understand the basic building blocks that form the pipeline of a modern Information Retrieval-based (IR) Question Answering system, and how that system can be evaluated on the SQuAD2.0 dataset. But, as it turns out, implementing question answering for real-world use cases is a bit more nuanced than evaluating system performance against a toy dataset. In this post, we’ll explore several challenges faced by the Retriever when applying IR-QA to a more realistic dataset, as well as a few practical approaches for overcoming them.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -204,7 +204,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
 &lt;h3 id=&quot;Prerequisites&quot;&gt;Prerequisites&lt;a class=&quot;anchor-link&quot; href=&quot;#Prerequisites&quot;&gt; &lt;/a&gt;&lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;a basic understanding of IR-QA systems (see our &lt;a href=&quot;https://qa.fastforwardlabs.com/&quot;&gt;previous posts&lt;/a&gt;)&lt;/li&gt;
-&lt;li&gt;a basic understanding modern NLP techniques&lt;/li&gt;
+&lt;li&gt;a basic understanding of modern NLP techniques&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;/div&gt;
@@ -218,9 +218,11 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;While SQuAD has been a popular benchmark for the task of machine comprehension, there are several perceived flaws in how the dataset was constructed that renders it an unfair comparison to how humans naturally seek answers to questions. Specifically, SQuAD was created through artificial crowdsourcing where annotators were presented with a Wikipedia paragraph and asked to write questions that can be answered from it. This is a fundamentally different scenario than human curiosity blindly seeking answers to an unknown domain. By first reading a body of text and then generating questions, the annotators had already leaked information into the questions they crafted. The methodology used here is not ideal because a.) many questions lack context in absence of the provided paragraph and b.) there is a high lexical overlap between passages and questions - artificially inflating the efficacy of exact match search tools (like Elasticsearch). Consider the following example:&lt;/p&gt;
+&lt;p&gt;While SQuAD has been a popular benchmark for the task of machine comprehension, there are several perceived flaws in how the dataset was constructed that render it an unfair comparison to how humans naturally seek answers to questions. Specifically, SQuAD was created through artificial crowdsourcing where annotators were presented with a Wikipedia paragraph and asked to write questions that can be answered from it. By first reading a body of text and then generating questions, the annotators had already leaked information into the questions they crafted.&lt;/p&gt;
+&lt;p&gt;The methodology used here is not ideal, because a.) many questions lack context in absence of the provided paragraph and b.) there is a high lexical overlap between passages and questions - which artificially inflates the efficacy of exact match search tools (like Elasticsearch). Consider the following example:&lt;/p&gt;
 &lt;blockquote&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;Question:&lt;/em&gt;&lt;/strong&gt; Other than the Automobile Club of Southern California, what other AAA Auto Club chose to simplify the divide?&lt;br /&gt;
-&lt;strong&gt;&lt;em&gt;Answer:&lt;/em&gt;&lt;/strong&gt; California State Automobile Association&lt;/p&gt;
+&lt;strong&gt;&lt;em&gt;Answer:&lt;/em&gt;&lt;/strong&gt; California State Automobile Association
+This is a fundamentally different scenario from that in the real world; human curiosity often leads us to blindly seek answers from an unknown domain. The SQuAD dataset consists of questions constructed from a known domain; essentially the process is (albeit imperfectly) rigged.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;/div&gt;
@@ -234,13 +236,13 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;In response to the criticism of SQuAD’s shortcomings and to spur the progress of open-domain QA systems, Google released the &lt;a href=&quot;https://ai.google.com/research/NaturalQuestions&quot;&gt;Natural Questions (NQ) dataset&lt;/a&gt; in 2019. NQ consists of real, anonymized questions issued to the Google search engine and provides an entire Wikipedia article as context that may or may not contain the answer to a given question. The inclusion of open-ended, human-written questions and the need to reason over full pages of content make NQ a much more realistic and challenging task than datasets before it. Here are a few example questions from NQ:&lt;/p&gt;
+&lt;p&gt;In response to the criticism of SQuAD’s shortcomings, and to spur the progress of open-domain QA systems, Google released the &lt;a href=&quot;https://ai.google.com/research/NaturalQuestions&quot;&gt;Natural Questions (NQ) dataset&lt;/a&gt; in 2019. NQ consists of real, anonymized questions issued to the Google search engine, and provides an entire Wikipedia article as context that may or may not contain the answer to a given question. The inclusion of open-ended, human-written questions and the need to reason over full pages of content make building a QA system over the NQ dataset a much more realistic and challenging task than datasets before it. Here are a few example questions from NQ:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;where does the energy in a nuclear explosion come from?&lt;/li&gt;
 &lt;li&gt;how many episodes in season 2 breaking bad?&lt;/li&gt;
 &lt;li&gt;meaning of cats in the cradle song?&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Notice how some NQ questions are underspecified, raw, and syntactically erroneous? Do these seem oddly familiar to how you interact with search engines everyday? Let’s explore a couple of techniques that might help overcome the challenges presented by this dataset and improve the Elasticsearch Retriever we built in the previous blog post.&lt;/p&gt;
+&lt;p&gt;Notice how some of the NQ questions are underspecified, raw, and syntactically erroneous. Do these seem oddly familiar to how you interact with search engines every day? Let’s explore a couple of techniques that might help overcome the challenges presented by this dataset and improve the Elasticsearch Retriever we built for our &lt;a href=&quot;https://qa.fastforwardlabs.com/elasticsearch/mean%20average%20precision/recall%20for%20irqa/qa%20system%20design/2020/06/30/Evaluating_the_Retriever_&amp;amp;_End_to_End_System.html&quot;&gt;previous blog post&lt;/a&gt;.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -259,7 +261,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;As we learned from the last blog post, the inverted index data structure underlying Elasticsearch doesn’t preserve word order in a query by default. Consider the following question:&lt;/p&gt;
+&lt;p&gt;As we learned previously, the inverted index data structure underlying Elasticsearch doesn’t preserve word order in a query by default. Consider the following question:&lt;/p&gt;
 &lt;blockquote&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;Question:&lt;/em&gt;&lt;/strong&gt; &quot;Who is the bad guy in The Hunger Games?&quot;&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -268,13 +270,13 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;In this example, we as humans can intuit that the combination of words “The Hunger Games” has a very specific meaning in contrast to the three tokens independently. We want to enable Elasticsearch to identify content specific to the &quot;Hunger Games” trilogy, and not become entangled with general content about hunger and games. To accomplish this, we can apply named entity recognition (NER) - an information extraction technique that automatically identifies named entities (e.g. people, places, organizations, locations, etc.) in free text.&lt;/p&gt;
+&lt;p&gt;In this example, we as humans can intuit that the combination of words “The Hunger Games” has a very specific meaning in contrast to the three tokens (&quot;the&quot;, &quot;hunger&quot;, &quot;games&quot;) independently. We want to enable Elasticsearch to identify content specific to &quot;The Hunger Games” trilogy, and not become entangled with general content about hunger and games. To accomplish this, we can apply named entity recognition (NER) - an information extraction technique that automatically identifies named entities (e.g., people, places, organizations, locations, etc.) in free text.&lt;/p&gt;
 &lt;p&gt;Implementing entity enrichment requires extended use of Elasticsearch’s &lt;a href=&quot;https://elasticsearch-dsl.readthedocs.io/en/latest/&quot;&gt;rich query language&lt;/a&gt; and a pre-trained NER model (we chose one readily available through the &lt;a href=&quot;https://spacy.io/&quot;&gt;spaCy&lt;/a&gt; NLP library). The process is as follows:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Apply NER to process a question and extract out any named entities&lt;/li&gt;
-&lt;li&gt;Create a phrase sub-query for each entity to preserve the order of tokens for that phrase in match criteria&lt;/li&gt;
-&lt;li&gt;Create a standard match sub-query for the original question itself&lt;/li&gt;
-&lt;li&gt;Combine all sub-queries into a boolean compound query that scores candidate documents according to overlap criteria from both question and phrase queries&lt;/li&gt;
+&lt;li&gt;Apply NER to process a question and extract out any named entities.&lt;/li&gt;
+&lt;li&gt;Create a phrase subquery for each entity to preserve the order of tokens for that phrase in match criteria.&lt;/li&gt;
+&lt;li&gt;Create a standard match subquery for the original question itself.&lt;/li&gt;
+&lt;li&gt;Combine all subqueries into a boolean compound query that scores candidate documents according to overlap criteria from both question and phrase queries.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;To simplify query expansion testing, we built a QueryExpander class (hidden below) that automates several query expansion methods. Let's take a look how our query is transformed through entity enrichment:&lt;/p&gt;
 
@@ -316,7 +318,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
 
 &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;QueryExpander&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;sd&quot;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
-&lt;span class=&quot;sd&quot;&gt;    Query expansion utility that augments an ElasticSearch queries with optional techniques&lt;/span&gt;
+&lt;span class=&quot;sd&quot;&gt;    Query expansion utility that augments ElasticSearch queries with optional techniques&lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;    including Named Entity Recognition and Synonym Expansion&lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;    &lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;    Args:&lt;/span&gt;
@@ -345,7 +347,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
         
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;build_query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
 
-        &lt;span class=&quot;c1&quot;&gt;# build entity sub-query&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# build entity subquery&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;entity_args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
             &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;extract_entities&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
         
@@ -353,10 +355,10 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
         &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;synonym_args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
             &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;identify_terms_to_expand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
         
-        &lt;span class=&quot;c1&quot;&gt;# build question sub-query&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# build question subquery&lt;/span&gt;
         &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;construct_question_query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
         
-        &lt;span class=&quot;c1&quot;&gt;# combine sub-queries&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# combine subqueries&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;sub_queries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;sub_queries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;question_sub_query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hasattr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;entity_sub_queries&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
@@ -368,8 +370,8 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
     
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;extract_entities&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
         &lt;span class=&quot;sd&quot;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
-&lt;span class=&quot;sd&quot;&gt;        Extracts named entities using spaCy and constructs phrase match sub-queries&lt;/span&gt;
-&lt;span class=&quot;sd&quot;&gt;        for each entity. Saves both entities and sub-queries as attributes.&lt;/span&gt;
+&lt;span class=&quot;sd&quot;&gt;        Extracts named entities using spaCy and constructs phrase match subqueries&lt;/span&gt;
+&lt;span class=&quot;sd&quot;&gt;        for each entity. Saves both entities and subqueries as attributes.&lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;        &lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;        &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
         
@@ -401,7 +403,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
         &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;entity_terms&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
     
-        &lt;span class=&quot;c1&quot;&gt;# terms to expand are not part of entity, a stopword, numeric, etc&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# terms to expand are not part of entity, a stopword, numeric, etc.&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;entity_pos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NOUN&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;VERB&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;ADJ&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;ADV&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;terms_to_expand&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx_term&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_term&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; \
                            &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx_term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lower_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;entity_terms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_stop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;\
@@ -415,7 +417,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;construct_question_query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
         &lt;span class=&quot;sd&quot;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;        Builds a multi-match query from the raw question text extended with synonyms &lt;/span&gt;
-&lt;span class=&quot;sd&quot;&gt;        for eligible any terms&lt;/span&gt;
+&lt;span class=&quot;sd&quot;&gt;        for any eligible terms&lt;/span&gt;
 
 &lt;span class=&quot;sd&quot;&gt;        &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
         
@@ -485,7 +487,7 @@ Photo by &lt;a href=&quot;https://unsplash.com/@morningbrew?utm_source=unsplash&
         &lt;span class=&quot;sd&quot;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;        Takes in a token and returns a specified number of synonyms defined by&lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;        cosine similarity of word vectors. Uses stemming to ensure none of the&lt;/span&gt;
-&lt;span class=&quot;sd&quot;&gt;        returned synonymns share the same stem (ex. photo and photos cant happen)&lt;/span&gt;
+&lt;span class=&quot;sd&quot;&gt;        returned synonyms share the same stem (ex. photo and photos can&amp;#39;t happen)&lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;        &lt;/span&gt;
 &lt;span class=&quot;sd&quot;&gt;        &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
@@ -605,7 +607,7 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;The exact match nature of Elasticsearch is powerful and effective, but isn't perfect. Word matching is limited in its ability to take semantically related concepts into consideration, and for the vague nature of NQ questions, will degrade the performance of our Retriever. For example, let's further consider the question from above and a supporting context passage:&lt;/p&gt;
+&lt;p&gt;The exact match nature of Elasticsearch is powerful and effective, but it isn't perfect. Word matching is limited in its ability to take semantically related concepts into consideration, and for the vague nature of NQ questions, will degrade the performance of our Retriever. For example, let's further consider the question from above and a supporting context passage:&lt;/p&gt;
 &lt;blockquote&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;Question:&lt;/em&gt;&lt;/strong&gt; &quot;Who is the bad guy in The Hunger Games?&quot;&lt;br /&gt;
 &lt;strong&gt;&lt;em&gt;Context:&lt;/em&gt;&lt;/strong&gt; &quot;President Coriolanus Snow is the main antagonistic villain in The Hunger Games trilogy, and though seemingly laid-back, his demeanor hides a sadistic mind.&quot;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -615,14 +617,15 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;An exact-match based Retriever like Elasticsearch would struggle to fetch this supporting context passage because it lacks the ability to relate the concepts of &quot;bad guy&quot; and &quot;villain&quot;. More &lt;a href=&quot;https://arxiv.org/pdf/2004.04906.pdf&quot;&gt;sophisticated document retrieval systems&lt;/a&gt; that take advantage of learned, dense representations of text would perform better in this situation, however these systems are non-trivial to implement and impractical to maintain. Rather, we can try to help generalize the query through synonym expansion at search time - that is, identify ambiguous terms in the input question and augment the query with additional synonyms for those terms. But how do we determine what a synonym is? And how do we know which terms in the question should be expanded?&lt;/p&gt;
-&lt;p&gt;We experimented with two methods that follow the same process, but differ slightly in how synonyms are designated. The process entails:&lt;/p&gt;
+&lt;p&gt;An exact match-based Retriever like Elasticsearch would struggle to fetch this supporting context passage because it lacks the ability to relate the concepts of &quot;bad guy&quot; and &quot;villain.&quot; More &lt;a href=&quot;https://arxiv.org/pdf/2004.04906.pdf&quot;&gt;sophisticated document retrieval systems&lt;/a&gt; (that take advantage of learned, dense representations of text) would perform better in this situation; however, these systems are non-trivial to implement and impractical to maintain. Rather, we can try to help generalize the query through synonym expansion at search time - that is, we can identify ambiguous terms in the input question and augment the query with additional synonyms for those terms.&lt;/p&gt;
+&lt;p&gt;But how do we determine what a synonym is? And how do we know which terms in the question should be expanded?&lt;/p&gt;
+&lt;p&gt;We experimented with two methods that follow the same process, but differ slightly in &lt;em&gt;how&lt;/em&gt; synonyms are designated. The process entails:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Identifying a set of candidate tokens.&lt;/strong&gt;  Ideally, we want to expand tokens such that additional terms serve to increase recall while adding minimal noise or altering the semantics of the original query. We look at every term in the question and choose to only expand nouns, verbs, adjectives, and adverbs that are not part of a named entity.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Expanding each candidate token.&lt;/strong&gt; Related terms can be derived in numerous ways from traditional lexicon lookups (e.g. WordNet) to similarity measures between learned vector space representations (e.g. Word2Vec). We’ve tested out the use of static word embedding similarity and masked language model predictions as proxies for generating synonymous terms (more on these methods in a bit).&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Post-processing synonyms and crafting a new query.&lt;/strong&gt; We then filter the expanded vocabulary to remove any duplicative, non-alphanumeric, or proper noun tokens. The final set of expanded terms is used to create a new Elasticsearch query by appending the novel words to the original question text.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Identifying a set of candidate tokens.&lt;/strong&gt;  Ideally, we want to expand tokens such that additional terms serve to increase recall, while adding minimal noise and without altering the semantics of the original query. We look at every term in the question and choose to only expand nouns, verbs, adjectives, and adverbs that are not part of a named entity.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Expanding each candidate token.&lt;/strong&gt; Related terms can be derived in numerous ways, from traditional lexicon lookups (e.g., WordNet) to similarity measures between learned vector space representations (e.g., Word2Vec). We’ve tested the use of static word embedding similarity and masked language model predictions as proxies for generating synonymous terms (more on these methods in a bit).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Post-processing synonyms and crafting a new query.&lt;/strong&gt; We then filter the expanded vocabulary to remove any duplicative, non-alphanumeric, and proper noun tokens. The final set of expanded terms is used to create a new Elasticsearch query by appending the novel words to the original question text.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Let’s dive deeper into the two expansion methods.&lt;/p&gt;
+&lt;p&gt;Let’s take a deep dive into these two expansion methods to see how they compare.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -635,8 +638,9 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;Word embeddings are real-valued, vector representations of text that capture general contextual similarities between words in a given vocabulary. They are built on the idea that similar words tend to occur together frequently and thus are learned in an unsupervised manner from vast amounts of unstructured text. Their numerical form allows for mathematical operations - a common application being vector similarity. Since the vectors have been trained to represent the natural co-occurance of words, we extrapolate that terms corresponding to vectors with high cosine similarity are contextually synonomous. These word relationships are learned with regard to the data they are trained on, so it is critical that the training corpus for a set of embeddings is indicative of the downstream task the embedding vectors will be applied to. For that reason, we make use of 100 length &lt;a href=&quot;https://nlp.stanford.edu/pubs/glove.pdf&quot;&gt;GloVe&lt;/a&gt; word vectors trained on Wikipedia and made available through the &lt;a href=&quot;https://radimrehurek.com/gensim/&quot;&gt;Gensim library&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Let's take a look at an example question and how it is expanded using static embeddings:&lt;/p&gt;
+&lt;p&gt;Word embeddings are real-valued, vector representations of text that capture general contextual similarities between words in a given vocabulary. They are built on the idea that similar words tend to occur together frequently and thus are learned in an unsupervised manner from vast amounts of unstructured text. Their numerical form allows for mathematical operations - a common application being vector similarity.&lt;/p&gt;
+&lt;p&gt;Since the vectors have been trained to represent the natural co-occurence of words, we extrapolate that terms corresponding to vectors with high cosine similarity are contextually synonymous. These word relationships are learned with regard to the data they are trained on, so it is critical that the training corpus for a set of embeddings is indicative of the downstream task to which the embedding vectors will be applied. For that reason, we made use of 100 length &lt;a href=&quot;https://nlp.stanford.edu/pubs/glove.pdf&quot;&gt;GloVe&lt;/a&gt; word vectors trained on Wikipedia, available through the &lt;a href=&quot;https://radimrehurek.com/gensim/&quot;&gt;Gensim library&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let's take a look at an example question and how it is expanded, using static embeddings:&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -692,14 +696,8 @@ Elasticsearch Query:
 
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;Here we notice that &quot;popular&quot; and &quot;tv&quot; were the only tokens from the question deemed as candidates for expansion because all others are either stopwords or proper nouns composing a named entity. The expansion terms generated from our embedding similarity technique appear to be synonyms to the candidate terms, and by expanding the question with these related terms, we help generalize the query to capture a wider range of potentially relevant content. However, while this example demonstrates a (mostly) successful use of embedding similarity, this is not always the case...&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
-&lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;Despite the semantic value baked into word embeddings, there are several limitations to their use as a proxy for synonomous meaning. Let's look at another example:&lt;/p&gt;
+&lt;p&gt;Here we notice that &quot;popular&quot; and &quot;tv&quot; were the only tokens from the question deemed as candidates for expansion because all others are either stopwords or proper nouns composing a named entity. The expansion terms generated from our embedding similarity technique appear to be synonyms to the candidate terms, and by expanding the question with these related terms, we help generalize the query to capture a wider range of potentially relevant content.&lt;/p&gt;
+&lt;p&gt;However, while this example demonstrates a (mostly) successful use of embedding similarity, this is not always the case. Despite the semantic value baked into word embeddings, there are several limitations to their use as a proxy for synonymous meaning. Let's look at another example:&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -752,8 +750,8 @@ Elasticsearch Query:
 
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;After drawing your attention to the suggested expansions for the term &quot;rose&quot;, it is obvious that our approach lacks the ability to disambiguate between different senses of the same word. As humans, we naturally infer that the term &quot;rose&quot; implies a flower rather than the past-tense action of ascending from a lower position to a higher one. This illustrates a main limitation of word embeddings - words with multiple meanings are conflated into a single, static representation. In linguistic terms, polysemy and homonymy are not handled effectively.&lt;/p&gt;
-&lt;p&gt;Not only have we altered the semantics of the original query by introducing the new terms for the &lt;em&gt;wrong&lt;/em&gt; word-sense, but our approach has also failed to accurately capture synonomous terms for that mistaken word-sense. We see that &quot;rose&quot; expanded to &quot;fell&quot; and &quot;climbed&quot;...the first of which is actually an antonym. What is going on here? As mentioned earlier, word embeddings are trained at the task of modeling co-occurance probabilities. So while terms that occur in similar contexts &lt;em&gt;may sometimes&lt;/em&gt; be synonomous, that certainly is not always the case.&lt;/p&gt;
+&lt;p&gt;Drawing your attention to the suggested expansions for the term &quot;rose&quot;, it becomes obvious that our approach lacks the ability to disambiguate between different senses of the same word. As humans, we naturally infer that the term &quot;rose&quot; implies a flower rather than the past-tense action of ascending from a lower position to a higher one. This illustrates a main limitation of word embeddings - multiple meanings of the same word are conflated as a single, static representation. In linguistic terms, polysemy and homonymy are not handled effectively.&lt;/p&gt;
+&lt;p&gt;Not only have we altered the semantics of the original query by introducing the new terms for the &lt;em&gt;wrong&lt;/em&gt; word sense, but our approach has also failed to accurately capture synonymous terms for that mistaken word sense. We see that &quot;rose&quot; expanded to &quot;fell&quot; and &quot;climbed&quot;...the first of which is actually an antonym. What is going on here? As mentioned earlier, word embeddings are trained at the task of modeling co-occurrence probabilities. So while terms that occur in similar contexts &lt;em&gt;may&lt;/em&gt; sometimes be synonymous, that certainly is not always the case.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -766,10 +764,10 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;What was missing from the prior approach that allows us as humans to disambiguate the meaning of the word &quot;rose&quot;? The answer is &lt;em&gt;context&lt;/em&gt;. The ability to dynamically recognize alternate meaning by paying attention to the context surrounding a term allows us to de-conflate homonymns. For a computer to do the same, we can make use of a masked language model (MLM) to leverage the bi-directional context surrounding a given word and imply its morphological form.
+&lt;p&gt;The prior approach lacks something that allows us as humans to disambiguate the meaning of the word &quot;rose&quot; - &lt;em&gt;context&lt;/em&gt;. The ability to dynamically recognize alternate meaning by paying attention to the context surrounding a term allows us to distinguish homonyms. For a computer to do the same, we can make use of a masked language model (MLM) to leverage the bi-directional context surrounding a given word and imply its morphological form.
 &lt;div class=&quot;flash&quot;&gt;
     &lt;svg class=&quot;octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info&quot; viewBox=&quot;0 0 14 16&quot; version=&quot;1.1&quot; width=&quot;14&quot; height=&quot;16&quot; aria-hidden=&quot;true&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
-    &lt;strong&gt;Note: &lt;/strong&gt;For more info how a masked language model works, we recommend the original &lt;a href=&quot;https://arxiv.org/pdf/1810.04805.pdf&quot;&gt;BERT paper&lt;/a&gt; and this &lt;a href=&quot;https://demo.allennlp.org/masked-lm&quot;&gt;interactive tool from AllenNLP&lt;/a&gt;
+    &lt;strong&gt;Note: &lt;/strong&gt;For more info how a masked language model works, we recommend the original &lt;a href=&quot;https://arxiv.org/pdf/1810.04805.pdf&quot;&gt;BERT paper&lt;/a&gt; and this &lt;a href=&quot;https://demo.allennlp.org/masked-lm&quot;&gt;interactive tool from AllenNLP&lt;/a&gt;.
 &lt;/div&gt;&lt;/p&gt;
 
 &lt;/div&gt;
@@ -777,8 +775,8 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;In practice, this involves constructing intermediate versions of the original question where each identified candidate token is masked, and a MLM predicts the top N tokens that are contextually most likely to complete the sentence. As with static embeddings, contextual query expansion relies on the assumption that the MLM has been trained (or fine-tuned) on the target document corpus so it holds relevant, implicit information that can be exploited to identify suitable expansion terms.&lt;/p&gt;
-&lt;p&gt;In our case, we make use of a &lt;em&gt;BERT-base-uncased&lt;/em&gt; model that has also been pre-trained on Wikipedia and made conveniently available through &lt;a href=&quot;https://huggingface.co/&quot;&gt;HuggingFace's&lt;/a&gt; &quot;fill-mask&quot; pipeline API. Let's see how this approach performs on our ambiguous example from above:&lt;/p&gt;
+&lt;p&gt;In practice, this involves constructing intermediate versions of the original question, in which each identified candidate token is masked, and an MLM predicts the top N tokens that are contextually most likely to complete the sentence. As with static embeddings, contextual query expansion relies on the assumption that the MLM has been trained (or fine-tuned) on the target document corpus (so it holds relevant, implicit information that can be exploited to identify suitable expansion terms).&lt;/p&gt;
+&lt;p&gt;In our case, we made use of a &lt;em&gt;BERT-base-uncased&lt;/em&gt; model that has also been pre-trained on Wikipedia, conveniently available through &lt;a href=&quot;https://huggingface.co/&quot;&gt;HuggingFace's&lt;/a&gt; &quot;fill-mask&quot; pipeline API. Let's see how this approach performs on our ambiguous example from above:&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -836,7 +834,7 @@ Elasticsearch Query:
 
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;Great! Because we are now using supervised model to consider the full sentence and predict the missing candidate terms, we are able to capture the correct meaning of the term &quot;rose&quot; and also produce more reliable &quot;synonyms&quot; for each of the three expanded terms.&lt;/p&gt;
+&lt;p&gt;Great! Because we are now using a supervised model to consider the full sentence and predict the missing candidate terms, we are able to capture the correct meaning of the term &quot;rose,&quot; and also produce more reliable &quot;synonyms&quot; for each of the three expanded terms.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -849,8 +847,8 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;Due to the topical breadth of Natural Questions, a vast knowledge base is needed for the Retriever to search over in order to fairly evaluate an end-to-end QA system. For that reason, a full Wikipedia dump was &lt;a href=&quot;https://github.com/attardi/wikiextractor&quot;&gt;cleaned&lt;/a&gt; and loaded into an Elasticsearch index for testing. To represent a practical application of QA, full articles were indexed rather than pre-parsed paragraphs (as we saw in the previous post). The &lt;a href=&quot;https://ai.google.com/research/NaturalQuestions/download&quot;&gt;NQ development set&lt;/a&gt; was processed to drop all long and yes/no answer questions, yielding 7651 short and null answer examples. Additionally, answers with more than 5 tokens were discarded as answers with many tokens often resemble extractive snippets rather than canonical answers.&lt;/p&gt;
-&lt;p&gt;With our knowledge corpus and evaluation data ready to go, we evaluated Retriever performance (with the same methodology used in the last post) over an increasing number of documents while toggling entity and synonym expansion methods at search time.&lt;/p&gt;
+&lt;p&gt;Due to the topical breadth of Natural Questions, a vast knowledge base over which the Retriever can search is necessary in order to fairly evaluate an end-to-end QA system. For that reason, we &lt;a href=&quot;https://github.com/attardi/wikiextractor&quot;&gt;cleaned&lt;/a&gt; and loaded a full Wikipedia dump into an Elasticsearch index for testing. To represent a practical application of QA, full articles were indexed rather than pre-parsed paragraphs (as we saw in the &lt;a href=&quot;https://qa.fastforwardlabs.com/elasticsearch/mean%20average%20precision/recall%20for%20irqa/qa%20system%20design/2020/06/30/Evaluating_the_Retriever_&amp;amp;_End_to_End_System.html&quot;&gt;previous post&lt;/a&gt;). The &lt;a href=&quot;https://ai.google.com/research/NaturalQuestions/download&quot;&gt;NQ development set&lt;/a&gt; was processed to drop all long and yes/no answer questions, yielding 7651 short and null answer examples. Additionally, answers with more than five tokens were discarded as answers with many tokens often resemble extractive snippets rather than canonical answers.&lt;/p&gt;
+&lt;p&gt;With our knowledge corpus and evaluation data ready to go, we evaluated our Retriever performance (with the same methodology used in the last post) over an increasing number of documents, while toggling entity and synonym expansion methods at search time.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -864,8 +862,9 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;Intuitively, we see that returning more articles increases Retriever recall because there exists more content that may contain a question’s answer. However, that performance gain begins to plateau as additional content becomes less relevant to the query. We observe a performance plateau occurs at ~70% recall when retrieving 14 full Wikipedia articles. Despite the differences in experimental setup, when we compare that to the ~83% recall on SQuAD from the last post (when retrieving only 3 &lt;em&gt;paragraphs&lt;/em&gt; of content), it becomes evident just how much more challenging the NQ dataset actually is. We also observe that entity expansion provides in a slight improvement to recall as it increases specificity of the query definition to help target multi-word phrases in articles.&lt;/p&gt;
-&lt;p&gt;Finally, we observe a loss in performance when expanding candidate question terms with synonyms from either proposed method. What is going on here? While the intuition behind synonym expansion makes sense in theory, we ultimately find it very difficult to implement a &quot;one-size-fits-all&quot; approach for determining relevant synonyms. Even after adding a probability threshold for MLM expansion term predictions to further minimize the chance of introducing spurious terms, we are unable to consistently restrict semantic-altering words. Qualitative analysis reveals that MLM expansion does work in many cases, but also over-generalizes in others. In the world of information retrieval, relevancy tuning is a deeply complex subject and requires customization for each use case. Therefore it is generally not recommended to apply blanket synonym expansion techniques. Rather, using search-time expansion of similar terms from a curated ontology or acronym lookup specific to your domain may be beneficial.&lt;/p&gt;
+&lt;p&gt;Intuitively, we see that returning more articles increases Retriever recall because more content that may contain a question’s answer exists. However, that performance gain begins to plateau as additional content becomes less relevant to the query. We observe a performance plateau occurs at ~70% recall when retrieving 14 full Wikipedia articles. Despite the differences in experimental setup, when we compare that to the ~83% recall on SQuAD in the &lt;a href=&quot;https://qa.fastforwardlabs.com/elasticsearch/mean%20average%20precision/recall%20for%20irqa/qa%20system%20design/2020/06/30/Evaluating_the_Retriever_&amp;amp;_End_to_End_System.html&quot;&gt;last post&lt;/a&gt; (when retrieving only three &lt;em&gt;paragraphs&lt;/em&gt; of content), it becomes evident just how much more challenging the NQ dataset actually is. We also observe that entity expansion provides a slight improvement to recall, as it increases specificity of the query definition to help target multi-word phrases in articles.&lt;/p&gt;
+&lt;p&gt;Finally, we observe a loss in performance when expanding candidate question terms with synonyms from either proposed method. While the intuition behind synonym expansion makes sense in theory, we ultimately find it very difficult to implement a &quot;one-size-fits-all&quot; approach for determining relevant synonyms. Even after adding a probability threshold for MLM expansion term predictions to further minimize the chance of introducing spurious terms, we are unable to consistently restrict semantic-altering words.&lt;/p&gt;
+&lt;p&gt;Qualitative analysis reveals that MLM expansion does work in many cases, but also over-generalizes in others. In the world of information retrieval, relevancy tuning is a deeply complex subject and requires customization for each use case. Therefore, it is generally not recommended to apply blanket synonym expansion techniques. Rather, expanding similar terms from a curated ontology or acronym lookup specific to your domain at search time may prove beneficial.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -878,8 +877,8 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;We know from our last post that in an IR QA system, the Reader is bounded by the performance of the Retriever, and fetching more documents increases system recall. However, simply increasing the number of documents passed to the Reader also increases the amount of irrelevant information that is processed and degrades the overall QA system performance - both speed and accuracy. But what if we could have the best of both worlds?&lt;/p&gt;
-&lt;p&gt;Passage ranking is a technique that involves selecting a subset of re-ranked paragraphs from a collection of retrieved documents to retain the answer recall from those documents, while filtering out noisy content. By implementing a quick and efficient passage ranking technique, our QA pipeline considers more documents worth of information, but distills down only the relevant pieces for the Reader to process.&lt;/p&gt;
+&lt;p&gt;We know from our last post that in an IR QA system, the Reader is bounded by the performance of the Retriever, and fetching more documents increases system recall. However, simply increasing the number of documents passed to the Reader also increases the amount of irrelevant information to be processed, and degrades the overall QA system performance - in regard to both speed and accuracy. But what if we could have the best of both worlds?&lt;/p&gt;
+&lt;p&gt;Passage ranking is a technique that involves selecting a subset of re-ranked paragraphs from a collection of retrieved documents to retain the answer recall from those documents, while filtering out noisy content. By implementing a quick and efficient passage ranking technique, our QA pipeline considers more documents worth of information, but distills content down to only the relevant pieces for the Reader to process.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -893,13 +892,13 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;The concept of passage ranking is inspired by a field of information retrieval called &lt;em&gt;Learning to Rank&lt;/em&gt; which frames relevance ranking as a supervised machine learning problem. While many &lt;a href=&quot;https://www.aclweb.org/anthology/D18-1053.pdf&quot;&gt;supervised ranking approaches&lt;/a&gt; have proven successful, they require learning custom similarity metrics and introduce additional complexity into a QA system - making them impractical for many use cases. In contrast, the passage ranking implementation that we consider here is a simple, unsupervised approach that demonstrates a viable way to improve IR for general question answering applications. Our passage ranking process consists of the following steps at search time:&lt;/p&gt;
+&lt;p&gt;The concept of passage ranking is inspired by a field of information retrieval called &lt;em&gt;Learning to Rank&lt;/em&gt;, which frames relevance ranking as a supervised machine learning problem. While many &lt;a href=&quot;https://www.aclweb.org/anthology/D18-1053.pdf&quot;&gt;supervised ranking approaches&lt;/a&gt; have proven successful, they require learning custom similarity metrics and introduce additional complexity into a QA system - making them impractical for many use cases. In contrast, the passage ranking implementation that we consider here is a simple, unsupervised approach that demonstrates a viable way to improve IR for general question answering applications. Our passage ranking process consists of the following steps at search time:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;The query question and a set of N candidate documents from Elasticsearch are fed as input&lt;/li&gt;
-&lt;li&gt;All documents are split into paragraphs&lt;/li&gt;
+&lt;li&gt;The query question and a set of N candidate documents from Elasticsearch are fed as input.&lt;/li&gt;
+&lt;li&gt;All documents are split into paragraphs.&lt;/li&gt;
 &lt;li&gt;The list of paragraphs and the input question are converted into a sparse document-term matrix (DTM) using TF-IDF vectorization. We preserve n-grams during vectorization, so the final DTM includes single terms, bi-grams, and tri-grams.&lt;/li&gt;
-&lt;li&gt;Cosine similarity is calculated between the question vector and each paragraph vector&lt;/li&gt;
-&lt;li&gt;Paragraphs are sorted based on similarity score and the top M passages are passed on to the Reader for answer extraction&lt;/li&gt;
+&lt;li&gt;Cosine similarity is calculated between the question vector and each paragraph vector.&lt;/li&gt;
+&lt;li&gt;Paragraphs are sorted based on similarity score and the top M passages are passed on to the Reader for answer extraction.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;/div&gt;
@@ -913,12 +912,12 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;To demonstrate the effect of passage ranking, we evaluated system recall across the NQ development set while retrieving one article’s worth of content as determined from two different methods:&lt;/p&gt;
+&lt;p&gt;To demonstrate the effect of passage ranking, we evaluated system recall across the NQ development dataset while retrieving one article’s worth of content as determined from two different methods:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;The top 1 document scored and returned directly from Elasticsearch&lt;/li&gt;
+&lt;li&gt;The top one document scored and returned directly from Elasticsearch&lt;/li&gt;
 &lt;li&gt;The top 20 ranked paragraphs pooled from N candidate documents&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;A fair comparison between these two methods requires consideration of an equal amount of retrieved content. We found Wikipedia articles corresponding to our NQ development set contain 20 paragraphs on average.&lt;/p&gt;
+&lt;p&gt;(A fair comparison between these two methods requires consideration of an equal amount of retrieved content. We found Wikipedia articles corresponding to our NQ development set contained 20 paragraphs on average.)&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -932,8 +931,9 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;In the top half of the figure above, we see that re-ranking all paragraphs from 5 input documents and selecting only the top 20 (green dot) allows us to achieve a system recall of 53% in comparison to the 44% recall attained by Elasticsearch returning the top document alone (no passage ranking). These results support the notion that introducing an intermediate passage ranking step into a QA pipeline allows us to improve recall by almost 10 percentage points for a fixed amount of context. We notice that with passage ranking, recall increases as the number of candidate documents increase - up until ~5 documents, at which point it slowly declines.This demonstrates that after 5 documents worth of content, our sparse vector ranking algorithm loses signal as additional unrelated noise is introduced to the ranking corpus.&lt;/p&gt;
-&lt;p&gt;We also evaluate the time complexity of the passage ranking process and notice that the peak recall (@5 documents of content) comes at a cost of 4x processing time (retrieval + passage ranking vs. just retrieving 1 document from Elasticsearch). While this appears considerable, it's important to frame this cost in the setting of the full QA pipeline. Passage ranking enables our already slow Reader to only process 1/5th the amount of content while providing 20% more answers in the context window for the price of ~0.1 seconds.&lt;/p&gt;
+&lt;p&gt;In the top half of the figure above, we see that re-ranking all paragraphs from five input documents and selecting only the top 20 (represented by the green dot) allows us to achieve a system recall of 53% in comparison to the 44% recall attained by Elasticsearch returning the top document alone (without passage ranking). These results support the notion that introducing an intermediate passage ranking step into a QA pipeline allows us to improve recall by almost ten percentage points for a fixed amount of context.&lt;/p&gt;
+&lt;p&gt;We notice that with passage ranking, recall increases as the number of candidate documents increase - up until five documents, at which point, it slowly declines. This demonstrates that after five documents' worth of content, our sparse vector ranking algorithm loses signal as additional unrelated noise is introduced to the ranking corpus.&lt;/p&gt;
+&lt;p&gt;We also evaluate the time complexity of the passage ranking process and notice that the peak recall (at five documents' worth of content) comes at a cost of four times the processing time (retrieval + passage ranking vs. just retrieving one document from Elasticsearch). While this appears considerable, it's important to frame this cost in the setting of the full QA pipeline. Passage ranking enables our already slow Reader to only process one fifth the amount of content while providing 20% more answers in the context window for the price of ~0.1 seconds.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -946,7 +946,7 @@ Elasticsearch Query:
 &lt;/div&gt;
 &lt;div class=&quot;cell border-box-sizing text_cell rendered&quot;&gt;&lt;div class=&quot;inner_cell&quot;&gt;
 &lt;div class=&quot;text_cell_render border-box-sizing rendered_html&quot;&gt;
-&lt;p&gt;In this post, we identified a few challenges in applying IR QA systems to a more realistic QA task, and we looked a variety of techniques to help improve information retrieval. In the end, we found that entity expansion and passage ranking prove successful in returning more answer-containing context for the Reader to extract answers from. Additionally, we learned that while contextual synonym expansion may help Elasticsearch in some instances, it cannot be used as a blanket approach for relevancy tuning. In our final blog post we'll explore how transfer learning can help boost Reader performance on a domain specific dataset!&lt;/p&gt;
+&lt;p&gt;In this post, we identified a few challenges in applying IR QA systems to a more realistic QA task, and we looked at a variety of techniques to help improve information retrieval. In the end, we found that entity expansion and passage ranking prove successful in returning more answer-containing context from which the Reader can extract answers. Additionally, we learned that while contextual synonym expansion may help Elasticsearch in some instances, it cannot be used as a blanket approach for relevancy tuning. In our &lt;a href=&quot;https://qa.fastforwardlabs.com/domain%20adaptation/transfer%20learning/specialized%20datasets/qa/medical%20qa/2020/07/22/QA-for-Specialized-Data.html&quot;&gt;final blog post&lt;/a&gt;, we'll explore how transfer learning can help boost Reader performance on a domain-specific dataset!&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
