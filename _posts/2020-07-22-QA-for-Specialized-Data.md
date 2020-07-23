@@ -1,5 +1,5 @@
 ---
-title: "How to Apply a Transformer QA Model to Your Data"
+title: "Beyond SQuAD: How to Apply a Transformer QA Model to Your Data"
 description: A look at how transfer learning can boost performance in specialized domains.
 toc: true
 layout: post
