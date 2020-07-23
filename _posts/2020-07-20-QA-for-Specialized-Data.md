@@ -1,13 +1,10 @@
 ---
-title: "How to Apply a QA Model to _Your_ Data"
+title: "How to Apply a Transformer QA Model to Your Data"
 description: A look at how transfer learning can boost performance in specialized domains.
 toc: true
 layout: post
 comments: true
-hide: true
-permalink: /reader_hidden/
-search_exclude: false
-categories: [domain adaptation, transfer learning, specialized datasets, QA]
+categories: [domain adaptation, transfer learning, specialized datasets, QA, medical QA]
 ---
 
 If you’ve been following along in our question answering journey, you now understand the basic building blocks that form the pipeline of modern Information Retrieval-based Question Answering (IRQA) systems, and how such systems are trained and evaluated against the SQuAD2.0 dataset. However, implementing an IRQA system in the real-world is a bit more nuanced. One of our biggest questions was how well would a Reader trained on SQuAD2.0 perform on a real-world corpus? And what if that corpus were highly specialized, perhaps a collection of legal contracts, financial reports, or technical manuals? In this post we perform experiments designed to highlight how to adapt Transformer models to specialized domains and provide guidelines for practical applications. 
