@@ -103,7 +103,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      14 min read
+      15 min read
     
 </span></p>
 
@@ -146,7 +146,7 @@ window.onload = wrap_img;
 </li>
 <li class="toc-entry toc-h1"><a href="#practical-guidelines-for-domain-specific-qa">Practical Guidelines for Domain-Specific QA</a></li>
 <li class="toc-entry toc-h1"><a href="#final-thoughts">Final Thoughts</a></li>
-</ul><p>Implementing an IR QA system in the real-world is a nuanced affair. As we’ve been <a href="http://qa.fastforwardlabs.com">writing about our QA journey</a>, we began to wonder: how well would a Reader trained on SQuAD2.0 perform on a real-world corpus? And what if that corpus were highly specialized - perhaps a collection of legal contracts, financial reports, or technical manuals? In this post, we describe our experiments designed to highlight how to adapt Transformer models to specialized domains, and provide guidelines for practical applications.</p>
+</ul><p>Implementing an IR QA system in the real-world is a nuanced affair. As we got deeper into <a href="http://qa.fastforwardlabs.com">our QA journey</a>, we began to wonder: how well would a Reader trained on SQuAD2.0 perform on a real-world corpus? And what if that corpus were highly specialized - perhaps a collection of legal contracts, financial reports, or technical manuals? In this post, we describe our experiments designed to highlight how to adapt Transformer models to specialized domains, and provide guidelines for practical applications.</p>
 
 <p><img src="/images/post5/morning-brew-D-3g8pkHqCc-unsplash.jpg" alt=""><br>
 Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Morning Brew</a> on <a href="unsplash.com">Unsplash</a></p>
@@ -173,7 +173,7 @@ Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_
 
 <h1 id="experimenting-with-qa-domain-adaptation">
 <a class="anchor" href="#experimenting-with-qa-domain-adaptation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Experimenting with QA Domain Adaptation</h1>
-<p>You’ve trained your model on SQuAD and it can handle general factoid-style question answering tasks, but how well will it perform on a more specialized task that might be rife with jargon and technical content, or require long-form answers? Those are the questions we sought to answer. We note that, since these experiments are performed on only one highly specialized dataset, the results we demonstrate are not guaranteed in your use case. Instead, we seek to provide general guidelines for improving your model’s performance.</p>
+<p>You’ve trained your model on SQuAD and it can handle general factoid-style question answering tasks, but how well will it perform on a more specialized task that might be rife with jargon and technical content, or require long-form answers? Those are the questions we sought to answer. We note that, since these experiments were performed on only one highly specialized dataset, the results we demonstrate are not guaranteed in your use case. Instead, we seek to provide general guidelines for improving your model’s performance.</p>
 
 <h2 id="domain-specific-qa-datasets">
 <a class="anchor" href="#domain-specific-qa-datasets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Domain-Specific QA Datasets</h2>
@@ -206,7 +206,7 @@ Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_
   <li>What is the size of bovine coronavirus?</li>
 </ul>
 
-<p>We see there are a lot of technical medical terms (“hepcidin,” “IFITM5”), as well as some more recognizable words (that likely have different implications or interpretations in a medical context - e.g., “localization,” “expressed”). However, the questions are overall generally factoids, similar to the SQuAD dataset. Below are the most common question types in the combined dataset:</p>
+<p>We see there are a lot of technical medical terms (“hepcidin,” “IFITM5”), as well as some more recognizable words (that likely have different implications or interpretations in a medical context - e.g., “localization,” “expressed”). However, the questions are overall generally factoids, similar to the SQuAD dataset. Below are the most common question types in the combined dataset.</p>
 
 <p><img src="/images/post5/most_common_question_types.png" alt=""></p>
 
@@ -228,13 +228,11 @@ Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_
 <a class="anchor" href="#standard-transfer-learning-to-a-specialized-domain" aria-hidden="true"><span class="octicon octicon-link"></span></a>Standard Transfer Learning to a Specialized Domain</h2>
 <p><img src="/images/post5/ff14-57.png" alt="" title="Stages of Transfer Learning: (top) A Transformer model first learns language modeling through semi-supervised training on massive corpora of unstructured text, such as Wikipedia and the web. (middle) That same model learns a specific task, such as question answering, by supervised training (fine-tuning) on the SQuAD dataset. (bottom) Additional fine-tuning on a set of specialized QA examples allows the same model to perform better question answering in a specific domain. At each stage, transfer learning ensures that fewer examples are necessary to improve on the next task, since the model can bootstrap from previously learned statistical relationships."></p>
 
-<p>If fine-tuning a pre-trained language model on the SQuAD dataset allowed the model to learn the task of question answering, then applying transfer learning a second time (fine-tuning on a specialized dataset) should provide the model some knowledge of the specialized domain. While this standard application of transfer learning is not the <em>only</em> viable method for teaching a general model specialized QA, it’s arguably the most intuitive (and simplest) to execute.</p>
-
-<p>However, care must be taken during execution. We only have ~3300 examples for training, which is a far cry from the ~100k in the SQuAD dataset. How should we proceed?</p>
+<p>If fine-tuning a pre-trained language model on the SQuAD dataset allowed the model to learn the task of question answering, then applying transfer learning a second time (fine-tuning on a specialized dataset) should provide the model some knowledge of the specialized domain. While this standard application of transfer learning is not the <em>only</em> viable method for teaching a general model specialized QA, it’s arguably the most intuitive (and simplest) to execute. However, we needed to take care during execution. We only had ~3300 examples for training, which is a far cry from the ~100k in the SQuAD dataset.</p>
 
 <p>In a thorough analysis, we would perform a hyperparameter search over epochs, batch size, learning rate, etc., to determine the best set of hyperparameter values for our task - while being mindful of overfitting (which is easy to do with small training sets). However, even with a chosen, fixed set of hyperparameter values, <a href="https://arxiv.org/abs/2002.06305">research has shown</a> that training results can vary substantially due to different random seeds. Evaluating a model through cross-validation allows us to assess the size of this effect. Unfortunately, both cross-validation and hyperparameter search (another cross-validation) are costly and compute-intensive endeavors.</p>
 
-<p>In the practical world, most ML and NLP practitioners use hyperparameters that have (hopefully) been vetted by academics. For example, most people (including us) fine-tune on the SQuAD dataset, using the hyperparameters published by the original BERT authors. For this example, we used the hyperparameters <a href="https://openreview.net/forum?id=JENSKEEzsoU">published</a> by the authors of the COVID-QA dataset. (While we do combine their dataset with BioASQ, we felt these hyperparameters were nonetheless a good place to start.)</p>
+<p>In the practical world, most ML and NLP practitioners use hyperparameters that have (hopefully) been vetted by academics. For example, most people (including us) fine-tune on the SQuAD dataset, using the hyperparameters published by the original BERT authors. For this example, we used the hyperparameters <a href="https://openreview.net/forum?id=JENSKEEzsoU">published</a> by the authors of the COVID-QA dataset. (While we combined their dataset with BioASQ, we felt these hyperparameters were nonetheless a good place to start.)</p>
 
 <table>
   <thead>
@@ -294,11 +292,11 @@ Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_
 
 <p><img src="/images/post5/fine_tuning_distilbert.png" alt=""></p>
 
-<p>Is it really necessary to start with a General QA Model that has already been fine-tuned on SQuAD? Perhaps we could simply start with a pre-trained language model – a model that has not yet been trained at any explicit task – and fine-tune directly on the medical dataset, essentially teaching the model both the task of question answering and the specifics of the specialized dataset at the same time.</p>
+<p>Was it really necessary to start with a General QA Model that had already been fine-tuned on SQuAD? Perhaps we could have simply started with a pre-trained language model – a model that had not yet been trained at any explicit task – and fine-tuned directly on the medical dataset, essentially teaching the model both the task of question answering and the specifics of the specialized dataset at the same time.</p>
 
 <p>The green bars in the graphic above show the results of training the <code class="highlighter-rouge">language model</code> (listed in the table above) directly on our medical dataset. We’ll call this the Med-Only Model. As expected, it performed worse than either the General Model or our Specialized Model, but not by much! The blue and green bars differ by a only couple points - which is surprising, since the General Model is trained on 100k general examples and the Med-Only Model is trained on only 3300 specialized examples. This demonstrates that it’s not only a numbers game; it’s just as important to have data that reflects your specific domain.</p>
 
-<p>But how many specialized examples is enough? Training the General Model on an additional 3300 specialized question/answer pairs achieved about a ten point increase in F1. Because generating QA annotations is costly, could we have done it with fewer examples? We explored this by training the General Model model on increasing subsets of the medical train set, from 500 to 3000 examples. With only 500 examples we saw a four-point relative F1 increase. F1 increases rapidly with increasing training examples until we hit a training size of about 2000 examples, after which we saw diminishing returns on further performance gains.</p>
+<p>But how many specialized examples are enough? Training the General Model on an additional 3300 specialized question/answer pairs achieved about a ten point increase in F1. Because generating QA annotations is costly, could we have done it with fewer examples? We explored this by training the General Model model on increasing subsets of the medical train set, from 500 to 3000 examples. With only 500 examples we saw a four-point relative F1 increase. F1 increased rapidly with increasing training examples until we hit a training size of about 2000 examples, after which we saw diminishing returns on further performance gains.</p>
 
 <p><img src="/images/post5/fine_tuning_vs_train_size.png" alt=""></p>
 
@@ -308,9 +306,19 @@ Photo by <a href="https://unsplash.com/@morningbrew?utm_source=unsplash&amp;utm_
 
 <p><img src="/images/post5/cross_validation_test.png" alt="" title="F1 and exact match scores for each fold of a five-fold CV"></p>
 
-<p>With that said, we again stress that the performance we’ve demonstrated here is not guaranteed in every QA application to a specialized domain. However, our experiments echo the findings of other studies in the literature, which is heartening. (To learn more, check out <a href="https://arxiv.org/pdf/1911.02655">this paper</a>, <a href="https://dl.acm.org/doi/pdf/10.1145/3309706">this paper</a>, or <a href="https://arxiv.org/abs/1910.09753">this paper</a>.)</p>
+<p>With that said, we again stress that the performance we’ve demonstrated here is not guaranteed in every QA application to a specialized domain. However, our experiments echo the findings of other studies in the literature, which is heartening. 
+To learn more, check out <a href="https://arxiv.org/pdf/1911.02655">this paper</a>, <a href="https://dl.acm.org/doi/pdf/10.1145/3309706">this paper</a>, or <a href="https://arxiv.org/abs/1910.09753">this paper</a>.)</p>
 
-<p>Let’s summarize what we believe are a solid set of guidelines for practical QA applications in specialized domains.</p>
+<blockquote>
+  <p>To learn more, check out the following papers:</p>
+  <ul>
+    <li><a href="https://arxiv.org/pdf/1911.02655">Towards Domain Adaptation From Limited Data For Question Answering Using Deep Neural Networks</a></li>
+    <li><a href="https://dl.acm.org/doi/pdf/10.1145/3309706">Putting Question-Answering Systems into Practice: Transfer Learning for Efficient Domain Customization</a></li>
+    <li><a href="https://arxiv.org/abs/1910.09753">MRQA 2019 Shared Task: Evaluating Generalization in Reading Comprehension</a></li>
+  </ul>
+</blockquote>
+
+<p>As a result of our experiments, we believe that the following are a solid set of guidelines for practical QA applications in specialized domains.</p>
 
 <h1 id="practical-guidelines-for-domain-specific-qa">
 <a class="anchor" href="#practical-guidelines-for-domain-specific-qa" aria-hidden="true"><span class="octicon octicon-link"></span></a>Practical Guidelines for Domain-Specific QA</h1>
