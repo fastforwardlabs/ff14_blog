@@ -128,7 +128,6 @@ How robust are these results? As a final check, we performed a five-fold cross-v
 ![]({{ site.baseurl }}/images/post5/cross_validation_test.png "F1 and exact match scores for each fold of a five-fold CV")
 
 With that said, we again stress that the performance we’ve demonstrated here is not guaranteed in every QA application to a specialized domain. However, our experiments echo the findings of other studies in the literature, which is heartening. 
-To learn more, check out [this paper](https://arxiv.org/pdf/1911.02655), [this paper](https://dl.acm.org/doi/pdf/10.1145/3309706), or [this paper](https://arxiv.org/abs/1910.09753).) 
 
 > To learn more, check out the following papers: 
 > * [Towards Domain Adaptation From Limited Data For Question Answering Using Deep Neural Networks](https://arxiv.org/pdf/1911.02655)
