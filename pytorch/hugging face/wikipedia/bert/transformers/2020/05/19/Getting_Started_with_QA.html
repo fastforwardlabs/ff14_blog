@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-05-19T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","headline":"Building a QA System with BERT on Wikipedia","dateModified":"2020-05-19T00:00:00-05:00","datePublished":"2020-05-19T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html"},"url":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html","@context":"https://schema.org"}</script>
+{"dateModified":"2020-05-19T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html"},"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","url":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html","headline":"Building a QA System with BERT on Wikipedia","datePublished":"2020-05-19T00:00:00-05:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qa.fastforwardlabs.com/feed.xml" title="NLP for Question Answering" /><!-- the google_analytics_id gets auto inserted from the config file -->
 
@@ -36,7 +36,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-05-19T00:00:00-05:00" />
 <script type="application/ld+json">
-{"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","headline":"Building a QA System with BERT on Wikipedia","dateModified":"2020-05-19T00:00:00-05:00","datePublished":"2020-05-19T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html"},"url":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html","@context":"https://schema.org"}</script>
+{"dateModified":"2020-05-19T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html"},"description":"A high-level code walk-through of an IR-based QA system with PyTorch and Hugging Face.","@type":"BlogPosting","url":"https://qa.fastforwardlabs.com/pytorch/hugging%20face/wikipedia/bert/transformers/2020/05/19/Getting_Started_with_QA.html","headline":"Building a QA System with BERT on Wikipedia","datePublished":"2020-05-19T00:00:00-05:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
@@ -290,8 +290,8 @@ $ pip install <span class="nv">wikipedia</span><span class="o">==</span><span cl
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip install torch  torchvision -f https://download.pytorch.org/whl/torch_stable.html
-<span class="o">!</span>pip install transformers
-<span class="o">!</span>pip install wikipedia
+<span class="o">!</span>pip install <span class="nv">transformers</span><span class="o">==</span><span class="m">2</span>.5.1
+<span class="o">!</span>pip install <span class="nv">wikipedia</span><span class="o">==</span><span class="m">1</span>.4.0
 </pre></div>
 
     </div>
@@ -435,7 +435,7 @@ dev-v2.0.json       100%[===================&gt;]   4.17M  6.68MB/s    in 0.6s
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># download the run_squad.py training script</span>
-<span class="o">!</span>curl -L -O https://raw.githubusercontent.com/huggingface/transformers/master/examples/question-answering/run_squad.py
+<span class="o">!</span>curl -L -O https://github.com/huggingface/transformers/blob/b90745c5901809faef3136ed09a689e7d733526c/examples/run_squad.py
 </pre></div>
 
     </div>
